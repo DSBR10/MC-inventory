@@ -1,279 +1,111 @@
-import {
-  NextRequest,
-  NextResponse
-} from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getAWSBilling } from "@/lib/billing/aws";
+import { applyBillingFilters } from "@/lib/billing/filters";
+import { groupBillingData } from "@/lib/billing/grouping";
+import { normalizeBillingData } from "@/lib/billing/normalize";
+import { readBillingCache, writeBillingCache } from "@/lib/billing/cache";
 
-import {
-  getAWSBilling
-} from "@/lib/billing/aws";
+export const dynamic = "force-dynamic";
 
-import {
-  applyBillingFilters
-} from "@/lib/billing/filters";
+const CACHE_TTL = 100 * 60 * 10;
 
-import {
-  groupBillingData
-} from "@/lib/billing/grouping";
+let refreshing = false;
 
-import {
-  normalizeBillingData
-} from "@/lib/billing/normalize";
+async function buildBilling() {
+  const awsBilling = await getAWSBilling();
+  return normalizeBillingData(awsBilling);
+}
 
-export async function GET(
-  request: NextRequest
-) {
-
+async function refreshBilling() {
   try {
+    console.log("BILLING BACKGROUND REFRESH START");
+    const data = await buildBilling();
+    writeBillingCache({ timestamp: Date.now(), data });
+    console.log("BILLING BACKGROUND REFRESH DONE");
+  } catch (err) {
+    console.error("BILLING BACKGROUND REFRESH ERROR:", err);
+  }
+}
 
-    const {
-      searchParams
-    } = new URL(
-      request.url
-    );
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
 
     const filters = {
-
-      start:
-        searchParams.get(
-          "start"
-        ) || undefined,
-
-      end:
-        searchParams.get(
-          "end"
-        ) || undefined,
-
-      provider:
-        searchParams.get(
-          "provider"
-        ) || undefined,
-
-      service:
-        searchParams.get(
-          "service"
-        ) || undefined,
-
-      account:
-        searchParams.get(
-          "account"
-        ) || undefined,
-
-      tagKey:
-        searchParams.get(
-          "tagKey"
-        ) || undefined,
-
-      tagValue:
-        searchParams.get(
-          "tagValue"
-        ) || undefined,
-
-      groupBy:
-        searchParams.get(
-          "groupBy"
-        ) as any
-
+      start:     searchParams.get("start")    || undefined,
+      end:       searchParams.get("end")      || undefined,
+      provider:  searchParams.get("provider") || undefined,
+      service:   searchParams.get("service")  || undefined,
+      account:   searchParams.get("account")  || undefined,
+      tagKey:    searchParams.get("tagKey")   || undefined,
+      tagValue:  searchParams.get("tagValue") || undefined,
+      groupBy:   searchParams.get("groupBy")  as any
     };
 
-    /*
-      AWS Billing
-    */
+    /* ── CACHE ── */
+    let normalized;
+    const cached = readBillingCache();
 
-    const awsBilling =
-      await getAWSBilling();
+    if (cached) {
+      const age = Date.now() - cached.timestamp;
+      console.log(`BILLING CACHE AGE: ${Math.floor(age / 1000)}s`);
 
-    /*
-      Normalize
-    */
-
-    const normalized =
-      normalizeBillingData(
-        awsBilling
-      );
-
-    /*
-      Filters
-    */
-
-    const filtered =
-      applyBillingFilters(
-        normalized,
-        filters
-      );
-
-    /*
-      Grouping
-    */
-
-    let grouped = null;
-
-    if (filters.groupBy) {
-
-      grouped =
-        groupBillingData(
-
-          filtered,
-
-          filters.groupBy
-
-        );
-
-    }
-
-    /*
-      Facets
-    */
-
-    const providers =
-      Array.from(
-
-        new Set(
-
-          filtered.map(
-            (i) => i.provider
-          )
-
-        )
-
-      ).sort();
-
-    const services =
-      Array.from(
-
-        new Set(
-
-          filtered.map(
-            (i) => i.service
-          )
-
-        )
-
-      ).sort();
-
-    const accounts =
-      Array.from(
-
-        new Set(
-
-          filtered.map(
-            (i) => i.accountName
-          )
-
-        )
-
-      ).sort();
-
-    /*
-      Tag facets
-    */
-
-    const tagFacets:
-      Record<string, string[]> = {};
-
-    for (const item of filtered) {
-
-      const tags =
-        item.tags || {};
-
-      for (const [
-
-        key,
-        value
-
-      ] of Object.entries(tags)) {
-
-        if (!tagFacets[key]) {
-
-          tagFacets[key] = [];
-
-        }
-
-        if (
-          value &&
-          !tagFacets[key]
-            .includes(value)
-        ) {
-
-          tagFacets[key]
-            .push(value);
-
-        }
-
+      if (age > CACHE_TTL && !refreshing) {
+        refreshing = true;
+        refreshBilling().finally(() => { refreshing = false; });
       }
 
+      normalized = cached.data;
+
+    } else {
+      console.log("NO BILLING CACHE FOUND");
+      refreshing = true;
+      normalized = await buildBilling();
+      writeBillingCache({ timestamp: Date.now(), data: normalized });
+      refreshing = false;
     }
 
-    Object.keys(tagFacets)
-      .forEach((key) => {
+    /* ── FILTERS ── */
+    const filtered = applyBillingFilters(normalized, filters);
 
-        tagFacets[key]
-          .sort();
+    /* ── GROUPING ── */
+    const grouped = filters.groupBy
+      ? groupBillingData(filtered, filters.groupBy)
+      : null;
 
-      });
+    /* ── FACETS ── */
+    const providers = Array.from(new Set(filtered.map((i) => i.provider))).sort();
+    const services  = Array.from(new Set(filtered.map((i) => i.service))).sort();
+    const accounts  = Array.from(new Set(filtered.map((i) => i.accountName))).sort();
 
-    /*
-      Total
-    */
+    const tagFacets: Record<string, string[]> = {};
+    for (const item of filtered) {
+      for (const [key, value] of Object.entries(item.tags || {})) {
+        if (!tagFacets[key]) tagFacets[key] = [];
+        if (value && !tagFacets[key].includes(value)) tagFacets[key].push(value);
+      }
+    }
+    Object.keys(tagFacets).forEach((k) => tagFacets[k].sort());
 
-    const total =
-
-      filtered.reduce(
-
-        (acc, item) =>
-
-          acc + item.cost,
-
-        0
-
-      );
+    /* ── TOTAL ── */
+    const total = filtered.reduce((acc, item) => acc + item.cost, 0);
 
     return NextResponse.json({
-
       success: true,
-
+      source: cached ? "cache" : "fresh",
+      timestamp: cached?.timestamp ?? Date.now(),
+      refreshing,
       filters,
-
       total,
-
-      count:
-        filtered.length,
-
+      count: filtered.length,
       grouped,
-
-      facets: {
-
-        providers,
-        services,
-        accounts,
-        tags:
-          tagFacets
-
-      },
-
-      data:
-        filtered
-
+      facets: { providers, services, accounts, tags: tagFacets },
+      data: filtered
     });
 
   } catch (error) {
-
-    console.error(
-      "BILLING API ERROR:",
-      error
-    );
-
-    return NextResponse.json(
-
-      {
-        success: false
-      },
-
-      {
-        status: 500
-      }
-
-    );
-
+    refreshing = false;
+    console.error("BILLING API ERROR:", error);
+    return NextResponse.json({ success: false }, { status: 500 });
   }
-
 }

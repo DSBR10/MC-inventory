@@ -210,7 +210,7 @@ Promise<BillingItem[]> {
               account.name,
 
             accountId:
-              account.accountId,
+              account.id,
 
             service,
 
@@ -327,7 +327,7 @@ Promise<BillingItem[]> {
                 account.name,
 
               accountId:
-                account.accountId,
+                account.id,
 
               service,
 

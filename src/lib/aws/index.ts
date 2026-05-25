@@ -26,6 +26,38 @@ import {
   getAWSELBInventory
 } from "./elb";
 
+import {
+  getAWSECSInventory
+} from "./ecs";
+
+import {
+  getAWSCloudFrontInventory
+} from "./cloudfront";
+
+import {
+  getAWSDynamoDBInventory
+} from "./dynamodb";
+
+import {
+  getAWSDocumentDBInventory
+} from "./documentdb";
+
+import {
+  getAWSLambdaInventory
+} from "./lambda";
+
+import {
+  getAWSEKSInventory
+} from "./eks";
+
+import {
+  getAWSElastiCacheInventory
+} from "./elasticache";
+
+import {
+  getAWSAPIGatewayInventory
+} from "./apigateway";
+
 export async function getAWSInventory() {
 
   const accounts =
@@ -52,7 +84,15 @@ export async function getAWSInventory() {
             s3,
             vpc,
             subnet,
-            elb
+            elb,
+            ecs,
+            cloudfront,
+            dynamodb,
+            documentdb,
+            lambda,
+            eks,
+            elasticache,
+            apigateway
 
           ] = await Promise.all([
 
@@ -66,7 +106,23 @@ export async function getAWSInventory() {
 
             getAWSSubnetInventory(account),
 
-            getAWSELBInventory(account)
+            getAWSELBInventory(account),
+
+            getAWSECSInventory(account),
+
+            getAWSCloudFrontInventory(account),
+
+          getAWSDynamoDBInventory(account),
+
+            getAWSDocumentDBInventory(account),
+
+            getAWSLambdaInventory(account),
+
+            getAWSEKSInventory(account),
+
+            getAWSElastiCacheInventory(account),
+
+            getAWSAPIGatewayInventory(account)
 
           ]);
 
@@ -77,7 +133,15 @@ export async function getAWSInventory() {
             ...s3,
             ...vpc,
             ...subnet,
-            ...elb
+            ...elb,
+            ...ecs,
+            ...cloudfront,
+            ...dynamodb,
+            ...documentdb,
+            ...lambda,
+            ...eks,
+            ...elasticache,
+            ...apigateway
 
           ];
 

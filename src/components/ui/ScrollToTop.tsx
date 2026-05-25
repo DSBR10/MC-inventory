@@ -5,47 +5,26 @@ import { useEffect, useState } from "react";
 import { ChevronUp } from "lucide-react";
 
 export default function ScrollToTop() {
-
-  const [visible, setVisible] =
-    useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-
     const handleScroll = () => {
-
-      setVisible(
-        window.scrollY > 350
-      );
-
+      setVisible(window.scrollY > 350);
     };
 
-    window.addEventListener(
-      "scroll",
-      handleScroll
-    );
+    window.addEventListener("scroll", handleScroll);
 
-    return () =>
-
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
-
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToTop = () => {
-
     window.scrollTo({
-
       top: 0,
-      behavior: "smooth"
-
+      behavior: "smooth",
     });
-
   };
 
   return (
-
     <button
       onClick={scrollToTop}
       className={`
@@ -71,7 +50,7 @@ export default function ScrollToTop() {
         items-center
         justify-center
 
-        text-white
+        text-[var(--text-primary)]
 
         shadow-2xl
 
@@ -79,33 +58,25 @@ export default function ScrollToTop() {
         duration-300
 
         ${
-
           visible
-
             ? `
               opacity-100
               translate-y-0
               pointer-events-auto
             `
-
             : `
               opacity-0
               translate-y-10
               pointer-events-none
             `
-
         }
       `}
       style={{
         background:
-          "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))"
+          "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
       }}
     >
-
       <ChevronUp size={24} />
-
     </button>
-
   );
-
 }

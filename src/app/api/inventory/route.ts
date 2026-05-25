@@ -27,6 +27,18 @@ import {
 } from "@/lib/huawei/elb";
 
 import {
+  getHuaweiCCEInventory
+} from "@/lib/huawei/cce";
+
+import {
+  getHuaweiCDNInventory
+} from "@/lib/huawei/cdn";
+
+import {
+  getHuaweiDDSInventory
+} from "@/lib/huawei/dds";
+
+import {
   enrichRelationships
 } from "@/lib/inventory/enrichRelationships";
 
@@ -72,7 +84,10 @@ async function buildInventory() {
     huaweiVPC,
     huaweiSubnet,
     huaweiOBS,
-    huaweiELB
+    huaweiELB,
+    huaweiCCE,
+    huaweiCDN,
+    huaweiDDS
 
   ] = await Promise.all([
 
@@ -83,7 +98,10 @@ async function buildInventory() {
     getHuaweiVPCInventory(),
     getHuaweiSubnetInventory(),
     getHuaweiOBSInventory(),
-    getHuaweiELBInventory()
+    getHuaweiELBInventory(),
+    getHuaweiCCEInventory(),
+    getHuaweiCDNInventory(),
+    getHuaweiDDSInventory()
 
   ]);
 
@@ -96,7 +114,10 @@ async function buildInventory() {
     ...huaweiVPC,
     ...huaweiSubnet,
     ...huaweiOBS,
-    ...huaweiELB
+    ...huaweiELB,
+    ...huaweiCCE,
+    ...huaweiCDN,
+    ...huaweiDDS
 
   ];
 

@@ -92,6 +92,8 @@ export type InventoryItem = {
 
   service: string;
 
+  resourceType?: string;
+
   name: string;
 
   id: string;
@@ -143,5 +145,7 @@ export type InventoryItem = {
   publiclyExposed?: boolean;
 
   topologyType?: string;
+
+  children?: InventoryItem[];
 
 };

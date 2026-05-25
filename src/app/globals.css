@@ -13,210 +13,433 @@
 }
 
 @media (prefers-color-scheme: dark) {
+
   :root {
+
     --background: #0a0a0a;
     --foreground: #ededed;
+
   }
+
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  background:
+    var(--background);
+
+  color:
+    var(--foreground);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
 }
 
 /* ========================================
    TEMAS DE COLORES PROFESIONALES
-   ======================================== */
+======================================== */
 
-/* Tema 1: Purple Passion (Morado con Rosado) */
+/* PURPLE */
+
 :root,
 [data-theme="purple"] {
+
   --gradient-start: #667eea;
   --gradient-end: #764ba2;
+
   --gradient-secondary-start: #f093fb;
   --gradient-secondary-end: #f5576c;
+
   --primary: #8b5cf6;
   --primary-dark: #7c3aed;
   --primary-light: #a78bfa;
+
   --secondary: #ec4899;
   --accent: #d946ef;
+
   --bg-dark: #0f0f1a;
   --bg-card: #1a1a2e;
   --bg-hover: #252542;
+
+  --bg-secondary: #151526;
+  --bg-tertiary: #1f1f35;
+
   --border: #2d2d44;
+
   --text-primary: #f3f4f6;
   --text-secondary: #9ca3af;
+
+  --table-header: rgba(255,255,255,.03);
+
+  --overlay: rgba(15,23,42,.72);
+
+  --shadow-color: rgba(0,0,0,.25);
+
+  --glass-bg: rgba(26,26,46,.72);
+
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
   --info: #3b82f6;
+
 }
 
-/* Tema 2: Ocean Breeze (Azul agua marina + Turquesa) */
+/* OCEAN */
+
 [data-theme="ocean"] {
+
   --gradient-start: #00b4db;
   --gradient-end: #0083b0;
+
   --gradient-secondary-start: #11998e;
   --gradient-secondary-end: #38ef7d;
+
   --primary: #06b6d4;
   --primary-dark: #0891b2;
   --primary-light: #22d3ee;
+
   --secondary: #14b8a6;
   --accent: #2dd4bf;
+
   --bg-dark: #0a192f;
   --bg-card: #112240;
   --bg-hover: #1a3650;
+
+  --bg-secondary: #0f2038;
+  --bg-tertiary: #17304d;
+
   --border: #233554;
+
   --text-primary: #e6f1ff;
   --text-secondary: #8892b0;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
+
 }
 
-/* Tema 3: Sunset (Naranja + Coral) */
+/* SUNSET */
+
 [data-theme="sunset"] {
+
   --gradient-start: #f12711;
   --gradient-end: #f5af19;
+
   --gradient-secondary-start: #ff6a00;
   --gradient-secondary-end: #ee0979;
+
   --primary: #f97316;
   --primary-dark: #ea580c;
   --primary-light: #fb923c;
+
   --secondary: #ef4444;
   --accent: #ec4899;
+
   --bg-dark: #1a0f0a;
   --bg-card: #2d1a10;
   --bg-hover: #3d2518;
+
+  --bg-secondary: #25140c;
+  --bg-tertiary: #3b2315;
+
   --border: #4a3320;
+
   --text-primary: #fff7ed;
   --text-secondary: #d4c4b0;
-  --success: #10b981;
-  --warning: #fbbf24;
-  --error: #ef4444;
-  --info: #3b82f6;
+
 }
 
-/* Tema 4: Forest (Verde esmeralda + Verde menta) */
+/* FOREST */
+
 [data-theme="forest"] {
+
   --gradient-start: #11998e;
   --gradient-end: #38ef7d;
+
   --gradient-secondary-start: #00b09b;
   --gradient-secondary-end: #96c93d;
+
   --primary: #10b981;
   --primary-dark: #059669;
   --primary-light: #34d399;
+
   --secondary: #14b8a6;
   --accent: #6ee7b7;
+
   --bg-dark: #0a1a12;
   --bg-card: #0f2a1a;
   --bg-hover: #1a3a25;
+
+  --bg-secondary: #10251a;
+  --bg-tertiary: #183528;
+
   --border: #234e2a;
+
   --text-primary: #ecfdf5;
   --text-secondary: #a7f3d0;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
+
 }
 
-/* Tema 5: Midnight (Azul noche + Índigo) */
+/* MIDNIGHT */
+
 [data-theme="midnight"] {
+
   --gradient-start: #2b1b3d;
   --gradient-end: #1a1a3e;
+
   --gradient-secondary-start: #4a00e0;
   --gradient-secondary-end: #8e2de2;
+
   --primary: #6366f1;
   --primary-dark: #4f46e5;
   --primary-light: #818cf8;
+
   --secondary: #8b5cf6;
   --accent: #c084fc;
+
   --bg-dark: #0a0a14;
   --bg-card: #141424;
   --bg-hover: #1e1e34;
+
+  --bg-secondary: #11111d;
+  --bg-tertiary: #1b1b2d;
+
   --border: #2a2a44;
+
   --text-primary: #f3f4f6;
   --text-secondary: #9ca3af;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
+
 }
 
-/* Tema 6: Cherry Blossom (Rosa + Cereza) */
+/* CHERRY */
+
 [data-theme="cherry"] {
+
   --gradient-start: #ff9a9e;
   --gradient-end: #fecfef;
+
   --gradient-secondary-start: #fbc2eb;
   --gradient-secondary-end: #a6c1ee;
+
   --primary: #f472b6;
   --primary-dark: #ec4899;
   --primary-light: #f9a8d4;
+
   --secondary: #fb7185;
   --accent: #f43f5e;
+
   --bg-dark: #1a0f18;
   --bg-card: #2d1a25;
   --bg-hover: #3d2535;
+
+  --bg-secondary: #24141d;
+  --bg-tertiary: #351d2c;
+
   --border: #4a3040;
+
   --text-primary: #fff5f5;
   --text-secondary: #fbcfe8;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
-}
 
-/* Aplicación global de temas */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
-}
-
-body {
-  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
-  color: var(--text-primary);
-}
-
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-hover);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
 }
 
 /* ========================================
-   ENTERPRISE ANIMATIONS
+   GLOBAL
+======================================== */
+
+* {
+
+  transition:
+    background-color .25s ease,
+    border-color .25s ease,
+    color .2s ease;
+
+}
+
+html,
+body {
+
+  min-height:
+    100%;
+
+}
+
+body {
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--bg-dark) 0%,
+      var(--bg-card) 100%
+    );
+
+  color:
+    var(--text-primary);
+
+}
+
+/* ========================================
+   SURFACES
+======================================== */
+
+.surface-card {
+
+  background:
+    var(--glass-bg);
+
+  border:
+    1px solid var(--border);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 8px 30px var(--shadow-color);
+
+}
+
+.surface-secondary {
+
+  background:
+    var(--bg-secondary);
+
+}
+
+.surface-tertiary {
+
+  background:
+    var(--bg-tertiary);
+
+}
+
+.surface-hover:hover {
+
+  background:
+    var(--bg-hover);
+
+}
+
+/* ========================================
+   ENTERPRISE INPUTS
+======================================== */
+
+.input-enterprise {
+
+  background:
+    var(--bg-card);
+
+  border:
+    1px solid var(--border);
+
+  color:
+    var(--text-primary);
+
+  border-radius:
+    14px;
+
+}
+
+.input-enterprise::placeholder {
+
+  color:
+    var(--text-secondary);
+
+}
+
+.dropdown-enterprise {
+
+  background:
+    var(--bg-card);
+
+  border:
+    1px solid var(--border);
+
+  box-shadow:
+    0 10px 30px var(--shadow-color);
+
+}
+
+.overlay-enterprise {
+
+  background:
+    var(--overlay);
+
+  backdrop-filter:
+    blur(20px);
+
+}
+
+/* ========================================
+   SCROLLBAR
+======================================== */
+
+::-webkit-scrollbar {
+
+  width: 8px;
+  height: 8px;
+
+}
+
+::-webkit-scrollbar-track {
+
+  background:
+    var(--bg-hover);
+
+  border-radius:
+    999px;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+  background:
+    var(--primary);
+
+  border-radius:
+    999px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+  background:
+    var(--primary-dark);
+
+}
+
+/* ========================================
+   ANIMATIONS
 ======================================== */
 
 @keyframes glowPulse {
 
   0% {
-    transform: scale(1);
-    opacity: 0.7;
+
+    transform:
+      scale(1);
+
+    opacity:
+      .7;
+
   }
 
   50% {
-    transform: scale(1.08);
-    opacity: 1;
+
+    transform:
+      scale(1.08);
+
+    opacity:
+      1;
+
   }
 
   100% {
-    transform: scale(1);
-    opacity: 0.7;
+
+    transform:
+      scale(1);
+
+    opacity:
+      .7;
+
   }
 
 }
@@ -224,78 +447,273 @@ body {
 @keyframes fadeSlide {
 
   from {
-    opacity: 0;
-    transform: translateY(10px);
+
+    opacity:
+      0;
+
+    transform:
+      translateY(10px);
+
   }
 
   to {
-    opacity: 1;
-    transform: translateY(0);
+
+    opacity:
+      1;
+
+    transform:
+      translateY(0);
+
   }
 
 }
 
 .animate-glowPulse {
-  animation: glowPulse 2s infinite ease-in-out;
+
+  animation:
+    glowPulse 2s infinite ease-in-out;
+
 }
 
 .animate-fadeSlide {
-  animation: fadeSlide .4s ease;
+
+  animation:
+    fadeSlide .4s ease;
+
 }
 
 /* ========================================
-   TABLE UX
+   TABLES
 ======================================== */
 
 table {
-  border-collapse: separate;
-  border-spacing: 0;
+
+  border-collapse:
+    separate;
+
+  border-spacing:
+    0;
+
+}
+
+thead {
+
+  background:
+    var(--table-header);
+
 }
 
 thead th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(12px);
+
+  position:
+    sticky;
+
+  top:
+    0;
+
+  z-index:
+    10;
+
+  backdrop-filter:
+    blur(12px);
+
 }
 
 tbody tr:hover {
-  transform: scale(1.001);
+
+  transform:
+    scale(1.001);
+
+  background:
+    rgba(255,255,255,.02);
+
 }
 
 /* ========================================
-   MODAL SCROLL
+   MODAL
 ======================================== */
 
+.modal-panel {
+
+  background:
+    var(--glass-bg);
+
+  border:
+    1px solid var(--border);
+
+  backdrop-filter:
+    blur(24px);
+
+}
+
 .modal-scroll::-webkit-scrollbar {
-  width: 10px;
+
+  width:
+    10px;
+
 }
 
 .modal-scroll::-webkit-scrollbar-thumb {
+
   background:
     linear-gradient(
       180deg,
       var(--primary),
       var(--secondary)
     );
-}
-
-/* LIGHT MODE */
-
-[data-mode="light"] {
-
-  --bg-dark: #f4f7fb;
-  --bg-card: #ffffff;
-  --bg-hover: #edf2f7;
-  --border: #dbe4ee;
-
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
 
 }
 
 /* ========================================
-   ENTERPRISE INTERACTIONS
+   LIGHT MODE
+======================================== */
+
+[data-mode="light"] {
+
+  color-scheme: light;
+
+  --bg-dark: #eef2f7;
+  --bg-card: #ffffff;
+  --bg-hover: #f4f7fb;
+
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #edf2f7;
+
+  --border: #d7e0ea;
+
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+
+  --table-header: #f8fafc;
+
+  --overlay: rgba(255,255,255,.78);
+
+  --shadow-color: rgba(15,23,42,.08);
+
+  --glass-bg: rgba(255,255,255,.72);
+
+}
+
+/* BODY */
+
+[data-mode="light"] body {
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef2f7 0%,
+      #f8fafc 100%
+    );
+
+}
+
+/* TABLES */
+
+[data-mode="light"] tbody tr:hover {
+
+  background:
+    rgba(15,23,42,.03);
+
+}
+
+/* INPUTS */
+
+[data-mode="light"] input,
+[data-mode="light"] select,
+[data-mode="light"] textarea {
+
+  background:
+    white !important;
+
+  color:
+    var(--text-primary) !important;
+
+  border:
+    1px solid var(--border) !important;
+
+}
+
+/* OPTIONS */
+
+[data-mode="light"] option {
+
+  background:
+    white;
+
+  color:
+    #111827;
+
+}
+
+/* HEADER */
+
+[data-mode="light"] header {
+
+  background:
+    rgba(255,255,255,.72) !important;
+
+  border-color:
+    var(--border) !important;
+
+  backdrop-filter:
+    blur(20px);
+
+}
+
+/* SIDEBAR */
+
+[data-mode="light"] aside {
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #f8fafc
+    ) !important;
+
+  border-color:
+    var(--border) !important;
+
+}
+
+/* OVERLAYS */
+
+[data-mode="light"] .overlay-enterprise {
+
+  background:
+    rgba(255,255,255,.65);
+
+}
+
+/* ========================================
+   ENTERPRISE CARDS
+======================================== */
+
+.enterprise-card {
+
+  background:
+    rgba(255,255,255,.03);
+
+  border:
+    1px solid var(--border);
+
+  backdrop-filter:
+    blur(16px);
+
+  border-radius:
+    24px;
+
+}
+
+[data-mode="light"] .enterprise-card {
+
+  background:
+    rgba(255,255,255,.8);
+
+}
+
+/* ========================================
+   INTERACTIONS
 ======================================== */
 
 .interactive-button {
@@ -319,7 +737,7 @@ tbody tr:hover {
     translateY(-2px);
 
   box-shadow:
-    0 10px 25px rgba(0,0,0,.25);
+    0 10px 25px var(--shadow-color);
 
   border-color:
     color-mix(
@@ -333,7 +751,7 @@ tbody tr:hover {
 .interactive-button:active {
 
   transform:
-    translateY(0px)
+    translateY(0)
     scale(.98);
 
 }
@@ -353,7 +771,7 @@ tbody tr:hover {
     translateY(-3px);
 
   box-shadow:
-    0 15px 35px rgba(0,0,0,.28);
+    0 15px 35px var(--shadow-color);
 
   border-color:
     color-mix(
@@ -384,79 +802,5 @@ tbody tr:hover {
       var(--bg-hover) 70%,
       white 3%
     );
-
-}
-
-/* ───────────────────────────── */
-/* INTERACTIONS */
-/* ───────────────────────────── */
-
-.interactive-button {
-
-  transition:
-    all .18s ease;
-
-}
-
-.interactive-button:hover {
-
-  transform:
-    translateY(-1px);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.25);
-
-}
-
-.interactive-button:active {
-
-  transform:
-    scale(.98);
-
-}
-
-.interactive-glow:hover {
-
-  border-color:
-    rgba(255,255,255,.12);
-
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,.04),
-    0 10px 40px rgba(0,0,0,.35);
-
-}
-
-/* ───────────────────────────── */
-/* SCROLLBAR */
-/* ───────────────────────────── */
-
-::-webkit-scrollbar {
-
-  width: 8px;
-  height: 8px;
-
-}
-
-::-webkit-scrollbar-track {
-
-  background:
-    transparent;
-
-}
-
-::-webkit-scrollbar-thumb {
-
-  background:
-    rgba(255,255,255,.12);
-
-  border-radius:
-    999px;
-
-}
-
-::-webkit-scrollbar-thumb:hover {
-
-  background:
-    rgba(255,255,255,.22);
 
 }

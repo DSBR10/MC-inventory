@@ -3,6 +3,7 @@ export type HuaweiAccount = {
   projectId: string;
   ak: string;
   sk: string;
+  region: string;
 };
 
 // ─────────────────────────────────────────────
@@ -29,6 +30,9 @@ export function getHuaweiAccounts(): HuaweiAccount[] {
     const sk =
       process.env[`HUAWEI_ACCOUNT_${index}_SK`];
 
+    const region =
+      process.env[`HUAWEI_ACCOUNT_${index}_REGION`] || 'la-south-2';
+
     if (
       !name ||
       !projectId ||
@@ -42,7 +46,8 @@ export function getHuaweiAccounts(): HuaweiAccount[] {
       name,
       projectId,
       ak,
-      sk
+      sk,
+      region
     });
 
     index++;

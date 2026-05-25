@@ -369,7 +369,7 @@ export async function getAWSELBInventory(
           lb.DNSName || "N/A",
 
         status:
-          "active",
+          "available",
 
         operatingSystem:
           lb.Type || "N/A",

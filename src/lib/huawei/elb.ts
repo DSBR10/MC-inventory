@@ -320,7 +320,7 @@ export async function getHuaweiELBInventory() {
                     : undefined,
 
                 status:
-                  elb.status || "ACTIVE",
+                  elb.status || "available",
 
                 operatingSystem:
                   "N/A",

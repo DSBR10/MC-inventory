@@ -1,23 +1,16 @@
 export default function CommandTerminal() {
-
   return (
-
     <div
       className="
         rounded-3xl
         border
-        border-white/10
+        border-[var(--border)]
         bg-black
         overflow-hidden
       "
     >
-
-      <div className="border-b border-white/10 p-4">
-
-        <h2 className="font-semibold">
-          Terminal remota
-        </h2>
-
+      <div className="border-b border-[var(--border)] p-4">
+        <h2 className="font-semibold">Terminal remota</h2>
       </div>
 
       <textarea
@@ -32,9 +25,6 @@ export default function CommandTerminal() {
           font-mono
         "
       />
-
     </div>
-
   );
-
 }

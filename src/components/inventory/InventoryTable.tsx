@@ -1,7 +1,4 @@
-import {
-  ArrowUp,
-  ArrowDown
-} from "lucide-react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 import { InventoryItem } from "@/types/inventory";
 
@@ -10,35 +7,25 @@ import ServiceBadge from "./ServiceBadge";
 import TagsList from "./TagsList";
 
 type Props = {
-
   data: InventoryItem[];
 
-  onSelect: (
-    item: InventoryItem
-  ) => void;
+  onSelect: (item: InventoryItem) => void;
 
-  onSort: (
-    field: any
-  ) => void;
+  onSort: (field: any) => void;
 
   sortField: string;
 
   sortDirection: string;
-
 };
 
 export default function InventoryTable({
-
   data,
   onSelect,
   onSort,
   sortField,
-  sortDirection
-
+  sortDirection,
 }: Props) {
-
   return (
-
     <div
       className="
         bg-[var(--bg-card)]/60
@@ -49,18 +36,14 @@ export default function InventoryTable({
         backdrop-blur-xl
       "
     >
-
       <div className="overflow-x-auto">
-
         <table
           className="w-full table-fixed"
           style={{
-            minWidth: "1200px"
+            minWidth: "1200px",
           }}
         >
-
           <colgroup>
-
             <col style={{ width: "9%" }} />
             <col style={{ width: "12%" }} />
             <col style={{ width: "10%" }} />
@@ -68,7 +51,6 @@ export default function InventoryTable({
             <col style={{ width: "22%" }} />
             <col style={{ width: "10%" }} />
             <col style={{ width: "18%" }} />
-
           </colgroup>
 
           <thead
@@ -78,9 +60,7 @@ export default function InventoryTable({
               border-[var(--border)]
             "
           >
-
             <tr>
-
               <Header
                 title="Provider"
                 field="provider"
@@ -142,20 +122,14 @@ export default function InventoryTable({
               >
                 Tags
               </th>
-
             </tr>
-
           </thead>
 
           <tbody>
-
             {data.map((item) => (
-
               <tr
                 key={item.uniqueKey}
-                onClick={() =>
-                  onSelect(item)
-                }
+                onClick={() => onSelect(item)}
                 className="
                   border-b
                   border-[var(--border)]
@@ -165,9 +139,7 @@ export default function InventoryTable({
                   cursor-pointer
                 "
               >
-
                 <td className="px-4 py-3 text-[13px]">
-
                   <div
                     className="
                       inline-flex
@@ -182,7 +154,6 @@ export default function InventoryTable({
                   >
                     {item.provider}
                   </div>
-
                 </td>
 
                 <td className="px-4 py-3 text-[13px] truncate">
@@ -190,17 +161,11 @@ export default function InventoryTable({
                 </td>
 
                 <td className="px-4 py-3">
-
-                  <ServiceBadge
-                    service={item.service}
-                  />
-
+                  <ServiceBadge service={item.service} />
                 </td>
 
                 <td className="px-4 py-3">
-
                   <div className="min-w-0">
-
                     <p className="font-semibold truncate text-[13px]">
                       {item.name}
                     </p>
@@ -216,90 +181,49 @@ export default function InventoryTable({
                     >
                       {item.id}
                     </p>
-
                   </div>
-
                 </td>
 
                 <td className="px-4 py-3">
-
                   <div className="space-y-1">
-
-                    <p className="text-[13px] truncate">
-                      {item.host}
-                    </p>
+                    <p className="text-[13px] truncate">{item.host}</p>
 
                     {item.privateIp && (
-
                       <p className="text-[11px] text-cyan-400 truncate">
                         PRI: {item.privateIp}
                       </p>
-
                     )}
 
                     {item.publicIp && (
-
                       <p className="text-[11px] text-orange-400 truncate">
                         PUB: {item.publicIp}
                       </p>
-
                     )}
-
                   </div>
-
                 </td>
 
                 <td className="px-4 py-3">
-
-                  <StatusBadge
-                    status={item.status}
-                  />
-
+                  <StatusBadge status={item.status} />
                 </td>
 
                 <td className="px-4 py-3">
-
-                  <TagsList
-                    tags={item.tags}
-                  />
-
+                  <TagsList tags={item.tags} />
                 </td>
-
               </tr>
-
             ))}
-
           </tbody>
-
         </table>
-
       </div>
-
     </div>
-
   );
-
 }
 
-function Header({
-
-  title,
-  field,
-  onSort,
-  sortField,
-  sortDirection
-
-}: any) {
-
-  const active =
-    sortField === field;
+function Header({ title, field, onSort, sortField, sortDirection }: any) {
+  const active = sortField === field;
 
   return (
-
     <th
-      onClick={() =>
-        onSort(field)
-      }
+      onClick={() => onSort(field)}
       className="
         px-4
         py-3
@@ -310,36 +234,23 @@ function Header({
         text-[var(--text-secondary)]
         cursor-pointer
         select-none
-        hover:text-white
+        hover:text-[var(--text-primary)]
         transition-all
       "
     >
-
       <div className="flex items-center gap-2">
-
         <span>{title}</span>
 
         {active ? (
-
-          sortDirection === "asc"
-
-            ? <ArrowUp size={12} />
-
-            : <ArrowDown size={12} />
-
+          sortDirection === "asc" ? (
+            <ArrowUp size={12} />
+          ) : (
+            <ArrowDown size={12} />
+          )
         ) : (
-
-          <ArrowUp
-            size={12}
-            className="opacity-30"
-          />
-
+          <ArrowUp size={12} className="opacity-30" />
         )}
-
       </div>
-
     </th>
-
   );
-
 }

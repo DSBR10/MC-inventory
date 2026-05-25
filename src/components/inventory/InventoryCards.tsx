@@ -5,28 +5,15 @@ import StatusBadge from "./StatusBadge";
 import TagsList from "./TagsList";
 
 type Props = {
-
   data: InventoryItem[];
 
-  onSelect: (
-    item: InventoryItem
-  ) => void;
-
+  onSelect: (item: InventoryItem) => void;
 };
 
-export default function InventoryCards({
-
-  data,
-  onSelect
-
-}: Props) {
-
+export default function InventoryCards({ data, onSelect }: Props) {
   return (
-
     <div className="space-y-3">
-
       {data.map((item) => (
-
         <div
           key={item.uniqueKey}
           onClick={() => onSelect(item)}
@@ -44,14 +31,9 @@ export default function InventoryCards({
             hover:bg-[var(--bg-hover)]/30
           "
         >
-
           <div className="flex justify-between gap-4 mb-3">
-
             <div>
-
-              <h3 className="font-bold text-base">
-                {item.name}
-              </h3>
+              <h3 className="font-bold text-base">{item.name}</h3>
 
               <p
                 className="
@@ -62,20 +44,13 @@ export default function InventoryCards({
               >
                 {item.id}
               </p>
-
             </div>
 
-            <ServiceBadge
-              service={item.service}
-            />
-
+            <ServiceBadge service={item.service} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">
-
-            <StatusBadge
-              status={item.status}
-            />
+            <StatusBadge status={item.status} />
 
             <span
               className="
@@ -85,35 +60,24 @@ export default function InventoryCards({
             >
               {item.provider}
             </span>
-
           </div>
 
           <div className="mb-3">
-
-            <p className="text-[11px] text-gray-400 mb-1">
+            <p className="text-[11px] text-[var(--text-secondary)] mb-1">
               Network
             </p>
 
-            <p className="text-sm">
-              {item.host}
-            </p>
-
+            <p className="text-sm">{item.host}</p>
           </div>
 
           {(item.securityGroups || []).length > 0 && (
-
             <div className="mb-3">
-
-              <p className="text-[11px] text-gray-400 mb-2">
+              <p className="text-[11px] text-[var(--text-secondary)] mb-2">
                 Security Groups
               </p>
 
               <div className="flex flex-wrap gap-2">
-
-                {item.securityGroups
-                  ?.slice(0, 2)
-                  .map((sg) => (
-
+                {item.securityGroups?.slice(0, 2).map((sg) => (
                   <span
                     key={sg.id}
                     className="
@@ -127,25 +91,14 @@ export default function InventoryCards({
                   >
                     {sg.name}
                   </span>
-
                 ))}
-
               </div>
-
             </div>
-
           )}
 
-          <TagsList
-            tags={item.tags}
-          />
-
+          <TagsList tags={item.tags} />
         </div>
-
       ))}
-
     </div>
-
   );
-
 }

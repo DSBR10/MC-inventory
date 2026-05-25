@@ -9,13 +9,10 @@ import {
   Globe,
   ArrowDown,
   Boxes,
-  Activity
+  Activity,
 } from "lucide-react";
 
-import {
-  useMemo,
-  useState
-} from "react";
+import { useMemo, useState } from "react";
 
 import { InventoryItem } from "@/types/inventory";
 
@@ -23,129 +20,67 @@ import TagsList from "./TagsList";
 import SecurityGroupList from "./SecurityGroupList";
 
 type Props = {
-
   item: InventoryItem | null;
 
   allItems: InventoryItem[];
 
-  onNavigate: (
-    item: InventoryItem
-  ) => void;
+  onNavigate: (item: InventoryItem) => void;
 
   onClose: () => void;
-
 };
 
-type Tab =
-  | "overview"
-  | "network"
-  | "security"
-  | "loadbalancer";
+type Tab = "overview" | "network" | "security" | "loadbalancer";
 
 export default function ResourceModal({
-
   item,
   allItems,
   onNavigate,
-  onClose
-
+  onClose,
 }: Props) {
-
-  const [tab, setTab] =
-    useState<Tab>("overview");
+  const [tab, setTab] = useState<Tab>("overview");
 
   if (!item) return null;
 
-  const findResource = (
-    id?: string
-  ) => {
-
+  const findResource = (id?: string) => {
     if (!id) return null;
 
-    return allItems.find(
-
-      (r) =>
-
-        r.id === id ||
-
-        r.name === id ||
-
-        r.host === id
-
-    );
-
+    return allItems.find((r) => r.id === id || r.name === id || r.host === id);
   };
 
-  const securityAnalysis =
-    useMemo(() => {
+  const securityAnalysis = useMemo(() => {
+    const findings: string[] = [];
 
-      const findings: string[] = [];
+    (item.securityGroups || []).forEach((sg) => {
+      (sg.inboundRules || []).forEach((rule) => {
+        const openToWorld = rule.cidr === "0.0.0.0/0";
 
-      (item.securityGroups || []).forEach((sg) => {
+        const from = rule.fromPort;
 
-        (sg.inboundRules || []).forEach((rule) => {
+        if (openToWorld && from === 22) {
+          findings.push("SSH expuesto públicamente");
+        }
 
-          const openToWorld =
-            rule.cidr === "0.0.0.0/0";
+        if (openToWorld && from === 3389) {
+          findings.push("RDP expuesto públicamente");
+        }
 
-          const from =
-            rule.fromPort;
-
-          if (
-            openToWorld &&
-            from === 22
-          ) {
-
-            findings.push(
-              "SSH expuesto públicamente"
-            );
-
-          }
-
-          if (
-            openToWorld &&
-            from === 3389
-          ) {
-
-            findings.push(
-              "RDP expuesto públicamente"
-            );
-
-          }
-
-          if (
-            openToWorld &&
-            rule.protocol === "-1"
-          ) {
-
-            findings.push(
-              "ALL traffic permitido"
-            );
-
-          }
-
-        });
-
+        if (openToWorld && rule.protocol === "-1") {
+          findings.push("ALL traffic permitido");
+        }
       });
+    });
 
-      return findings;
-
-    }, [item]);
+    return findings;
+  }, [item]);
 
   const riskLevel =
-
     securityAnalysis.length >= 3
-
       ? "CRITICAL"
-
       : securityAnalysis.length > 0
-
         ? "WARNING"
-
         : "SAFE";
 
   return (
-
     <div
       className="
         fixed
@@ -159,7 +94,6 @@ export default function ResourceModal({
         p-4
       "
     >
-
       <div
         className="
           bg-[var(--bg-card)]
@@ -174,7 +108,6 @@ export default function ResourceModal({
         "
         style={{ maxHeight: "92vh" }}
       >
-
         {/* HEADER */}
 
         <div
@@ -189,13 +122,9 @@ export default function ResourceModal({
             rounded-t-2xl
           "
         >
-
           <div className="flex justify-between items-start gap-4">
-
             <div className="flex-1 min-w-0">
-
               <div className="flex flex-wrap gap-2 mb-4">
-
                 <Badge value={item.service} />
 
                 <Badge value={item.provider} />
@@ -204,33 +133,14 @@ export default function ResourceModal({
 
                 <RiskBadge risk={riskLevel} />
 
-                {item.publicIp && (
+                {item.publicIp && <Badge value="PUBLIC" color="orange" />}
 
-                  <Badge
-                    value="PUBLIC"
-                    color="orange"
-                  />
-
-                )}
-
-                {item.ssmManaged && (
-
-                  <Badge
-                    value="SSM"
-                    color="green"
-                  />
-
-                )}
-
+                {item.ssmManaged && <Badge value="SSM" color="green" />}
               </div>
 
               <div className="flex items-center gap-3">
-
                 <div className="min-w-0">
-
-                  <h2 className="text-2xl font-bold truncate">
-                    {item.name}
-                  </h2>
+                  <h2 className="text-2xl font-bold truncate">{item.name}</h2>
 
                   <p
                     className="
@@ -243,15 +153,10 @@ export default function ResourceModal({
                   >
                     {item.id}
                   </p>
-
                 </div>
 
-                <CopyButton
-                  value={item.id}
-                />
-
+                <CopyButton value={item.id} />
               </div>
-
             </div>
 
             <button
@@ -268,51 +173,39 @@ export default function ResourceModal({
             >
               Cerrar
             </button>
-
           </div>
 
           {/* TABS */}
 
           <div className="flex gap-2 mt-5 flex-wrap">
-
             <TabButton
               active={tab === "overview"}
-              onClick={() =>
-                setTab("overview")
-              }
+              onClick={() => setTab("overview")}
               icon={<Server size={14} />}
               label="Overview"
             />
 
             <TabButton
               active={tab === "network"}
-              onClick={() =>
-                setTab("network")
-              }
+              onClick={() => setTab("network")}
               icon={<Network size={14} />}
               label="Network"
             />
 
             <TabButton
               active={tab === "security"}
-              onClick={() =>
-                setTab("security")
-              }
+              onClick={() => setTab("security")}
               icon={<ShieldAlert size={14} />}
               label="Security"
             />
 
             <TabButton
               active={tab === "loadbalancer"}
-              onClick={() =>
-                setTab("loadbalancer")
-              }
+              onClick={() => setTab("loadbalancer")}
               icon={<Activity size={14} />}
               label="Load Balancing"
             />
-
           </div>
-
         </div>
 
         {/* BODY */}
@@ -325,11 +218,9 @@ export default function ResourceModal({
             min-h-0
           "
         >
-
           {/* EXPOSURE */}
 
           {item.publiclyExposed ? (
-
             <div
               className="
                 mb-5
@@ -343,14 +234,9 @@ export default function ResourceModal({
                 gap-4
               "
             >
-
-              <ShieldAlert
-                size={20}
-                className="text-red-400 mt-1"
-              />
+              <ShieldAlert size={20} className="text-red-400 mt-1" />
 
               <div>
-
                 <p
                   className="
                     font-semibold
@@ -368,16 +254,12 @@ export default function ResourceModal({
                     text-red-200/80
                   "
                 >
-                  Este recurso posee exposición pública
-                  o reglas abiertas hacia Internet.
+                  Este recurso posee exposición pública o reglas abiertas hacia
+                  Internet.
                 </p>
-
               </div>
-
             </div>
-
           ) : (
-
             <div
               className="
                 mb-5
@@ -391,14 +273,9 @@ export default function ResourceModal({
                 gap-4
               "
             >
-
-              <ShieldCheck
-                size={20}
-                className="text-green-400 mt-1"
-              />
+              <ShieldCheck size={20} className="text-green-400 mt-1" />
 
               <div>
-
                 <p
                   className="
                     font-semibold
@@ -418,23 +295,16 @@ export default function ResourceModal({
                 >
                   No se detectó exposición pública.
                 </p>
-
               </div>
-
             </div>
-
           )}
 
           {/* OVERVIEW */}
 
           {tab === "overview" && (
-
             <div className="space-y-6">
-
               <SectionCard title="Información General">
-
                 <div className="mb-4">
-
                   <div
                     className={`
                       inline-flex
@@ -444,28 +314,19 @@ export default function ResourceModal({
                       py-2
                       rounded-2xl
                       border
-                      ${getRiskStyles(
-                        item.riskLevel
-                      )}
+                      ${getRiskStyles(item.riskLevel)}
                     `}
                   >
-
                     <ShieldAlert size={16} />
 
                     <div>
-
-                      <p className="text-[10px] opacity-70">
-                        Risk Level
-                      </p>
+                      <p className="text-[10px] opacity-70">Risk Level</p>
 
                       <p className="font-semibold text-sm">
                         {item.riskLevel || "SAFE"}
                       </p>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div
@@ -477,49 +338,39 @@ export default function ResourceModal({
                     gap-3
                   "
                 >
-
                   <InfoCard label="Provider" value={item.provider} />
                   <InfoCard label="Cuenta" value={item.accountName} />
                   <InfoCard label="Servicio" value={item.service} />
                   <InfoCard label="Estado" value={item.status} />
                   <InfoCard label="Host" value={item.host} />
-                  <InfoCard label="Sistema Operativo" value={item.operatingSystem} />
+                  <InfoCard
+                    label="Sistema Operativo"
+                    value={item.operatingSystem}
+                  />
                   <InfoCard label="Instance Type" value={item.instanceType} />
                   <InfoCard label="AZ" value={item.availabilityZone} />
                   <InfoCard label="Launch Time" value={item.launchTime} />
-
                 </div>
-
               </SectionCard>
 
               <SectionCard title="Tags">
-
                 <TagsList tags={item.tags} />
-
               </SectionCard>
-
             </div>
-
           )}
 
           {/* NETWORK */}
 
           {tab === "network" && (
-
             <div className="space-y-6">
-
               <SectionCard title="Topology">
-
                 <div className="space-y-4">
-
                   {item.publiclyExposed && (
-
                     <TopologyNode
                       icon={<Globe size={16} />}
                       label="Internet"
                       type="external"
                     />
-
                   )}
 
                   <TopologyNode
@@ -527,51 +378,28 @@ export default function ResourceModal({
                     label={`${item.service} · ${item.name}`}
                     type={item.topologyType}
                   />
-
                 </div>
-
               </SectionCard>
 
               <SectionCard title="Networking">
-
                 <div className="grid md:grid-cols-2 gap-3">
+                  <InfoCard label="Private IP" value={item.privateIp} />
 
-                  <InfoCard
-                    label="Private IP"
-                    value={item.privateIp}
-                  />
+                  <InfoCard label="Public IP" value={item.publicIp} />
 
-                  <InfoCard
-                    label="Public IP"
-                    value={item.publicIp}
-                  />
+                  <InfoCard label="VPC" value={item.vpcId} />
 
-                  <InfoCard
-                    label="VPC"
-                    value={item.vpcId}
-                  />
-
-                  <InfoCard
-                    label="Subnet"
-                    value={item.subnetId}
-                  />
-
+                  <InfoCard label="Subnet" value={item.subnetId} />
                 </div>
-
               </SectionCard>
-
             </div>
-
           )}
 
           {/* SECURITY */}
 
           {tab === "security" && (
-
             <div className="space-y-6">
-
               <SectionCard title="Risk Analysis">
-
                 <div
                   className={`
                     p-4
@@ -587,71 +415,37 @@ export default function ResourceModal({
                     }
                   `}
                 >
-
-                  <p className="font-bold text-base mb-4">
-                    {riskLevel}
-                  </p>
+                  <p className="font-bold text-base mb-4">{riskLevel}</p>
 
                   {securityAnalysis.length === 0 ? (
-
                     <p className="text-green-400 text-sm">
                       No se encontraron riesgos críticos.
                     </p>
-
                   ) : (
-
                     <div className="space-y-2">
-
                       {securityAnalysis.map((f, idx) => (
-
-                        <p
-                          key={idx}
-                          className="text-sm"
-                        >
+                        <p key={idx} className="text-sm">
                           • {f}
                         </p>
-
                       ))}
-
                     </div>
-
                   )}
-
                 </div>
-
               </SectionCard>
 
               <SectionCard title="Security Groups">
-
-                <SecurityGroupList
-                  groups={item.securityGroups}
-                />
-
+                <SecurityGroupList groups={item.securityGroups} />
               </SectionCard>
-
             </div>
-
           )}
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
-function TabButton({
-  active,
-  onClick,
-  icon,
-  label
-}: any) {
-
+function TabButton({ active, onClick, icon, label }: any) {
   return (
-
     <button
       onClick={onClick}
       className={`
@@ -668,9 +462,7 @@ function TabButton({
 
         ${
           active
-
-            ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-
+            ? "bg-[var(--primary)] text-[var(--text-primary)] border-[var(--primary)]"
             : "bg-[var(--bg-hover)] border-[var(--border)]"
         }
       `}
@@ -678,18 +470,11 @@ function TabButton({
       {icon}
       {label}
     </button>
-
   );
-
 }
 
-function Badge({
-  value,
-  color
-}: any) {
-
+function Badge({ value, color }: any) {
   return (
-
     <span
       className={`
         px-2.5
@@ -700,32 +485,20 @@ function Badge({
 
         ${
           color === "orange"
-
             ? "bg-orange-500/10 text-orange-400 border-orange-500/20"
-
             : color === "green"
-
               ? "bg-green-500/10 text-green-400 border-green-500/20"
-
               : "bg-[var(--primary)]/10 text-[var(--primary)] border-[var(--primary)]/20"
         }
       `}
     >
       {value}
     </span>
-
   );
-
 }
 
-function RiskBadge({
-  risk
-}: {
-  risk: string;
-}) {
-
+function RiskBadge({ risk }: { risk: string }) {
   return (
-
     <span
       className={`
         px-2.5
@@ -736,36 +509,22 @@ function RiskBadge({
 
         ${
           risk === "CRITICAL"
-
             ? "bg-red-500/10 text-red-400 border-red-500/20"
-
             : risk === "WARNING"
-
               ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-
               : "bg-green-500/10 text-green-400 border-green-500/20"
         }
       `}
     >
       {risk}
     </span>
-
   );
-
 }
 
-function CopyButton({
-  value
-}: {
-  value: string;
-}) {
-
+function CopyButton({ value }: { value: string }) {
   return (
-
     <button
-      onClick={() =>
-        navigator.clipboard.writeText(value)
-      }
+      onClick={() => navigator.clipboard.writeText(value)}
       className="
         p-2
         rounded-xl
@@ -776,22 +535,13 @@ function CopyButton({
         interactive-button
       "
     >
-
       <Copy size={14} />
-
     </button>
-
   );
-
 }
 
-function SectionCard({
-  title,
-  children
-}: any) {
-
+function SectionCard({ title, children }: any) {
   return (
-
     <div
       className="
         bg-[var(--bg-hover)]/20
@@ -801,26 +551,15 @@ function SectionCard({
         p-5
       "
     >
-
-      <h3 className="text-lg font-bold mb-5">
-        {title}
-      </h3>
+      <h3 className="text-lg font-bold mb-5">{title}</h3>
 
       {children}
-
     </div>
-
   );
-
 }
 
-function InfoCard({
-  label,
-  value
-}: any) {
-
+function InfoCard({ label, value }: any) {
   return (
-
     <div
       className="
         p-4
@@ -830,27 +569,17 @@ function InfoCard({
         border-[var(--border)]
       "
     >
-
       <p className="text-[10px] text-[var(--text-secondary)] uppercase mb-2">
         {label}
       </p>
 
-      <p className="text-xs break-all">
-        {value || "N/A"}
-      </p>
-
+      <p className="text-xs break-all">{value || "N/A"}</p>
     </div>
-
   );
-
 }
 
-function HealthBadge({
-  status
-}: any) {
-
+function HealthBadge({ status }: any) {
   return (
-
     <span
       className={`
         px-2.5
@@ -861,30 +590,23 @@ function HealthBadge({
 
         ${
           status === "healthy"
-
             ? "bg-green-500/10 text-green-400 border-green-500/20"
-
             : "bg-red-500/10 text-red-400 border-red-500/20"
         }
       `}
     >
       {status}
     </span>
-
   );
-
 }
 
 function TopologyNode({
-
   icon,
   label,
   type,
   clickable,
-  onClick
-
+  onClick,
 }: {
-
   icon: React.ReactNode;
 
   label: string;
@@ -894,11 +616,8 @@ function TopologyNode({
   clickable?: boolean;
 
   onClick?: () => void;
-
 }) {
-
   return (
-
     <button
       onClick={onClick}
       disabled={!clickable}
@@ -915,49 +634,30 @@ function TopologyNode({
 
         ${
           clickable
-
             ? `
               hover:scale-[1.01]
               hover:border-cyan-400
               hover:shadow-lg
               cursor-pointer
             `
-
             : ""
         }
 
         ${getTopologyStyles(type)}
       `}
     >
-
-      <div>
-
-        {icon}
-
-      </div>
+      <div>{icon}</div>
 
       <div className="flex-1">
-
-        <p className="font-medium text-sm">
-          {label}
-        </p>
-
+        <p className="font-medium text-sm">{label}</p>
       </div>
-
     </button>
-
   );
-
 }
 
-function getTopologyStyles(
-  type?: string
-) {
-
+function getTopologyStyles(type?: string) {
   switch (type) {
-
     case "entrypoint":
-
       return `
         bg-cyan-500/10
         border-cyan-500/20
@@ -965,7 +665,6 @@ function getTopologyStyles(
       `;
 
     case "compute":
-
       return `
         bg-violet-500/10
         border-violet-500/20
@@ -973,7 +672,6 @@ function getTopologyStyles(
       `;
 
     case "network":
-
       return `
         bg-orange-500/10
         border-orange-500/20
@@ -981,7 +679,6 @@ function getTopologyStyles(
       `;
 
     case "external":
-
       return `
         bg-red-500/10
         border-red-500/20
@@ -989,24 +686,16 @@ function getTopologyStyles(
       `;
 
     default:
-
       return `
         bg-[var(--bg-hover)]/40
         border-[var(--border)]
       `;
-
   }
-
 }
 
-function getRiskStyles(
-  level?: string
-) {
-
+function getRiskStyles(level?: string) {
   switch (level) {
-
     case "CRITICAL":
-
       return `
         bg-red-500/10
         border-red-500/20
@@ -1014,7 +703,6 @@ function getRiskStyles(
       `;
 
     case "HIGH":
-
       return `
         bg-orange-500/10
         border-orange-500/20
@@ -1022,7 +710,6 @@ function getRiskStyles(
       `;
 
     case "MEDIUM":
-
       return `
         bg-yellow-500/10
         border-yellow-500/20
@@ -1030,7 +717,6 @@ function getRiskStyles(
       `;
 
     case "LOW":
-
       return `
         bg-cyan-500/10
         border-cyan-500/20
@@ -1038,13 +724,10 @@ function getRiskStyles(
       `;
 
     default:
-
       return `
         bg-green-500/10
         border-green-500/20
         text-green-400
       `;
-
   }
-
 }

@@ -3,10 +3,9 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 
-const EC2Terminal = dynamic(
-  () => import("../components/EC2Terminal"),
-  { ssr: false }
-);
+const EC2Terminal = dynamic(() => import("../components/EC2Terminal"), {
+  ssr: false,
+});
 
 export default function TerminalPage() {
   const [instanceId, setInstanceId] = useState("");
@@ -14,7 +13,7 @@ export default function TerminalPage() {
   const [connected, setConnected] = useState(false);
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white p-10">
+    <main className="min-h-screen bg-gray-950 text-[var(--text-primary)] p-10">
       <h1 className="text-3xl mb-6">EC2 Terminal</h1>
 
       {!connected && (
@@ -43,10 +42,7 @@ export default function TerminalPage() {
       )}
 
       {connected && (
-        <EC2Terminal
-          instanceId={instanceId}
-          accountId={accountId}
-        />
+        <EC2Terminal instanceId={instanceId} accountId={accountId} />
       )}
     </main>
   );

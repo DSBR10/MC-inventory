@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  useSession,
-  signOut
-} from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 import { useRouter } from "next/navigation";
 
@@ -21,13 +14,13 @@ import {
   ChevronDown,
   Moon,
   Sun,
-  Monitor
+  Monitor,
 } from "lucide-react";
 
 import {
   useTheme,
   themeLabels,
-  type ThemeName
+  type ThemeName,
 } from "@/app/providers/ThemeProvider";
 
 const themes: {
@@ -36,107 +29,65 @@ const themes: {
 }[] = [
   {
     id: "purple",
-    colors: ["#8b5cf6", "#ec4899"]
+    colors: ["#8b5cf6", "#ec4899"],
   },
   {
     id: "ocean",
-    colors: ["#06b6d4", "#14b8a6"]
+    colors: ["#06b6d4", "#14b8a6"],
   },
   {
     id: "sunset",
-    colors: ["#f97316", "#ef4444"]
+    colors: ["#f97316", "#ef4444"],
   },
   {
     id: "forest",
-    colors: ["#10b981", "#14b8a6"]
+    colors: ["#10b981", "#14b8a6"],
   },
   {
     id: "midnight",
-    colors: ["#6366f1", "#8b5cf6"]
+    colors: ["#6366f1", "#8b5cf6"],
   },
   {
     id: "cherry",
-    colors: ["#f472b6", "#fb7185"]
+    colors: ["#f472b6", "#fb7185"],
   },
 ];
 
 export default function UserMenu() {
+  const { data: session } = useSession();
 
-  const {
-    data: session
-  } = useSession();
+  const router = useRouter();
 
-  const router =
-    useRouter();
+  const { theme, setTheme, appearance, setAppearance } = useTheme();
 
-  const {
-    theme,
-    setTheme,
-    appearance,
-    setAppearance
-  } = useTheme();
+  const [open, setOpen] = useState(false);
 
-  const [open, setOpen] =
-    useState(false);
-
-  const ref =
-    useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-
-    const handleClick = (
-      e: MouseEvent
-    ) => {
-
-      if (
-        ref.current &&
-        !ref.current.contains(
-          e.target as Node
-        )
-      ) {
-
+    const handleClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
-
       }
-
     };
 
-    window.addEventListener(
-      "mousedown",
-      handleClick
-    );
+    window.addEventListener("mousedown", handleClick);
 
-    return () =>
-      window.removeEventListener(
-        "mousedown",
-        handleClick
-      );
-
+    return () => window.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const user =
-    session?.user;
+  const user = session?.user;
 
-  const role =
-    user?.role || "infraestructura";
+  const role = user?.role || "infraestructura";
 
-  const initial =
-    user?.name?.charAt(0)
-      .toUpperCase() || "U";
+  const initial = user?.name?.charAt(0).toUpperCase() || "U";
 
   return (
-
-    <div
-      ref={ref}
-      className="relative"
-    >
-
+    <div ref={ref} className="relative">
       {/* BUTTON */}
 
       <button
-        onClick={() =>
-          setOpen(!open)
-        }
+        onClick={() => setOpen(!open)}
         className="
           flex
           items-center
@@ -152,7 +103,6 @@ export default function UserMenu() {
           backdrop-blur-xl
         "
       >
-
         <div
           className="
             w-10
@@ -161,27 +111,21 @@ export default function UserMenu() {
             flex
             items-center
             justify-center
-            text-white
+            text-[var(--text-primary)]
             font-bold
           "
           style={{
             background:
-              "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))"
+              "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
           }}
         >
           {initial}
         </div>
 
         <div className="hidden md:block text-left">
+          <p className="text-sm font-semibold">{user?.name}</p>
 
-          <p className="text-sm font-semibold">
-            {user?.name}
-          </p>
-
-          <p className="text-xs text-[var(--text-secondary)]">
-            {role}
-          </p>
-
+          <p className="text-xs text-[var(--text-secondary)]">{role}</p>
         </div>
 
         <ChevronDown
@@ -191,13 +135,11 @@ export default function UserMenu() {
             ${open ? "rotate-180" : ""}
           `}
         />
-
       </button>
 
       {/* DROPDOWN */}
 
       {open && (
-
         <div
           className="
             absolute
@@ -215,7 +157,6 @@ export default function UserMenu() {
             animate-fadeSlide
           "
         >
-
           {/* HEADER */}
 
           <div
@@ -225,9 +166,7 @@ export default function UserMenu() {
               border-[var(--border)]
             "
           >
-
             <div className="flex items-center gap-4">
-
               <div
                 className="
                   w-16
@@ -238,21 +177,18 @@ export default function UserMenu() {
                   justify-center
                   text-2xl
                   font-bold
-                  text-white
+                  text-[var(--text-primary)]
                 "
                 style={{
                   background:
-                    "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))"
+                    "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
                 }}
               >
                 {initial}
               </div>
 
               <div>
-
-                <h3 className="font-bold text-lg">
-                  {user?.name}
-                </h3>
+                <h3 className="font-bold text-lg">{user?.name}</h3>
 
                 <p className="text-sm text-[var(--text-secondary)]">
                   {user?.email}
@@ -274,41 +210,28 @@ export default function UserMenu() {
                     border-[var(--primary)]/20
                   "
                 >
-
                   <Shield size={12} />
 
                   {role}
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
 
           {/* APPEARANCE */}
 
           <div className="p-6 border-b border-[var(--border)]">
-
             <div className="flex items-center gap-2 mb-4">
-
               <Palette size={16} />
 
-              <p className="font-semibold">
-                Apariencia
-              </p>
-
+              <p className="font-semibold">Apariencia</p>
             </div>
 
             {/* LIGHT DARK */}
 
             <div className="grid grid-cols-3 gap-2 mb-5">
-
               <button
-                onClick={() =>
-                  setAppearance("dark")
-                }
+                onClick={() => setAppearance("dark")}
                 className={`
                   p-3
                   rounded-xl
@@ -326,19 +249,13 @@ export default function UserMenu() {
                   }
                 `}
               >
-
                 <Moon size={16} />
 
-                <span className="text-xs">
-                  Dark
-                </span>
-
+                <span className="text-xs">Dark</span>
               </button>
 
               <button
-                onClick={() =>
-                  setAppearance("light")
-                }
+                onClick={() => setAppearance("light")}
                 className={`
                   p-3
                   rounded-xl
@@ -356,19 +273,13 @@ export default function UserMenu() {
                   }
                 `}
               >
-
                 <Sun size={16} />
 
-                <span className="text-xs">
-                  Light
-                </span>
-
+                <span className="text-xs">Light</span>
               </button>
 
               <button
-                onClick={() =>
-                  setAppearance("system")
-                }
+                onClick={() => setAppearance("system")}
                 className={`
                   p-3
                   rounded-xl
@@ -386,28 +297,19 @@ export default function UserMenu() {
                   }
                 `}
               >
-
                 <Monitor size={16} />
 
-                <span className="text-xs">
-                  System
-                </span>
-
+                <span className="text-xs">System</span>
               </button>
-
             </div>
 
             {/* THEMES */}
 
             <div className="grid grid-cols-3 gap-3">
-
               {themes.map((t) => (
-
                 <button
                   key={t.id}
-                  onClick={() =>
-                    setTheme(t.id)
-                  }
+                  onClick={() => setTheme(t.id)}
                   className={`
                     p-3
                     rounded-2xl
@@ -421,11 +323,8 @@ export default function UserMenu() {
                     }
                   `}
                 >
-
                   <div className="flex gap-1 mb-2 justify-center">
-
                     {t.colors.map((c) => (
-
                       <div
                         key={c}
                         className="
@@ -434,34 +333,23 @@ export default function UserMenu() {
                           rounded-full
                         "
                         style={{
-                          background: c
+                          background: c,
                         }}
                       />
-
                     ))}
-
                   </div>
 
-                  <p className="text-xs">
-                    {themeLabels[t.id]}
-                  </p>
-
+                  <p className="text-xs">{themeLabels[t.id]}</p>
                 </button>
-
               ))}
-
             </div>
-
           </div>
 
           {/* ACTIONS */}
 
           <div className="p-4 space-y-2">
-
             <button
-              onClick={() =>
-                router.push("/profile")
-              }
+              onClick={() => router.push("/profile")}
               className="
                 w-full
                 p-3
@@ -473,17 +361,14 @@ export default function UserMenu() {
                 transition-all
               "
             >
-
               <User size={18} />
-
               Perfil
-
             </button>
 
             <button
               onClick={() =>
                 signOut({
-                  callbackUrl: "/login"
+                  callbackUrl: "/login",
                 })
               }
               className="
@@ -498,21 +383,12 @@ export default function UserMenu() {
                 transition-all
               "
             >
-
               <LogOut size={18} />
-
               Cerrar sesión
-
             </button>
-
           </div>
-
         </div>
-
       )}
-
     </div>
-
   );
-
 }

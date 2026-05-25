@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  Menu
-} from "lucide-react";
+import { Menu } from "lucide-react";
 
-export default function MobileSidebar({
-  onOpen
-}: {
-  onOpen: () => void;
-}) {
-
+export default function MobileSidebar({ onOpen }: { onOpen: () => void }) {
   return (
-
     <button
       onClick={onOpen}
       className="
@@ -20,20 +12,16 @@ export default function MobileSidebar({
         h-11
         rounded-xl
         border
-        border-white/10
-        bg-white/5
+        border-[var(--border)]
+        bg-[var(--bg-card)]/60
         flex
         items-center
         justify-center
-        hover:bg-white/10
+        hover:bg-[var(--bg-hover)]
         transition-all
       "
     >
-
       <Menu size={20} />
-
     </button>
-
   );
-
 }

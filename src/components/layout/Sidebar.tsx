@@ -1,203 +1,403 @@
 "use client";
 
 import Link from "next/link";
+
 import { usePathname } from "next/navigation";
 
-import {
-  Boxes,
-  BarChart3,
-  Terminal,
-  DollarSign,
-  Cloud,
-  X
-} from "lucide-react";
+import { Boxes, BarChart3, Terminal, DollarSign, Cloud, X } from "lucide-react";
 
 const menuItems = [
   {
     label: "Inventario",
     href: "/",
-    icon: Boxes
+    icon: Boxes,
   },
+
   {
     label: "Monitoreo",
     href: "/monitoreo",
-    icon: BarChart3
+    icon: BarChart3,
   },
+
   {
     label: "Comandos",
     href: "/comandos",
-    icon: Terminal
+    icon: Terminal,
   },
+
   {
     label: "Billing",
     href: "/billing",
-    icon: DollarSign
-  }
+    icon: DollarSign,
+  },
 ];
 
 export default function Sidebar({
   open,
-  onClose
+  onClose,
 }: {
   open: boolean;
+
   onClose: () => void;
 }) {
-
-  const pathname =
-    usePathname();
+  const pathname = usePathname();
 
   return (
-
     <aside
       className={`
+
         fixed
         top-0
         left-0
+
         h-screen
         w-[280px]
-        bg-[#071120]
-        border-r
-        border-white/10
+
         z-50
+
         transition-all
         duration-300
+
         flex
         flex-col
 
-        ${
-          open
+        border-r
+        border-[var(--border)]
 
-            ? "translate-x-0"
+        backdrop-blur-2xl
 
-            : "-translate-x-full"
-        }
+        bg-[var(--bg-card)]/92
+
+        shadow-2xl
+
+        ${open ? "translate-x-0" : "-translate-x-full"}
+
       `}
     >
-
       {/* HEADER */}
 
       <div
         className="
+
           h-16
+
           border-b
-          border-white/10
+          border-[var(--border)]
+
           flex
           items-center
           justify-between
+
           px-5
+
         "
       >
-
         <div className="flex items-center gap-3">
-
           <div
             className="
-              w-10
-              h-10
+
+              relative
+
+              w-11
+              h-11
+
               rounded-2xl
-              bg-cyan-500/20
+
               flex
               items-center
               justify-center
+
+              overflow-hidden
+
+              shadow-lg
+
             "
+            style={{
+              background: `linear-gradient(
+                  135deg,
+                  var(--gradient-start),
+                  var(--gradient-end)
+                )`,
+            }}
           >
+            <div
+              className="
 
-            <Cloud className="text-cyan-400" />
+                absolute
+                inset-0
 
+                bg-[var(--bg-hover)]
+
+              "
+            />
+
+            <Cloud
+              size={20}
+              className="relative z-10 text-[var(--text-primary)]"
+            />
           </div>
 
           <div>
+            <p
+              className="
 
-            <p className="font-bold text-white">
+                font-bold
+                text-[15px]
+
+                text-[var(--text-primary)]
+
+              "
+            >
               MC Inventory
             </p>
 
-            <p className="text-xs text-gray-400">
+            <p
+              className="
+
+                text-xs
+
+                text-[var(--text-secondary)]
+
+              "
+            >
               Multi Cloud Inventory
             </p>
-
           </div>
-
         </div>
 
         <button
           onClick={onClose}
+          className="
+
+            w-9
+            h-9
+
+            rounded-xl
+
+            border
+            border-[var(--border)]
+
+            bg-[var(--bg-hover)]/60
+
+            flex
+            items-center
+            justify-center
+
+            hover:scale-105
+
+            transition-all
+
+            interactive-button
+
+          "
         >
-
-          <X size={18} />
-
+          <X size={16} className="text-[var(--text-secondary)]" />
         </button>
-
       </div>
 
       {/* MENU */}
 
-      <div className="flex-1 p-4 space-y-2">
+      <div
+        className="
 
+          flex-1
+
+          p-4
+
+          space-y-2
+
+          overflow-y-auto
+
+        "
+      >
         {menuItems.map((item) => {
-
           const Icon = item.icon;
 
-          const active =
-            pathname === item.href;
+          const active = pathname === item.href;
 
           return (
-
             <Link
               key={item.href}
               href={item.href}
               onClick={onClose}
               className={`
+
+                group
+
+                relative
+
                 flex
                 items-center
                 gap-3
+
                 px-4
                 py-3
+
                 rounded-2xl
+
                 transition-all
+                duration-200
+
+                border
+
+                interactive-button
 
                 ${
                   active
+                    ? `
 
-                    ? "bg-cyan-500 text-black font-semibold"
+                      border-transparent
 
-                    : "text-gray-300 hover:bg-white/10"
+                      text-[var(--text-primary)]
+
+                      shadow-lg
+
+                    `
+                    : `
+
+                      border-transparent
+
+                      text-[var(--text-secondary)]
+
+                      hover:text-[var(--text-primary)]
+
+                      hover:border-[var(--border)]
+
+                      hover:bg-[var(--bg-hover)]/70
+
+                    `
                 }
+
               `}
+              style={
+                active
+                  ? {
+                      background: `linear-gradient(
+                          135deg,
+                          var(--gradient-start),
+                          var(--gradient-end)
+                        )`,
+                    }
+                  : {}
+              }
             >
+              {/* ACTIVE GLOW */}
 
-              <Icon size={18} />
+              {active && (
+                <div
+                  className="
 
-              <span>
+                    absolute
+                    inset-0
+
+                    rounded-2xl
+
+                    opacity-20
+
+                  "
+                  style={{
+                    background: `linear-gradient(
+                        135deg,
+                        var(--gradient-secondary-start),
+                        var(--gradient-secondary-end)
+                      )`,
+                  }}
+                />
+              )}
+
+              <Icon size={18} className="relative z-10" />
+
+              <span
+                className="
+
+                  relative
+                  z-10
+
+                  font-medium
+                  text-sm
+
+                "
+              >
                 {item.label}
               </span>
-
             </Link>
-
           );
-
         })}
-
       </div>
 
       {/* FOOTER */}
 
       <div
         className="
+
           border-t
-          border-white/10
-          p-4
-          text-xs
-          text-gray-500
+          border-[var(--border)]
+
+          px-5
+          py-4
+
         "
       >
+        <div
+          className="
 
-        MC Inventory v6.0
+            flex
+            items-center
+            justify-between
 
+          "
+        >
+          <div>
+            <p
+              className="
+
+                text-xs
+                font-semibold
+
+                text-[var(--text-primary)]
+
+              "
+            >
+              MC Inventory
+            </p>
+
+            <p
+              className="
+
+                text-[11px]
+
+                text-[var(--text-secondary)]
+
+              "
+            >
+              Enterprise FinOps Platform
+            </p>
+          </div>
+
+          <div
+            className="
+
+              px-2.5
+              py-1
+
+              rounded-lg
+
+              border
+              border-[var(--border)]
+
+              bg-[var(--bg-hover)]/70
+
+              text-[10px]
+              font-semibold
+
+              text-[var(--text-secondary)]
+
+            "
+          >
+            v6.0
+          </div>
+        </div>
       </div>
-
     </aside>
-
   );
-
 }

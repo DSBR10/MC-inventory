@@ -1,17 +1,14 @@
 export default function ServerSelector() {
-
   return (
-
     <div
       className="
         rounded-3xl
         border
-        border-white/10
-        bg-white/5
+        border-[var(--border)]
+        bg-[var(--bg-card)]/60
         p-5
       "
     >
-
       <select
         className="
           w-full
@@ -20,18 +17,11 @@ export default function ServerSelector() {
           rounded-2xl
           bg-black/30
           border
-          border-white/10
+          border-[var(--border)]
         "
       >
-
-        <option>
-          Seleccionar servidor
-        </option>
-
+        <option>Seleccionar servidor</option>
       </select>
-
     </div>
-
   );
-
 }

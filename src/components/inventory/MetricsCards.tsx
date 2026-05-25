@@ -4,7 +4,7 @@ import {
   Server,
   Globe,
   Boxes,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 
 import { InventoryItem } from "@/types/inventory";
@@ -13,55 +13,28 @@ type Props = {
   data: InventoryItem[];
 };
 
-export default function MetricsCards({
-  data
-}: Props) {
+export default function MetricsCards({ data }: Props) {
+  const total = data.length;
 
-  const total =
-    data.length;
+  const running = data.filter((i) =>
+    ["running", "available", "active", "ok"].includes(i.status.toLowerCase()),
+  ).length;
 
-  const running =
-    data.filter((i) =>
+  const exposed = data.filter((i) => i.publiclyExposed).length;
 
-      [
-        "running",
-        "available",
-        "active",
-        "ok"
-      ].includes(
-        i.status.toLowerCase()
-      )
+  const providers = new Set(data.map((i) => i.provider)).size;
 
-    ).length;
+  const services = new Set(data.map((i) => i.service)).size;
 
-  const exposed =
-    data.filter(
-      (i) => i.publiclyExposed
-    ).length;
-
-  const providers =
-    new Set(
-      data.map((i) => i.provider)
-    ).size;
-
-  const services =
-    new Set(
-      data.map((i) => i.service)
-    ).size;
-
-  const accounts =
-    new Set(
-      data.map((i) => i.accountName)
-    ).size;
+  const accounts = new Set(data.map((i) => i.accountName)).size;
 
   const metrics = [
-
     {
       label: "Total Recursos",
       value: total,
       subtitle: "Filtrados",
       icon: <Boxes size={18} />,
-      color: "var(--primary)"
+      color: "var(--primary)",
     },
 
     {
@@ -69,7 +42,7 @@ export default function MetricsCards({
       value: providers,
       subtitle: "Clouds",
       icon: <Cloud size={18} />,
-      color: "var(--info)"
+      color: "var(--info)",
     },
 
     {
@@ -77,7 +50,7 @@ export default function MetricsCards({
       value: services,
       subtitle: "Únicos",
       icon: <Server size={18} />,
-      color: "var(--warning)"
+      color: "var(--warning)",
     },
 
     {
@@ -85,7 +58,7 @@ export default function MetricsCards({
       value: running,
       subtitle: "Operativos",
       icon: <Shield size={18} />,
-      color: "var(--success)"
+      color: "var(--success)",
     },
 
     {
@@ -93,7 +66,7 @@ export default function MetricsCards({
       value: exposed,
       subtitle: "Públicos",
       icon: <Globe size={18} />,
-      color: "var(--error)"
+      color: "var(--error)",
     },
 
     {
@@ -101,13 +74,11 @@ export default function MetricsCards({
       value: accounts,
       subtitle: "Detectadas",
       icon: <AlertTriangle size={18} />,
-      color: "var(--secondary)"
-    }
-
+      color: "var(--secondary)",
+    },
   ];
 
   return (
-
     <div
       className="
         grid
@@ -117,9 +88,7 @@ export default function MetricsCards({
         mb-5
       "
     >
-
       {metrics.map((metric) => (
-
         <div
           key={metric.label}
           className="
@@ -135,7 +104,6 @@ export default function MetricsCards({
             interactive-glow
           "
         >
-
           <div
             className="
               absolute
@@ -143,17 +111,13 @@ export default function MetricsCards({
               opacity-10
             "
             style={{
-              background:
-                `linear-gradient(135deg, ${metric.color}, transparent)`
+              background: `linear-gradient(135deg, ${metric.color}, transparent)`,
             }}
           />
 
           <div className="relative z-10">
-
             <div className="flex items-start justify-between mb-3">
-
               <div>
-
                 <p
                   className="
                     text-[10px]
@@ -172,12 +136,11 @@ export default function MetricsCards({
                     font-bold
                   "
                   style={{
-                    color: metric.color
+                    color: metric.color,
                   }}
                 >
                   {metric.value}
                 </p>
-
               </div>
 
               <div
@@ -190,29 +153,20 @@ export default function MetricsCards({
                   justify-center
                 "
                 style={{
-                  background:
-                    `${metric.color}20`,
-                  color:
-                    metric.color
+                  background: `${metric.color}20`,
+                  color: metric.color,
                 }}
               >
                 {metric.icon}
               </div>
-
             </div>
 
             <p className="text-xs text-[var(--text-secondary)]">
               {metric.subtitle}
             </p>
-
           </div>
-
         </div>
-
       ))}
-
     </div>
-
   );
-
 }

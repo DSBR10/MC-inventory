@@ -36,7 +36,7 @@ export async function getHuaweiECSInventory() {
               method: "GET",
 
               host:
-                "ecs.la-north-2.myhuaweicloud.com",
+                `ecs.${account.region}.myhuaweicloud.com`,
 
               uri:
                 `/v1/${account.projectId}/cloudservers/detail`,
@@ -61,7 +61,10 @@ export async function getHuaweiECSInventory() {
                 account.sk,
 
               projectId:
-                account.projectId
+                account.projectId,
+
+              region:
+                account.region
 
             })
 
@@ -108,7 +111,7 @@ export async function getHuaweiECSInventory() {
                 await getHuaweiTags({
 
                   host:
-                    "ecs.la-north-2.myhuaweicloud.com",
+                    `ecs.${account.region}.myhuaweicloud.com`,
 
                   uri:
                     `/v1/${account.projectId}/cloudservers/${serverId}/tags`,

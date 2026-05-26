@@ -48,49 +48,9 @@ export async function getAWSEKSInventory(account: AWSAccount) {
           }),
         );
 
-        // Add cluster to inventory
-        inventory.push({
-          uniqueKey: `AWS-${account.id}-EKS-${clusterName}`,
-          provider: "AWS",
-          accountName: account.name,
-          accountId: account.id,
-          service: "EKS",
-          name: clusterName,
-          id: cluster.arn || "N/A",
-          host: cluster.endpoint || "N/A",
-          status: cluster.status || "UNKNOWN",
-          operatingSystem: cluster.version || "N/A",
-          platform: cluster.platformVersion || "N/A",
-          architecture: cluster.architecture || "linux",
-          instanceType:
-            cluster.resourcesVpcConfig?.clusterSecurityGroupId || "N/A",
-          availabilityZone: cluster.arn?.split(":")[3] || region,
-          tags: formatAwsTags(cluster.tags || {}),
-          raw: {
-            arn: cluster.arn,
-            createdAt: cluster.createdAt,
-            endpoint: cluster.endpoint,
-            roleArn: cluster.roleArn,
-            version: cluster.version,
-            platformVersion: cluster.platformVersion,
-            vpcConfig: {
-              subnetIds: cluster.resourcesVpcConfig?.subnetIds,
-              securityGroupIds: cluster.resourcesVpcConfig?.securityGroupIds,
-              vpcId: cluster.resourcesVpcConfig?.vpcId,
-              clusterSecurityGroupId:
-                cluster.resourcesVpcConfig?.clusterSecurityGroupId,
-            },
-            logging: cluster.logging,
-            identity: cluster.identity,
-            kubernetesNetworkConfig: cluster.kubernetesNetworkConfig,
-            storageConfig: cluster.storageConfig,
-            config: cluster.config,
-            tags: cluster.tags,
-            nodegroups: nodegroupsData.nodegroups?.length || 0,
-          },
-        });
+        // Build node groups as children
+        const children: any[] = [];
 
-        // Add each node group
         for (const nodegroupName of nodegroupsData.nodegroups || []) {
           try {
             const nodegroupData = await client.send(
@@ -103,13 +63,14 @@ export async function getAWSEKSInventory(account: AWSAccount) {
             const nodegroup = nodegroupData.nodegroup;
             if (!nodegroup) continue;
 
-            inventory.push({
+            children.push({
               uniqueKey: `AWS-${account.id}-EKS-NODEGROUP-${clusterName}-${nodegroupName}`,
               provider: "AWS",
               accountName: account.name,
               accountId: account.id,
-              service: "EKS",
-              name: `${clusterName}/${nodegroupName}`,
+              service: "EKS NodeGroup",
+              resourceType: "nodegroup",
+              name: nodegroupName,
               id: nodegroup.nodegroupArn || "N/A",
               host: clusterName,
               status: nodegroup.status || "UNKNOWN",
@@ -137,7 +98,6 @@ export async function getAWSEKSInventory(account: AWSAccount) {
                 releaseVersion: nodegroup.releaseVersion,
                 launchTemplate: nodegroup.launchTemplate,
                 capacityType: nodegroup.capacityType,
-                nodeImage: nodegroup.nodeImage,
               },
             });
           } catch (err) {
@@ -147,6 +107,48 @@ export async function getAWSEKSInventory(account: AWSAccount) {
             );
           }
         }
+
+        // Add cluster to inventory with children
+        inventory.push({
+          uniqueKey: `AWS-${account.id}-EKS-${clusterName}`,
+          provider: "AWS",
+          accountName: account.name,
+          accountId: account.id,
+          service: "EKS",
+          name: clusterName,
+          id: cluster.arn || "N/A",
+          host: cluster.endpoint || "N/A",
+          status: cluster.status || "UNKNOWN",
+          operatingSystem: cluster.version || "N/A",
+          platform: cluster.platformVersion || "N/A",
+          architecture: cluster.architecture || "linux",
+          instanceType:
+            cluster.resourcesVpcConfig?.clusterSecurityGroupId || "N/A",
+          availabilityZone: cluster.arn?.split(":")[3] || region,
+          tags: formatAwsTags(cluster.tags || {}),
+          children,
+          raw: {
+            arn: cluster.arn,
+            createdAt: cluster.createdAt,
+            endpoint: cluster.endpoint,
+            roleArn: cluster.roleArn,
+            version: cluster.version,
+            platformVersion: cluster.platformVersion,
+            vpcConfig: {
+              subnetIds: cluster.resourcesVpcConfig?.subnetIds,
+              securityGroupIds: cluster.resourcesVpcConfig?.securityGroupIds,
+              vpcId: cluster.resourcesVpcConfig?.vpcId,
+              clusterSecurityGroupId:
+                cluster.resourcesVpcConfig?.clusterSecurityGroupId,
+            },
+            logging: cluster.logging,
+            identity: cluster.identity,
+            kubernetesNetworkConfig: cluster.kubernetesNetworkConfig,
+            storageConfig: cluster.storageConfig,
+            tags: cluster.tags,
+            nodegroups: nodegroupsData.nodegroups?.length || 0,
+          },
+        });
       } catch (err) {
         console.error(`EKS Cluster error for ${clusterName}:`, err);
       }

@@ -600,18 +600,21 @@ export default function Home() {
 
         {/* ── Inventory ── */}
         <div className="page-section" style={{ animationDelay: "0.15s" }}>
-          {/* Check if we have ECS resources and should show hierarchical view */}
+          {/* Inventory view */}
           {(() => {
-            const hasECSResources = filteredData.some(item => item.service === "ECS" && item.resourceType === "CLUSTER");
+            // Only show ECS hierarchical view when explicitly filtered to ECS only
             const isECSFiltered = selectedServices.length === 1 && selectedServices[0] === "ECS";
 
-            if (hasECSResources && (isECSFiltered || selectedServices.length === 0)) {
-              return (
-                <ECSHierarchicalView
-                  data={filteredData}
-                  onSelect={setSelectedItem}
-                />
-              );
+            if (isECSFiltered) {
+              const hasECSResources = filteredData.some(item => item.service === "ECS" && item.resourceType === "CLUSTER");
+              if (hasECSResources) {
+                return (
+                  <ECSHierarchicalView
+                    data={filteredData}
+                    onSelect={setSelectedItem}
+                  />
+                );
+              }
             }
 
             if (mobileView || viewMode === "cards") {

@@ -36,7 +36,7 @@ export async function getHuaweiELBInventory() {
               method: "GET",
 
               host:
-                "elb.la-north-2.myhuaweicloud.com",
+                `elb.${account.region}.myhuaweicloud.com`,
 
               uri:
                 `/v2/${account.projectId}/elb/loadbalancers`,
@@ -75,7 +75,10 @@ export async function getHuaweiELBInventory() {
                 account.sk,
 
               projectId:
-                account.projectId
+                account.projectId,
+
+              region:
+                account.region
 
             });
 
@@ -90,34 +93,47 @@ export async function getHuaweiELBInventory() {
               /* TAGS */
               /* ───────────────────────── */
 
-              let tags = {};
+              let tags: Record<string, string> = {};
 
-              try {
+              // First try to extract tags from the ELB resource directly
+              if (elb.tags && Array.isArray(elb.tags)) {
+                for (const tag of elb.tags) {
+                  if (typeof tag === "string" && tag.includes("=")) {
+                    // Format: "key=value"
+                    const [key, ...rest] = tag.split("=");
+                    tags[key] = rest.join("=");
+                  } else if (tag.key && tag.value) {
+                    // Format: {key: "k", value: "v"}
+                    tags[tag.key] = tag.value;
+                  }
+                }
+              }
 
-                tags =
-                  await getHuaweiTags({
+              // If no tags from resource, try the tags API
+              if (Object.keys(tags).length === 0) {
+                try {
+                  tags =
+                    await getHuaweiTags({
 
-                    host:
-                      "elb.la-north-2.myhuaweicloud.com",
+                      host:
+                        `elb.${account.region}.myhuaweicloud.com`,
 
-                    uri:
-                      `/v2/${account.projectId}/elb/loadbalancers/${elbId}/tags`,
+                      uri:
+                        `/v2.0/${account.projectId}/elb/loadbalancers/${elbId}/tags`,
 
-                    ak:
-                      account.ak,
+                      ak:
+                        account.ak,
 
-                    sk:
-                      account.sk,
+                      sk:
+                        account.sk,
 
-                    projectId:
-                      account.projectId
+                      projectId:
+                        account.projectId
 
-                  });
-
-              } catch {
-
-                tags = {};
-
+                    });
+                } catch {
+                  tags = {};
+                }
               }
 
               /* ───────────────────────── */
@@ -134,7 +150,7 @@ export async function getHuaweiELBInventory() {
                     method: "GET",
 
                     host:
-                      "elb.la-north-2.myhuaweicloud.com",
+                      `elb.${account.region}.myhuaweicloud.com`,
 
                     uri:
                       `/v2/${account.projectId}/listeners`,

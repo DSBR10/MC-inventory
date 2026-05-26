@@ -14,15 +14,19 @@ type Params = {
   ak: string;
   sk: string;
   projectId: string;
+  region?: string;
 };
 
 export async function getHuaweiSecurityGroupRules({
   ak,
   sk,
-  projectId
+  projectId,
+  region
 }: Params) {
 
   try {
+
+    const actualRegion = region || "la-north-2";
 
     const data =
       await huaweiRequest({
@@ -30,7 +34,7 @@ export async function getHuaweiSecurityGroupRules({
         method: "GET",
 
         host:
-          "vpc.la-north-2.myhuaweicloud.com",
+          `vpc.${actualRegion}.myhuaweicloud.com`,
 
         uri:
           `/v1/${projectId}/security-group-rules`,

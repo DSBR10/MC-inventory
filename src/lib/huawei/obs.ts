@@ -26,7 +26,7 @@ export async function getHuaweiOBSInventory() {
                 account.sk,
 
               server:
-                "https://obs.la-north-2.myhuaweicloud.com"
+                `https://obs.${account.region}.myhuaweicloud.com`
 
             });
 

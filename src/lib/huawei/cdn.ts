@@ -1,8 +1,7 @@
 // Huawei Cloud CDN (Content Delivery Network) Service
+import { huaweiRequest } from "./auth";
 import { getHuaweiAccounts, type HuaweiAccount } from "./accounts";
-import axios from "axios";
-
-const region = process.env.HUAWEI_REGION || "la-south-2";
+import { getHuaweiTags } from "./tags";
 
 /**
  * Obtiene el inventario de dominios CDN de Huawei Cloud
@@ -21,74 +20,70 @@ export async function getHuaweiCDNInventory() {
 
 async function getAccountCDNInventory(account: HuaweiAccount) {
   try {
-    const crypto = require("crypto");
-
-    const endpoint = `https://cdn.myhuaweicloud.com`;
-    const path = `/v1.0/cdn/domains`;
-
-    // Crear firma de autenticación
-    const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-    const signature = createHuaweiSignature(
-      account.ak,
-      account.sk,
-      "GET",
-      path,
-      timestamp,
-    );
-
-    const headers = {
-      "Content-Type": "application/json",
-      "X-Sdk-Date": timestamp,
-      "X-Project-Id": account.projectId,
-      Authorization: signature,
-    };
+    const host = "cdn.myhuaweicloud.com";
 
     // Obtener lista de dominios CDN
-    const domainsResponse = await axios.get(`${endpoint}${path}`, { headers });
-    const domains = domainsResponse.data.domains || [];
+    const data = await huaweiRequest({
+      method: "GET",
+      host,
+      uri: "/v1.0/cdn/domains",
+      ak: account.ak,
+      sk: account.sk,
+      projectId: account.projectId,
+    });
+
+    if (!data) {
+      return [];
+    }
+
+    const domains = data.domains || [];
 
     const inventory: any[] = [];
 
     for (const domain of domains) {
       try {
         // Obtener detalles del dominio
-        const detailPath = `/v1.0/cdn/domains/${domain.id}`;
-        const detailResponse = await axios.get(`${endpoint}${detailPath}`, {
-          headers,
+        const detailData = await huaweiRequest({
+          method: "GET",
+          host,
+          uri: `/v1.0/cdn/domains/${domain.id}`,
+          ak: account.ak,
+          sk: account.sk,
+          projectId: account.projectId,
         });
-        const domainDetail = detailResponse.data.domain;
+
+        const domainDetail = detailData?.domain || {};
 
         // Obtener configuración del dominio
-        const configPath = `/v1.0/cdn/domains/${domain.id}/configs`;
         let config = {};
         try {
-          const configResponse = await axios.get(`${endpoint}${configPath}`, {
-            headers,
+          const configData = await huaweiRequest({
+            method: "GET",
+            host,
+            uri: `/v1.0/cdn/domains/${domain.id}/configs`,
+            ak: account.ak,
+            sk: account.sk,
+            projectId: account.projectId,
           });
-          config = configResponse.data.configs || {};
+          config = configData?.configs || {};
         } catch (err) {
           console.warn(
             `No se pudo obtener configuración del dominio ${domain.domain_name}`,
           );
         }
 
-        // Obtener estadísticas
-        const statsPath = `/v1.0/cdn/statistics/domain-summary?domain_name=${domain.domain_name}`;
-        let stats = {};
-        try {
-          const statsResponse = await axios.get(`${endpoint}${statsPath}`, {
-            headers,
-          });
-          stats = statsResponse.data || {};
-        } catch (err) {
-          console.warn(
-            `No se pudieron obtener estadísticas del dominio ${domain.domain_name}`,
-          );
-        }
+        // Obtener tags
+        const tags = await getHuaweiTags({
+          host,
+          uri: `/v1.0/cdn/domains/${domain.id}/tags`,
+          ak: account.ak,
+          sk: account.sk,
+          projectId: account.projectId,
+        });
 
         inventory.push({
           uniqueKey: `HUAWEI-${account.projectId}-CDN-${domain.id}`,
-          provider: "Huawei",
+          provider: "HUAWEI CLOUD",
           accountName: account.name,
           accountId: account.projectId,
           service: "CDN",
@@ -102,7 +97,7 @@ async function getAccountCDNInventory(account: HuaweiAccount) {
           architecture: domainDetail.sources?.[0]?.origin_type || "ipaddr",
           instanceType: domainDetail.domain_type || "acceleration",
           availabilityZone: "Global",
-          tags: domainDetail.tags || {},
+          tags,
           raw: {
             id: domain.id,
             cname: domain.cname,
@@ -119,7 +114,6 @@ async function getAccountCDNInventory(account: HuaweiAccount) {
             originProtocol: domainDetail.origin_protocol,
             forceRedirect: domainDetail.force_redirect,
             configs: config,
-            stats: stats,
           },
         });
       } catch (err) {
@@ -135,34 +129,4 @@ async function getAccountCDNInventory(account: HuaweiAccount) {
     console.error("Error al obtener inventario de CDN:", error.message);
     return [];
   }
-}
-
-/**
- * Crea la firma de autenticación para Huawei Cloud API
- */
-function createHuaweiSignature(
-  accessKey: string,
-  secretKey: string,
-  method: string,
-  path: string,
-  timestamp: string,
-): string {
-  const crypto = require("crypto");
-
-  const canonicalRequest = `${method}\n${path}\n\ncontent-type:application/json\nhost:cdn.myhuaweicloud.com\nx-sdk-date:${timestamp}\n\ncontent-type;host;x-sdk-date\n${crypto
-    .createHash("sha256")
-    .update("")
-    .digest("hex")}`;
-
-  const stringToSign = `SDK-HMAC-SHA256\n${timestamp}\n${crypto
-    .createHash("sha256")
-    .update(canonicalRequest)
-    .digest("hex")}`;
-
-  const signature = crypto
-    .createHmac("sha256", secretKey)
-    .update(stringToSign)
-    .digest("hex");
-
-  return `SDK-HMAC-SHA256 Access=${accessKey}, SignedHeaders=content-type;host;x-sdk-date, Signature=${signature}`;
 }

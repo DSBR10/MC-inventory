@@ -75,21 +75,7 @@ async function buildInventory() {
     "inventory-build"
   );
 
-  const [
-
-    awsInventory,
-
-    huaweiECS,
-    huaweiRDS,
-    huaweiVPC,
-    huaweiSubnet,
-    huaweiOBS,
-    huaweiELB,
-    huaweiCCE,
-    huaweiCDN,
-    huaweiDDS
-
-  ] = await Promise.all([
+  const results = await Promise.allSettled([
 
     getAWSInventory(),
 
@@ -105,19 +91,28 @@ async function buildInventory() {
 
   ]);
 
+  // Extract successful results, log failures
+  const getData = (result: PromiseSettledResult<any[]>, name: string) => {
+    if (result.status === "fulfilled") {
+      return result.value || [];
+    }
+    console.error(`INVENTORY FETCH FAILED [${name}]:`, result.reason);
+    return [];
+  };
+
   const allInventory = [
 
-    ...awsInventory,
+    ...getData(results[0], "AWS"),
 
-    ...huaweiECS,
-    ...huaweiRDS,
-    ...huaweiVPC,
-    ...huaweiSubnet,
-    ...huaweiOBS,
-    ...huaweiELB,
-    ...huaweiCCE,
-    ...huaweiCDN,
-    ...huaweiDDS
+    ...getData(results[1], "Huawei-ECS"),
+    ...getData(results[2], "Huawei-RDS"),
+    ...getData(results[3], "Huawei-VPC"),
+    ...getData(results[4], "Huawei-Subnet"),
+    ...getData(results[5], "Huawei-OBS"),
+    ...getData(results[6], "Huawei-ELB"),
+    ...getData(results[7], "Huawei-CCE"),
+    ...getData(results[8], "Huawei-CDN"),
+    ...getData(results[9], "Huawei-DDS")
 
   ];
 

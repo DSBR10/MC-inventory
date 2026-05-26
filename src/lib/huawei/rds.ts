@@ -28,7 +28,7 @@ export async function getHuaweiRDSInventory() {
               method: "GET",
 
               host:
-                "rds.la-north-2.myhuaweicloud.com",
+                `rds.${account.region}.myhuaweicloud.com`,
 
               uri:
                 `/v3/${account.projectId}/instances`,
@@ -64,7 +64,7 @@ export async function getHuaweiRDSInventory() {
                 await getHuaweiTags({
 
                   host:
-                    "rds.la-north-2.myhuaweicloud.com",
+                    `rds.${account.region}.myhuaweicloud.com`,
 
                   uri:
                     `/v3/${account.projectId}/instances/${dbId}/tags`,

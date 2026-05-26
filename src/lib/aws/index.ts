@@ -77,24 +77,7 @@ export async function getAWSInventory() {
             `Loading AWS account: ${account.name}`
           );
 
-          const [
-
-            ec2,
-            rds,
-            s3,
-            vpc,
-            subnet,
-            elb,
-            ecs,
-            cloudfront,
-            dynamodb,
-            documentdb,
-            lambda,
-            eks,
-            elasticache,
-            apigateway
-
-          ] = await Promise.all([
+          const results = await Promise.allSettled([
 
             getAWSEC2Inventory(account),
 
@@ -112,7 +95,7 @@ export async function getAWSInventory() {
 
             getAWSCloudFrontInventory(account),
 
-          getAWSDynamoDBInventory(account),
+            getAWSDynamoDBInventory(account),
 
             getAWSDocumentDBInventory(account),
 
@@ -126,22 +109,28 @@ export async function getAWSInventory() {
 
           ]);
 
+          const getData = (r: PromiseSettledResult<any[]>, name: string) => {
+            if (r.status === "fulfilled") return r.value || [];
+            console.error(`AWS FETCH FAILED [${account.name}/${name}]:`, r.reason);
+            return [];
+          };
+
           return [
 
-            ...ec2,
-            ...rds,
-            ...s3,
-            ...vpc,
-            ...subnet,
-            ...elb,
-            ...ecs,
-            ...cloudfront,
-            ...dynamodb,
-            ...documentdb,
-            ...lambda,
-            ...eks,
-            ...elasticache,
-            ...apigateway
+            ...getData(results[0], "EC2"),
+            ...getData(results[1], "RDS"),
+            ...getData(results[2], "S3"),
+            ...getData(results[3], "VPC"),
+            ...getData(results[4], "Subnet"),
+            ...getData(results[5], "ELB"),
+            ...getData(results[6], "ECS"),
+            ...getData(results[7], "CloudFront"),
+            ...getData(results[8], "DynamoDB"),
+            ...getData(results[9], "DocumentDB"),
+            ...getData(results[10], "Lambda"),
+            ...getData(results[11], "EKS"),
+            ...getData(results[12], "ElastiCache"),
+            ...getData(results[13], "APIGateway")
 
           ];
 

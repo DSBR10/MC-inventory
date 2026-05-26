@@ -56,18 +56,16 @@ export async function getHuaweiTags({
 
     for (const tag of tags) {
 
-      if (
-        Array.isArray(tag.values)
-      ) {
-
+      if (typeof tag === "string" && tag.includes("=")) {
+        // Format: "key=value"
+        const [key, ...rest] = tag.split("=");
+        formatted[key] = rest.join("=");
+      } else if (Array.isArray(tag.values)) {
         formatted[tag.key] =
           tag.values.join(",");
-
-      } else {
-
+      } else if (tag.key !== undefined) {
         formatted[tag.key] =
           tag.value;
-
       }
 
     }

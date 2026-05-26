@@ -1,13 +1,2138 @@
 {
-  "timestamp": 1779566584268,
+  "timestamp": 1779820749145,
   "data": [
     {
       "provider": "AWS",
-      "accountName": "MC Inventory",
-      "accountId": "264450776943",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Compute Cloud - Compute",
+      "region": "global",
+      "cost": 500.1818331555,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Relational Database Service",
+      "region": "global",
+      "cost": 377.2001031046,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Kinesis",
+      "region": "global",
+      "cost": 368.280248444,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Container Service",
+      "region": "global",
+      "cost": 320.4610870535,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
       "service": "EC2 - Other",
       "region": "global",
-      "cost": 1.44e-7,
+      "cost": 256.1246973849,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DocumentDB (with MongoDB compatibility)",
+      "region": "global",
+      "cost": 202.5080729615,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Load Balancing",
+      "region": "global",
+      "cost": 166.7457118785,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Key Management Service",
+      "region": "global",
+      "cost": 109.463773202,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Virtual Private Cloud",
+      "region": "global",
+      "cost": 108.024472372,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS WAF",
+      "region": "global",
+      "cost": 88.0109084616,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon GuardDuty",
+      "region": "global",
+      "cost": 83.8735321489,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AmazonCloudWatch",
+      "region": "global",
+      "cost": 80.5492453554,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Config",
+      "region": "global",
+      "cost": 78.72,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Security Hub",
+      "region": "global",
+      "cost": 42.8527,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Secrets Manager",
+      "region": "global",
+      "cost": 28.292380632,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon ElastiCache",
+      "region": "global",
+      "cost": 22.1613130187,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Resilience Hub",
+      "region": "global",
+      "cost": 15,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "CloudFront Flat-Rate Plans",
+      "region": "global",
+      "cost": 14.3877831,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DynamoDB",
+      "region": "global",
+      "cost": 13.088684051,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS End User Messaging",
+      "region": "global",
+      "cost": 2.303009968,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Storage Service",
+      "region": "global",
+      "cost": 1.8823844542,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS X-Ray",
+      "region": "global",
+      "cost": 1.21497,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon CloudFront",
+      "region": "global",
+      "cost": 0.9804246219,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon API Gateway",
+      "region": "global",
+      "cost": 0.8862461126,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Queue Service",
+      "region": "global",
+      "cost": 0.6148277522,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Route 53",
+      "region": "global",
+      "cost": 0.3650652,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Systems Manager",
+      "region": "global",
+      "cost": 0.14336,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS IoT",
+      "region": "global",
+      "cost": 0.09291668,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Notification Service",
+      "region": "global",
+      "cost": 0.0011395033,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS CloudShell",
+      "region": "global",
+      "cost": 1.022e-7,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Step Functions",
+      "region": "global",
+      "cost": 1.41e-8,
+      "currency": "USD",
+      "month": "2025-12",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DocumentDB (with MongoDB compatibility)",
+      "region": "global",
+      "cost": 602.5265681657,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Compute Cloud - Compute",
+      "region": "global",
+      "cost": 462.4752718111,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Kinesis",
+      "region": "global",
+      "cost": 368.280176218,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Relational Database Service",
+      "region": "global",
+      "cost": 336.4575185722,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Container Service",
+      "region": "global",
+      "cost": 265.8724053078,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "EC2 - Other",
+      "region": "global",
+      "cost": 240.0706926674,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Load Balancing",
+      "region": "global",
+      "cost": 184.3464055673,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Virtual Private Cloud",
+      "region": "global",
+      "cost": 105.6570974327,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Config",
+      "region": "global",
+      "cost": 95.037,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS WAF",
+      "region": "global",
+      "cost": 89.479022587,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Key Management Service",
+      "region": "global",
+      "cost": 88.993726364,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon GuardDuty",
+      "region": "global",
+      "cost": 73.6957334134,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AmazonCloudWatch",
+      "region": "global",
+      "cost": 63.4883613002,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Security Hub",
+      "region": "global",
+      "cost": 45.0626,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "CloudFront Flat-Rate Plans",
+      "region": "global",
+      "cost": 30,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Secrets Manager",
+      "region": "global",
+      "cost": 28.8920145392,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Resilience Hub",
+      "region": "global",
+      "cost": 15,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DynamoDB",
+      "region": "global",
+      "cost": 10.2867845164,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon ElastiCache",
+      "region": "global",
+      "cost": 6.1070234713,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS End User Messaging",
+      "region": "global",
+      "cost": 2.987879968,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Storage Service",
+      "region": "global",
+      "cost": 1.8503330917,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS X-Ray",
+      "region": "global",
+      "cost": 0.784925,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon CloudFront",
+      "region": "global",
+      "cost": 0.7393252726,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon API Gateway",
+      "region": "global",
+      "cost": 0.6762917525,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Queue Service",
+      "region": "global",
+      "cost": 0.460885648,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Route 53",
+      "region": "global",
+      "cost": 0.3476036,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Systems Manager",
+      "region": "global",
+      "cost": 0.1713,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS IoT",
+      "region": "global",
+      "cost": 0.08065404,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Notification Service",
+      "region": "global",
+      "cost": 0.0017569063,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Email Service",
+      "region": "global",
+      "cost": 0.0012016144,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Step Functions",
+      "region": "global",
+      "cost": 9e-9,
+      "currency": "USD",
+      "month": "2026-01",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DocumentDB (with MongoDB compatibility)",
+      "region": "global",
+      "cost": 544.2259929461,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Relational Database Service",
+      "region": "global",
+      "cost": 384.1130669549,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Compute Cloud - Compute",
+      "region": "global",
+      "cost": 303.5831229596,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Container Service",
+      "region": "global",
+      "cost": 285.5754977655,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Kinesis",
+      "region": "global",
+      "cost": 221.9394199039,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "EC2 - Other",
+      "region": "global",
+      "cost": 214.202497332,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Load Balancing",
+      "region": "global",
+      "cost": 166.4267346138,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS WAF",
+      "region": "global",
+      "cost": 98.4325296289,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Virtual Private Cloud",
+      "region": "global",
+      "cost": 87.6103154676,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Config",
+      "region": "global",
+      "cost": 75.435,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon GuardDuty",
+      "region": "global",
+      "cost": 60.2590001872,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AmazonCloudWatch",
+      "region": "global",
+      "cost": 50.1357913497,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Key Management Service",
+      "region": "global",
+      "cost": 45.9407333408,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Security Hub",
+      "region": "global",
+      "cost": 41.0547,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "CloudFront Flat-Rate Plans",
+      "region": "global",
+      "cost": 30,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Secrets Manager",
+      "region": "global",
+      "cost": 29.9606722807,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Resilience Hub",
+      "region": "global",
+      "cost": 15,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS End User Messaging",
+      "region": "global",
+      "cost": 12.275740016,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon ElastiCache",
+      "region": "global",
+      "cost": 9.7477903053,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DynamoDB",
+      "region": "global",
+      "cost": 4.7274992456,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Storage Service",
+      "region": "global",
+      "cost": 1.7585357202,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon CloudFront",
+      "region": "global",
+      "cost": 1.0174123387,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS X-Ray",
+      "region": "global",
+      "cost": 0.87137,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon API Gateway",
+      "region": "global",
+      "cost": 0.6530940247,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Queue Service",
+      "region": "global",
+      "cost": 0.5094373724,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Route 53",
+      "region": "global",
+      "cost": 0.4583764,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Systems Manager",
+      "region": "global",
+      "cost": 0.23199,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS IoT",
+      "region": "global",
+      "cost": 0.126982,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Notification Service",
+      "region": "global",
+      "cost": 0.0015541459,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS CodeArtifact",
+      "region": "global",
+      "cost": 0.000005015,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS CloudShell",
+      "region": "global",
+      "cost": 1.437e-7,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Step Functions",
+      "region": "global",
+      "cost": 4.8e-9,
+      "currency": "USD",
+      "month": "2026-02",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DocumentDB (with MongoDB compatibility)",
+      "region": "global",
+      "cost": 602.5300162581,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Relational Database Service",
+      "region": "global",
+      "cost": 394.2220359015,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Container Service",
+      "region": "global",
+      "cost": 322.8092788186,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Compute Cloud - Compute",
+      "region": "global",
+      "cost": 311.4401862587,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "EC2 - Other",
+      "region": "global",
+      "cost": 229.017122477,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Load Balancing",
+      "region": "global",
+      "cost": 184.2348869884,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS WAF",
+      "region": "global",
+      "cost": 108.9553513924,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Virtual Private Cloud",
+      "region": "global",
+      "cost": 91.8998239315,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Config",
+      "region": "global",
+      "cost": 74.265,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon GuardDuty",
+      "region": "global",
+      "cost": 57.8473299996,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Security Hub",
+      "region": "global",
+      "cost": 42.33901,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AmazonCloudWatch",
+      "region": "global",
+      "cost": 34.2310538806,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Secrets Manager",
+      "region": "global",
+      "cost": 31.8285859876,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "CloudFront Flat-Rate Plans",
+      "region": "global",
+      "cost": 30,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon ElastiCache",
+      "region": "global",
+      "cost": 17.1463511063,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Resilience Hub",
+      "region": "global",
+      "cost": 15,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Key Management Service",
+      "region": "global",
+      "cost": 11.211639256,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS End User Messaging",
+      "region": "global",
+      "cost": 2.457829968,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Storage Service",
+      "region": "global",
+      "cost": 1.5494593616,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Systems Manager",
+      "region": "global",
+      "cost": 1.06203,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Queue Service",
+      "region": "global",
+      "cost": 0.5336477478,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Route 53",
+      "region": "global",
+      "cost": 0.4610664,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS X-Ray",
+      "region": "global",
+      "cost": 0.38653,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon API Gateway",
+      "region": "global",
+      "cost": 0.3080946555,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DynamoDB",
+      "region": "global",
+      "cost": 0.2306686625,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon CloudFront",
+      "region": "global",
+      "cost": 0.1943517903,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS IoT",
+      "region": "global",
+      "cost": 0.14343492,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Notification Service",
+      "region": "global",
+      "cost": 0.0011873682,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Email Service",
+      "region": "global",
+      "cost": 0.0003004074,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Lambda",
+      "region": "global",
+      "cost": 1.408e-7,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Step Functions",
+      "region": "global",
+      "cost": 7.9e-9,
+      "currency": "USD",
+      "month": "2026-03",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DocumentDB (with MongoDB compatibility)",
+      "region": "global",
+      "cost": 583.0985565028,
       "currency": "USD",
       "month": "2026-04",
       "tags": {
@@ -20,11 +2145,929 @@
     },
     {
       "provider": "AWS",
-      "accountName": "MC Inventory",
-      "accountId": "264450776943",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Relational Database Service",
+      "region": "global",
+      "cost": 423.5943611815,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Compute Cloud - Compute",
+      "region": "global",
+      "cost": 359.6155200166,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "EC2 - Other",
+      "region": "global",
+      "cost": 237.2030477498,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
       "service": "Amazon Elastic Load Balancing",
       "region": "global",
-      "cost": 0.0001379303,
+      "cost": 177.2415315549,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS WAF",
+      "region": "global",
+      "cost": 110.8688452525,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Container Service",
+      "region": "global",
+      "cost": 88.818711846,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Virtual Private Cloud",
+      "region": "global",
+      "cost": 86.6216971124,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Security Hub",
+      "region": "global",
+      "cost": 39.86108,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Secrets Manager",
+      "region": "global",
+      "cost": 31.608822528,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Config",
+      "region": "global",
+      "cost": 31.017,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "CloudFront Flat-Rate Plans",
+      "region": "global",
+      "cost": 30,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AmazonCloudWatch",
+      "region": "global",
+      "cost": 20.6078794892,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon GuardDuty",
+      "region": "global",
+      "cost": 16.4017653548,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Resilience Hub",
+      "region": "global",
+      "cost": 15,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon ElastiCache",
+      "region": "global",
+      "cost": 11.8940333808,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Key Management Service",
+      "region": "global",
+      "cost": 11.1112685311,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS End User Messaging",
+      "region": "global",
+      "cost": 2.915660016,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Storage Service",
+      "region": "global",
+      "cost": 1.2441497913,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Route 53",
+      "region": "global",
+      "cost": 0.479408,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Systems Manager",
+      "region": "global",
+      "cost": 0.25228,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DynamoDB",
+      "region": "global",
+      "cost": 0.2199497742,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Queue Service",
+      "region": "global",
+      "cost": 0.1186274888,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS IoT",
+      "region": "global",
+      "cost": 0.02342936,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon CloudFront",
+      "region": "global",
+      "cost": 0.0153006586,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS X-Ray",
+      "region": "global",
+      "cost": 0.01149,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon API Gateway",
+      "region": "global",
+      "cost": 0.0093719421,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Notification Service",
+      "region": "global",
+      "cost": 0.0013171949,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Email Service",
+      "region": "global",
+      "cost": 0.0005006412,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Step Functions",
+      "region": "global",
+      "cost": 1.41e-8,
+      "currency": "USD",
+      "month": "2026-04",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DocumentDB (with MongoDB compatibility)",
+      "region": "global",
+      "cost": 488.4311296316,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Relational Database Service",
+      "region": "global",
+      "cost": 390.4075269575,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Compute Cloud - Compute",
+      "region": "global",
+      "cost": 264.4667515384,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "EC2 - Other",
+      "region": "global",
+      "cost": 206.1938896295,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Elastic Load Balancing",
+      "region": "global",
+      "cost": 54.3784755413,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Virtual Private Cloud",
+      "region": "global",
+      "cost": 52.7540732818,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Security Hub",
+      "region": "global",
+      "cost": 31.60532,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "CloudFront Flat-Rate Plans",
+      "region": "global",
+      "cost": 30,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Config",
+      "region": "global",
+      "cost": 28.74,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Secrets Manager",
+      "region": "global",
+      "cost": 25.6599380304,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AmazonCloudWatch",
+      "region": "global",
+      "cost": 12.5026167472,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon GuardDuty",
+      "region": "global",
+      "cost": 10.883005472,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Key Management Service",
+      "region": "global",
+      "cost": 9.064464762,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Resilience Hub",
+      "region": "global",
+      "cost": 6.06584415,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Cost Explorer",
+      "region": "global",
+      "cost": 3.98,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS End User Messaging",
+      "region": "global",
+      "cost": 2.691925888,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Route 53",
+      "region": "global",
+      "cost": 0.4557484,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Storage Service",
+      "region": "global",
+      "cost": 0.3477062387,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Systems Manager",
+      "region": "global",
+      "cost": 0.2118,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon DynamoDB",
+      "region": "global",
+      "cost": 0.169936372,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS CloudTrail",
+      "region": "global",
+      "cost": 0.003129,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Notification Service",
+      "region": "global",
+      "cost": 0.0013242555,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon CloudFront",
+      "region": "global",
+      "cost": 0.0002600583,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "Amazon Simple Queue Service",
+      "region": "global",
+      "cost": 0.0000112,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS CloudShell",
+      "region": "global",
+      "cost": 7.78e-8,
+      "currency": "USD",
+      "month": "2026-05",
+      "tags": {
+        "Cliente": "Sin tag",
+        "Proyecto": "Sin tag",
+        "Environment": "Sin tag",
+        "Owner": "Sin tag",
+        "CostCenter": "Sin tag"
+      }
+    },
+    {
+      "provider": "AWS",
+      "accountName": "QA",
+      "accountId": "954669981484",
+      "service": "AWS Step Functions",
+      "region": "global",
+      "cost": 1.16e-8,
       "currency": "USD",
       "month": "2026-05",
       "tags": {

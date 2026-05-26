@@ -1,8 +1,7 @@
 // Huawei Cloud DDS (Document Database Service) - MongoDB Compatible
+import { huaweiRequest } from "./auth";
 import { getHuaweiAccounts, type HuaweiAccount } from "./accounts";
-import axios from "axios";
-
-const region = process.env.HUAWEI_REGION || "la-south-2";
+import { getHuaweiTags } from "./tags";
 
 /**
  * Obtiene el inventario de instancias DDS (Document Database) de Huawei Cloud
@@ -21,77 +20,52 @@ export async function getHuaweiDDSInventory() {
 
 async function getAccountDDSInventory(account: HuaweiAccount) {
   try {
-    const crypto = require("crypto");
-
-    const endpoint = `https://dds.${region}.myhuaweicloud.com`;
-    const path = `/v3/${account.projectId}/instances`;
-
-    // Crear firma de autenticación
-    const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-    const signature = createHuaweiSignature(
-      account.ak,
-      account.sk,
-      "GET",
-      path,
-      timestamp,
-      region,
-    );
-
-    const headers = {
-      "Content-Type": "application/json",
-      "X-Sdk-Date": timestamp,
-      "X-Project-Id": account.projectId,
-      Authorization: signature,
-    };
+    const host = `dds.${account.region}.myhuaweicloud.com`;
 
     // Obtener lista de instancias DDS
-    const instancesResponse = await axios.get(`${endpoint}${path}`, {
-      headers,
+    const data = await huaweiRequest({
+      method: "GET",
+      host,
+      uri: `/v3/${account.projectId}/instances`,
+      ak: account.ak,
+      sk: account.sk,
+      projectId: account.projectId,
     });
-    const instances = instancesResponse.data.instances || [];
+
+    if (!data) {
+      return [];
+    }
+
+    const instances = data.instances || [];
 
     const inventory: any[] = [];
 
     for (const instance of instances) {
       try {
         // Obtener detalles de la instancia
-        const detailPath = `/v3/${account.projectId}/instances/${instance.id}`;
-        const detailResponse = await axios.get(`${endpoint}${detailPath}`, {
-          headers,
+        const detailData = await huaweiRequest({
+          method: "GET",
+          host,
+          uri: `/v3/${account.projectId}/instances/${instance.id}`,
+          ak: account.ak,
+          sk: account.sk,
+          projectId: account.projectId,
         });
-        const instanceDetail = detailResponse.data.instance;
 
-        // Obtener backups
-        const backupsPath = `/v3/${account.projectId}/backups?instance_id=${instance.id}`;
-        let backups = [];
-        try {
-          const backupsResponse = await axios.get(`${endpoint}${backupsPath}`, {
-            headers,
-          });
-          backups = backupsResponse.data.backups || [];
-        } catch (err) {
-          console.warn(
-            `No se pudieron obtener backups de la instancia ${instance.name}`,
-          );
-        }
+        const instanceDetail = detailData?.instance || {};
 
-        // Obtener métricas de la instancia
-        const metricsPath = `/v3/${account.projectId}/instances/${instance.id}/metrics`;
-        let metrics = {};
-        try {
-          const metricsResponse = await axios.get(`${endpoint}${metricsPath}`, {
-            headers,
-          });
-          metrics = metricsResponse.data || {};
-        } catch (err) {
-          console.warn(
-            `No se pudieron obtener métricas de la instancia ${instance.name}`,
-          );
-        }
+        // Obtener tags
+        const tags = await getHuaweiTags({
+          host,
+          uri: `/v3/${account.projectId}/instances/${instance.id}/tags`,
+          ak: account.ak,
+          sk: account.sk,
+          projectId: account.projectId,
+        });
 
         inventory.push({
           uniqueKey: `HUAWEI-${account.projectId}-DDS-${instance.id}`,
-          provider: "Huawei",
+          provider: "HUAWEI CLOUD",
           accountName: account.name,
           accountId: account.projectId,
           service: "DDS",
@@ -107,8 +81,8 @@ async function getAccountDDSInventory(account: HuaweiAccount) {
           architecture: instanceDetail.mode || "ReplicaSet",
           instanceType: instanceDetail.flavor?.spec_code || "N/A",
           availabilityZone:
-            instanceDetail.availability_zone || region,
-          tags: instanceDetail.tags || {},
+            instanceDetail.availability_zone || account.region,
+          tags,
           raw: {
             id: instance.id,
             region: instanceDetail.region,
@@ -147,9 +121,6 @@ async function getAccountDDSInventory(account: HuaweiAccount) {
             payMode: instanceDetail.pay_mode,
             createTime: instance.created,
             updateTime: instance.updated,
-            backupsCount: backups.length,
-            latestBackup: backups[0]?.end_time,
-            metrics: metrics,
           },
         });
       } catch (err) {
@@ -165,37 +136,4 @@ async function getAccountDDSInventory(account: HuaweiAccount) {
     console.error("Error al obtener inventario de DDS:", error.message);
     return [];
   }
-}
-
-/**
- * Crea la firma de autenticación para Huawei Cloud API
- */
-function createHuaweiSignature(
-  accessKey: string,
-  secretKey: string,
-  method: string,
-  path: string,
-  timestamp: string,
-  region: string,
-): string {
-  const crypto = require("crypto");
-
-  const host = `dds.${region}.myhuaweicloud.com`;
-
-  const canonicalRequest = `${method}\n${path}\n\ncontent-type:application/json\nhost:${host}\nx-sdk-date:${timestamp}\n\ncontent-type;host;x-sdk-date\n${crypto
-    .createHash("sha256")
-    .update("")
-    .digest("hex")}`;
-
-  const stringToSign = `SDK-HMAC-SHA256\n${timestamp}\n${crypto
-    .createHash("sha256")
-    .update(canonicalRequest)
-    .digest("hex")}`;
-
-  const signature = crypto
-    .createHmac("sha256", secretKey)
-    .update(stringToSign)
-    .digest("hex");
-
-  return `SDK-HMAC-SHA256 Access=${accessKey}, SignedHeaders=content-type;host;x-sdk-date, Signature=${signature}`;
 }

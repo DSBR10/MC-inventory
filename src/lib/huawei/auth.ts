@@ -108,13 +108,18 @@ ${hashedCanonicalRequest}`;
     });
 
     if (response.status >= 400) {
-      console.error(
-        "HUAWEI API ERROR:",
-        JSON.stringify(response.data, null, 2),
-      );
+      // 404s are expected when a service doesn't exist in the region - suppress noise
+      if (response.status !== 404) {
+        console.error(
+          "HUAWEI API ERROR:",
+          response.status,
+          JSON.stringify(response.data, null, 2),
+        );
+      }
+      return null;
     }
 
-    return response;
+    return response.data;
   } catch (error: any) {
     console.error("HUAWEI REQUEST ERROR:", error?.response?.data || error);
 

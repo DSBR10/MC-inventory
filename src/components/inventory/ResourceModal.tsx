@@ -29,7 +29,7 @@ type Props = {
   onClose: () => void;
 };
 
-type Tab = "overview" | "network" | "security" | "loadbalancer";
+type Tab = "overview" | "network" | "security" | "loadbalancer" | "cluster";
 
 export default function ResourceModal({
   item,
@@ -205,6 +205,15 @@ export default function ResourceModal({
               icon={<Activity size={14} />}
               label="Load Balancing"
             />
+
+            {(item.children?.length || 0) > 0 && (
+              <TabButton
+                active={tab === "cluster"}
+                onClick={() => setTab("cluster")}
+                icon={<Server size={14} />}
+                label={`Cluster (${item.children?.length || 0})`}
+              />
+            )}
           </div>
         </div>
 
@@ -390,6 +399,65 @@ export default function ResourceModal({
                   <InfoCard label="VPC" value={item.vpcId} />
 
                   <InfoCard label="Subnet" value={item.subnetId} />
+                </div>
+              </SectionCard>
+            </div>
+          )}
+
+          {/* CLUSTER CHILDREN */}
+
+          {tab === "cluster" && item.children && item.children.length > 0 && (
+            <div className="space-y-6">
+              <SectionCard title={`Recursos del Cluster (${item.children.length})`}>
+                <div className="space-y-3">
+                  {item.children.map((child) => (
+                    <button
+                      key={child.uniqueKey || child.id}
+                      onClick={() => onNavigate(child)}
+                      className="
+                        w-full
+                        flex
+                        items-center
+                        gap-4
+                        p-4
+                        rounded-xl
+                        border
+                        border-[var(--border)]
+                        bg-[var(--bg-hover)]/30
+                        hover:bg-[var(--bg-hover)]/60
+                        hover:border-[var(--primary)]/30
+                        transition-all
+                        text-left
+                        cursor-pointer
+                      "
+                    >
+                      <Server size={16} className="text-[var(--primary)] flex-shrink-0" />
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-sm truncate">
+                            {child.name}
+                          </p>
+                          <Badge value={child.service} />
+                          <Badge value={child.status} />
+                        </div>
+
+                        <p className="text-[11px] text-[var(--text-secondary)] font-mono truncate mt-1">
+                          {child.id}
+                        </p>
+
+                        <div className="flex items-center gap-4 mt-2 text-[11px] text-[var(--text-secondary)]">
+                          {child.host && <span>Host: {child.host}</span>}
+                          {child.instanceType && <span>Type: {child.instanceType}</span>}
+                          {child.availabilityZone && <span>AZ: {child.availabilityZone}</span>}
+                        </div>
+                      </div>
+
+                      <div className="flex-shrink-0">
+                        <TagsList tags={child.tags} />
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </SectionCard>
             </div>

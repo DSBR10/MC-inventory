@@ -28,7 +28,7 @@ export async function getHuaweiVPCInventory() {
               method: "GET",
 
               host:
-                "vpc.la-north-2.myhuaweicloud.com",
+                `vpc.${account.region}.myhuaweicloud.com`,
 
               uri:
                 `/v1/${account.projectId}/vpcs`,
@@ -67,7 +67,7 @@ export async function getHuaweiVPCInventory() {
                 await getHuaweiTags({
 
                   host:
-                    "vpc.la-north-2.myhuaweicloud.com",
+                    `vpc.${account.region}.myhuaweicloud.com`,
 
                   uri:
                     `/v2.0/${tenantId}/vpcs/${vpcId}/tags`,

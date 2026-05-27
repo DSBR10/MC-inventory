@@ -26,10 +26,6 @@ export async function getHuaweiELBInventory() {
 
         accounts.map(async (account) => {
 
-          /* ───────────────────────────── */
-          /* LOAD BALANCERS */
-          /* ───────────────────────────── */
-
           const data =
             await huaweiRequest({
 
@@ -61,10 +57,6 @@ export async function getHuaweiELBInventory() {
           const loadBalancers =
             data.loadbalancers || [];
 
-          /* ───────────────────────────── */
-          /* SECURITY GROUP RULES */
-          /* ───────────────────────────── */
-
           const allRules =
             await getHuaweiSecurityGroupRules({
 
@@ -89,29 +81,38 @@ export async function getHuaweiELBInventory() {
               const elbId =
                 elb.id || "N/A";
 
-              /* ───────────────────────── */
-              /* TAGS */
-              /* ───────────────────────── */
-
               let tags: Record<string, string> = {};
 
-              // First try to extract tags from the ELB resource directly
-              if (elb.tags && Array.isArray(elb.tags)) {
+              if (
+                elb.tags &&
+                Array.isArray(elb.tags)
+              ) {
+
                 for (const tag of elb.tags) {
-                  if (typeof tag === "string" && tag.includes("=")) {
-                    // Format: "key=value"
-                    const [key, ...rest] = tag.split("=");
-                    tags[key] = rest.join("=");
-                  } else if (tag.key && tag.value) {
-                    // Format: {key: "k", value: "v"}
-                    tags[tag.key] = tag.value;
+
+                  if (
+                    typeof tag === "string" &&
+                    tag.includes("=")
+                  ) {
+
+                    const [key, ...rest] =
+                      tag.split("=");
+
+                    tags[key] =
+                      rest.join("=");
+
                   }
+
                 }
+
               }
 
-              // If no tags from resource, try the tags API
-              if (Object.keys(tags).length === 0) {
+              if (
+                Object.keys(tags).length === 0
+              ) {
+
                 try {
+
                   tags =
                     await getHuaweiTags({
 
@@ -131,14 +132,10 @@ export async function getHuaweiELBInventory() {
                         account.projectId
 
                     });
-                } catch {
-                  tags = {};
-                }
-              }
 
-              /* ───────────────────────── */
-              /* LISTENERS */
-              /* ───────────────────────── */
+                } catch {}
+
+              }
 
               let listeners: any[] = [];
 
@@ -180,29 +177,20 @@ export async function getHuaweiELBInventory() {
 
                       name:
                         listener.name ||
-                        listener.id ||
-                        "listener",
+                        listener.id,
 
                       protocol:
-                        listener.protocol || "TCP",
+                        listener.protocol,
 
                       port:
-                        listener.protocol_port || 0,
+                        listener.protocol_port,
 
                       arn:
                         listener.id
 
                     }));
 
-              } catch {
-
-                listeners = [];
-
-              }
-
-              /* ───────────────────────── */
-              /* SECURITY GROUPS */
-              /* ───────────────────────── */
+              } catch {}
 
               const securityGroups =
 
@@ -287,19 +275,9 @@ export async function getHuaweiELBInventory() {
 
                 });
 
-              /* ───────────────────────── */
-              /* INTERNET EXPOSURE */
-              /* ───────────────────────── */
-
               const internetFacing =
 
-                elb.type === "External" ||
-
-                !!elb.vip_address;
-
-              /* ───────────────────────── */
-              /* NORMALIZED INVENTORY */
-              /* ───────────────────────── */
+                elb.type === "External";
 
               return {
 
@@ -318,6 +296,9 @@ export async function getHuaweiELBInventory() {
                 service:
                   "ELB",
 
+                resourceType:
+                  "LOAD_BALANCER",
+
                 name:
                   elb.name || "N/A",
 
@@ -328,7 +309,9 @@ export async function getHuaweiELBInventory() {
                   elb.vip_address || "N/A",
 
                 privateIp:
-                  elb.vip_address || undefined,
+                  internetFacing
+                    ? undefined
+                    : elb.vip_address,
 
                 publicIp:
                   internetFacing
@@ -357,7 +340,7 @@ export async function getHuaweiELBInventory() {
                 internetFacing,
 
                 topologyType:
-                  "LOAD_BALANCER",
+                  "entrypoint",
 
                 tags,
 

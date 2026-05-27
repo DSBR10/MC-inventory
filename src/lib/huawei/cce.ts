@@ -1,209 +1,521 @@
-// Huawei Cloud CCE (Cloud Container Engine) Service
 import { huaweiRequest } from "./auth";
-import { getHuaweiAccounts, type HuaweiAccount } from "./accounts";
+
+import {
+  getHuaweiAccounts,
+  type HuaweiAccount
+} from "./accounts";
+
 import { getHuaweiTags } from "./tags";
 
+import {
+  normalizeInventoryItem
+} from "./normalize";
+
 /**
- * Obtiene el inventario de clusters CCE de Huawei Cloud
+ * Huawei CCE Inventory
  */
 export async function getHuaweiCCEInventory() {
-  const accounts = getHuaweiAccounts();
+
+  const accounts =
+    getHuaweiAccounts();
+
   const allInventory: any[] = [];
 
   for (const account of accounts) {
-    const inventory = await getAccountCCEInventory(account);
+
+    const inventory =
+      await getAccountCCEInventory(account);
+
     allInventory.push(...inventory);
+
   }
 
   return allInventory;
+
 }
 
-async function getAccountCCEInventory(account: HuaweiAccount) {
+async function getAccountCCEInventory(
+  account: HuaweiAccount
+) {
+
   try {
-    const host = `cce.${account.region}.myhuaweicloud.com`;
 
-    // Obtener lista de clusters
-    const data = await huaweiRequest({
-      method: "GET",
-      host,
-      uri: `/api/v3/projects/${account.projectId}/clusters`,
-      ak: account.ak,
-      sk: account.sk,
-      projectId: account.projectId,
-    });
+    const host =
+      `cce.${account.region}.myhuaweicloud.com`;
 
-    if (!data) {
+    const response =
+      await huaweiRequest({
+
+        method: "GET",
+
+        host,
+
+        uri:
+          `/api/v3/projects/${account.projectId}/clusters`,
+
+        ak:
+          account.ak,
+
+        sk:
+          account.sk,
+
+        projectId:
+          account.projectId
+
+      });
+
+    if (!response) {
+
       return [];
+
     }
 
-    const clusters = data.items || [];
+    const clusters =
+      response.items || [];
 
     const inventory: any[] = [];
 
     for (const cluster of clusters) {
-      try {
-        // Obtener detalles del cluster
-        const clusterDetail = await huaweiRequest({
-          method: "GET",
-          host,
-          uri: `/api/v3/projects/${account.projectId}/clusters/${cluster.metadata.uid}`,
-          ak: account.ak,
-          sk: account.sk,
-          projectId: account.projectId,
-        });
 
-        // Obtener nodos del cluster como children
-        const children: any[] = [];
-        try {
-          const nodesData = await huaweiRequest({
+      try {
+
+        const clusterId =
+          cluster.metadata?.uid;
+
+        const detailResponse =
+          await huaweiRequest({
+
             method: "GET",
+
             host,
-            uri: `/api/v3/projects/${account.projectId}/clusters/${cluster.metadata.uid}/nodes`,
-            ak: account.ak,
-            sk: account.sk,
-            projectId: account.projectId,
+
+            uri:
+              `/api/v3/projects/${account.projectId}/clusters/${clusterId}`,
+
+            ak:
+              account.ak,
+
+            sk:
+              account.sk,
+
+            projectId:
+              account.projectId
+
           });
-          const nodes = nodesData?.items || [];
+
+        const clusterDetail =
+          detailResponse || {};
+
+        /* ───────────────────────────── */
+        /* NODES */
+        /* ───────────────────────────── */
+
+        const children: any[] = [];
+
+        try {
+
+          const nodesResponse =
+            await huaweiRequest({
+
+              method: "GET",
+
+              host,
+
+              uri:
+                `/api/v3/projects/${account.projectId}/clusters/${clusterId}/nodes`,
+
+              ak:
+                account.ak,
+
+              sk:
+                account.sk,
+
+              projectId:
+                account.projectId
+
+            });
+
+          const nodes =
+            nodesResponse?.items || [];
 
           for (const node of nodes) {
-            let nodeTags: Record<string, string> = {};
+
+            let nodeTags:
+              Record<string, string> = {};
+
+            /* ───────────────────────── */
+            /* NODE TAGS */
+            /* ───────────────────────── */
+
             try {
-              nodeTags = await getHuaweiTags({
-                host,
-                uri: `/api/v3/projects/${account.projectId}/clusters/${cluster.metadata.uid}/nodes/${node.metadata?.uid}/tags`,
-                ak: account.ak,
-                sk: account.sk,
-                projectId: account.projectId,
-              });
+
+              nodeTags =
+                await getHuaweiTags({
+
+                  host,
+
+                  uri:
+                    `/api/v3/projects/${account.projectId}/clusters/${clusterId}/nodes/${node.metadata?.uid}/tags`,
+
+                  ak:
+                    account.ak,
+
+                  sk:
+                    account.sk,
+
+                  projectId:
+                    account.projectId
+
+                });
+
             } catch {}
 
-            children.push({
-              uniqueKey: `HUAWEI-${account.projectId}-CCE-NODE-${node.metadata?.uid}`,
-              provider: "HUAWEI CLOUD",
-              accountName: account.name,
-              accountId: account.projectId,
-              service: "CCE Node",
-              resourceType: "node",
-              name: node.metadata?.name || "N/A",
-              id: node.metadata?.uid || "N/A",
-              host: node.status?.privateIP || "N/A",
-              privateIp: node.status?.privateIP,
-              publicIp: node.status?.publicIP,
-              status: node.status?.phase || "UNKNOWN",
-              operatingSystem: node.spec?.os?.os || "N/A",
-              platform: node.spec?.flavor || "N/A",
-              architecture: node.spec?.az || "N/A",
-              instanceType: node.spec?.flavor || "N/A",
-              availabilityZone: node.spec?.az || account.region,
-              tags: nodeTags,
-              raw: {
-                uid: node.metadata?.uid,
-                name: node.metadata?.name,
-                status: node.status?.phase,
-                privateIP: node.status?.privateIP,
-                publicIP: node.status?.publicIP,
-                flavor: node.spec?.flavor,
-                az: node.spec?.az,
-                os: node.spec?.os,
-              },
-            });
+            children.push(
+
+              normalizeInventoryItem({
+
+                uniqueKey:
+                  `HUAWEI-${account.projectId}-CCE-NODE-${node.metadata?.uid}`,
+
+                provider:
+                  "HUAWEI CLOUD",
+
+                accountName:
+                  account.name,
+
+                accountId:
+                  account.projectId,
+
+                service:
+                  "CCE Node",
+
+                resourceType:
+                  "kubernetes-node",
+
+                name:
+                  node.metadata?.name || "N/A",
+
+                id:
+                  node.metadata?.uid || "N/A",
+
+                host:
+                  node.status?.privateIP || "N/A",
+
+                privateIp:
+                  node.status?.privateIP,
+
+                publicIp:
+                  node.status?.publicIP,
+
+                status:
+                  node.status?.phase || "UNKNOWN",
+
+                operatingSystem:
+                  node.spec?.os?.os || "Linux",
+
+                platform:
+                  node.spec?.flavor || "N/A",
+
+                architecture:
+                  node.spec?.az || "N/A",
+
+                instanceType:
+                  node.spec?.flavor || "N/A",
+
+                availabilityZone:
+                  node.spec?.az || account.region,
+
+                publiclyExposed:
+                  !!node.status?.publicIP,
+
+                internetFacing:
+                  !!node.status?.publicIP,
+
+                topologyType:
+                  "compute",
+
+                tags:
+                  nodeTags,
+
+                raw:
+                  node
+
+              })
+
+            );
+
           }
+
         } catch (err) {
+
           console.warn(
-            `No se pudieron obtener nodos del cluster ${cluster.metadata.name}`,
+            `CCE NODE ERROR ${cluster.metadata?.name}:`,
+            err
           );
+
         }
 
-        // Obtener tags via TMS (Tag Management Service) API
-        // Resource tags in Huawei Cloud are managed by TMS, not the service-specific API
-        let tags: Record<string, string> = {};
-        try {
-          const tmsHost = `tms.${account.region}.myhuaweicloud.com`;
-          const tmsData = await huaweiRequest({
-            method: "POST",
-            host: tmsHost,
-            uri: `/v1.0/resource_tags/action`,
-            ak: account.ak,
-            sk: account.sk,
-            projectId: account.projectId,
-            body: {
-              action: "query",
-              resources: [{
-                resource_id: cluster.metadata.uid,
-                resource_type: "cce-cluster",
-                project_id: account.projectId,
-              }],
-            },
-          });
+        /* ───────────────────────────── */
+        /* CLUSTER TAGS */
+        /* ───────────────────────────── */
 
-          if (tmsData?.tags) {
-            for (const tag of tmsData.tags) {
-              if (tag.key && tag.value) {
-                tags[tag.key] = tag.value;
-              } else if (typeof tag === "string" && tag.includes("=")) {
-                const [key, ...rest] = tag.split("=");
-                tags[key] = rest.join("=");
-              }
+        let tags:
+          Record<string, string> = {};
+
+        // 1. Intentar tags directos metadata
+        if (cluster.metadata?.tags) {
+
+          for (const tag of cluster.metadata.tags) {
+
+            if (
+              typeof tag === "string" &&
+              tag.includes("=")
+            ) {
+
+              const [key, ...rest] =
+                tag.split("=");
+
+              tags[key] =
+                rest.join("=");
+
+            } else if (
+              tag.key &&
+              tag.value
+            ) {
+
+              tags[tag.key] =
+                tag.value;
+
             }
-          }
-        } catch {}
 
-        // Fallback: try CCE tags API
-        if (Object.keys(tags).length === 0) {
-          try {
-            tags = await getHuaweiTags({
-              host,
-              uri: `/api/v3/projects/${account.projectId}/clusters/${cluster.metadata.uid}/tags`,
-              ak: account.ak,
-              sk: account.sk,
-              projectId: account.projectId,
-            });
-          } catch {}
+          }
+
         }
 
-        inventory.push({
-          uniqueKey: `HUAWEI-${account.projectId}-CCE-${cluster.metadata.uid}`,
-          provider: "HUAWEI CLOUD",
-          accountName: account.name,
-          accountId: account.projectId,
-          service: "CCE",
-          name: cluster.metadata.name || "N/A",
-          id: cluster.metadata.uid || "N/A",
-          host: clusterDetail?.status?.endpoints?.[0]?.url || "N/A",
-          status: cluster.status?.phase || "UNKNOWN",
-          operatingSystem:
-            clusterDetail?.spec?.containerNetwork?.mode || "vpc-router",
-          platform: clusterDetail?.spec?.type || "VirtualMachine",
-          architecture: clusterDetail?.spec?.version || "N/A",
-          instanceType: clusterDetail?.spec?.flavor || "N/A",
-          availabilityZone: account.region,
-          tags,
-          children,
-          raw: {
-            uid: cluster.metadata.uid,
-            description: cluster.spec?.description,
-            billingMode: clusterDetail?.spec?.billingMode,
-            clusterType: clusterDetail?.spec?.type,
-            flavor: clusterDetail?.spec?.flavor,
-            version: clusterDetail?.spec?.version,
-            containerNetwork: clusterDetail?.spec?.containerNetwork,
-            hostNetwork: clusterDetail?.spec?.hostNetwork,
-            serviceNetwork: clusterDetail?.spec?.serviceNetwork,
-            endpoints: clusterDetail?.status?.endpoints,
-            nodesCount: children.length,
-          },
-        });
-      } catch (err) {
-        console.error(
-          `Error al obtener detalles del cluster ${cluster.metadata?.name}:`,
-          err,
+        // 2. Intentar via TMS
+        if (Object.keys(tags).length === 0) {
+
+          try {
+
+            const tmsHost =
+              `tms.${account.region}.myhuaweicloud.com`;
+
+            const resourceTypes = [
+
+              "cce",
+              "cce-cluster",
+              "clusters",
+              "cluster"
+
+            ];
+
+            for (const resourceType of resourceTypes) {
+
+              try {
+
+                const tmsData =
+                  await huaweiRequest({
+
+                    method: "POST",
+
+                    host:
+                      tmsHost,
+
+                    uri:
+                      `/v1.0/resource_tags/action`,
+
+                    ak:
+                      account.ak,
+
+                    sk:
+                      account.sk,
+
+                    projectId:
+                      account.projectId,
+
+                    body: {
+
+                      action:
+                        "filter",
+
+                      limit:
+                        "100",
+
+                      matches: [
+
+                        {
+                          key:
+                            "resource_id",
+
+                          value:
+                            clusterId
+                        }
+
+                      ],
+
+                      tags: [],
+
+                      resource_type:
+                        resourceType
+
+                    }
+
+                  });
+
+                const resources =
+                  tmsData?.resources || [];
+
+                for (const resource of resources) {
+
+                  for (const tag of (resource.tags || [])) {
+
+                    if (
+                      tag.key &&
+                      tag.value
+                    ) {
+
+                      tags[tag.key] =
+                        tag.value;
+
+                    }
+
+                  }
+
+                }
+
+                if (
+                  Object.keys(tags).length > 0
+                ) {
+
+                  break;
+
+                }
+
+              } catch {}
+
+            }
+
+          } catch {}
+
+        }
+
+        // 3. Fallback final
+        if (Object.keys(tags).length === 0) {
+
+          try {
+
+            tags =
+              await getHuaweiTags({
+
+                host,
+
+                uri:
+                  `/api/v3/projects/${account.projectId}/clusters/${clusterId}/tags`,
+
+                ak:
+                  account.ak,
+
+                sk:
+                  account.sk,
+
+                projectId:
+                  account.projectId
+
+              });
+
+          } catch {}
+
+        }
+
+        /* ───────────────────────────── */
+        /* INVENTORY */
+        /* ───────────────────────────── */
+
+        inventory.push(
+
+          normalizeInventoryItem({
+
+            uniqueKey:
+              `HUAWEI-${account.projectId}-CCE-${clusterId}`,
+
+            provider:
+              "HUAWEI CLOUD",
+
+            accountName:
+              account.name,
+
+            accountId:
+              account.projectId,
+
+            service:
+              "CCE",
+
+            resourceType:
+              "kubernetes-cluster",
+
+            name:
+              cluster.metadata?.name || "N/A",
+
+            id:
+              clusterId || "N/A",
+
+            host:
+              clusterDetail?.status?.endpoints?.[0]?.url || "N/A",
+
+            status:
+              cluster.status?.phase || "UNKNOWN",
+
+            operatingSystem:
+              clusterDetail?.spec?.containerNetwork?.mode || "vpc-router",
+
+            platform:
+              clusterDetail?.spec?.type || "VirtualMachine",
+
+            architecture:
+              clusterDetail?.spec?.version || "N/A",
+
+            instanceType:
+              clusterDetail?.spec?.flavor || "N/A",
+
+            availabilityZone:
+              account.region,
+
+            topologyType:
+              "cluster",
+
+            children,
+
+            tags,
+
+            raw:
+              clusterDetail
+
+          })
+
         );
+
+      } catch (err) {
+
+        console.error(
+          `CCE DETAIL ERROR ${cluster.metadata?.name}:`,
+          err
+        );
+
       }
+
     }
 
     return inventory;
+
   } catch (error: any) {
-    console.error("Error al obtener inventario de CCE:", error.message);
+
+    console.error(
+      "HUAWEI CCE ERROR:",
+      error.message
+    );
+
     return [];
+
   }
+
 }

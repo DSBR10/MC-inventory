@@ -26,7 +26,7 @@ export async function getHuaweiTags({
 
   try {
 
-    const data =
+    const response =
       await huaweiRequest({
 
         method: "GET",
@@ -43,29 +43,55 @@ export async function getHuaweiTags({
 
       });
 
-    if (!data) {
+    if (
+      !response ||
+      response.status >= 400
+    ) {
 
       return {};
 
     }
 
     const tags =
-      data.tags || [];
+      response.data?.tags || [];
 
-    const formatted: Record<string, string> = {};
+    const formatted:
+      Record<string, string> = {};
 
     for (const tag of tags) {
 
-      if (typeof tag === "string" && tag.includes("=")) {
-        // Format: "key=value"
-        const [key, ...rest] = tag.split("=");
-        formatted[key] = rest.join("=");
-      } else if (Array.isArray(tag.values)) {
+      if (
+
+        typeof tag === "string" &&
+
+        tag.includes("=")
+
+      ) {
+
+        const [key, ...rest] =
+          tag.split("=");
+
+        formatted[key] =
+          rest.join("=");
+
+      }
+
+      else if (
+        Array.isArray(tag.values)
+      ) {
+
         formatted[tag.key] =
           tag.values.join(",");
-      } else if (tag.key !== undefined) {
+
+      }
+
+      else if (
+        tag.key !== undefined
+      ) {
+
         formatted[tag.key] =
           tag.value;
+
       }
 
     }

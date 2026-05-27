@@ -10,6 +10,10 @@ import {
   getHuaweiTags
 } from "./tags";
 
+import {
+  normalizeInventoryItem
+} from "./normalize";
+
 export async function getHuaweiVPCInventory() {
 
   try {
@@ -22,7 +26,7 @@ export async function getHuaweiVPCInventory() {
 
         accounts.map(async (account) => {
 
-          const data =
+          const response =
             await huaweiRequest({
 
               method: "GET",
@@ -44,14 +48,17 @@ export async function getHuaweiVPCInventory() {
 
             });
 
-          if (!data) {
+          if (
+            !response ||
+            response.status >= 400
+          ) {
 
             return [];
 
           }
 
           const vpcs =
-            data.vpcs || [];
+            response.data?.vpcs || [];
 
           return await Promise.all(
 
@@ -83,7 +90,7 @@ export async function getHuaweiVPCInventory() {
 
                 });
 
-              return {
+              return normalizeInventoryItem({
 
                 uniqueKey:
                   `HUAWEI-${tenantId}-VPC-${vpcId}`,
@@ -100,6 +107,9 @@ export async function getHuaweiVPCInventory() {
                 service:
                   "VPC",
 
+                resourceType:
+                  "network",
+
                 name:
                   vpc.name || "N/A",
 
@@ -115,9 +125,21 @@ export async function getHuaweiVPCInventory() {
                 operatingSystem:
                   "N/A",
 
-                tags
+                platform:
+                  "Huawei VPC",
 
-              };
+                architecture:
+                  "IPv4",
+
+                availabilityZone:
+                  account.region,
+
+                tags,
+
+                raw:
+                  vpc
+
+              });
 
             })
 
@@ -132,8 +154,11 @@ export async function getHuaweiVPCInventory() {
   } catch (error: any) {
 
     console.error(
+
       "HUAWEI VPC ERROR:",
+
       error?.response?.data || error
+
     );
 
     return [];

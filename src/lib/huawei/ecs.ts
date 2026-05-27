@@ -83,6 +83,10 @@ export async function getHuaweiECSInventory() {
 
             servers.map(async (server: any) => {
 
+              let privateIp: string | undefined;
+
+              let publicIp: string | undefined;
+
               let hostIp = "N/A";
 
               if (server.addresses) {
@@ -92,17 +96,34 @@ export async function getHuaweiECSInventory() {
                     server.addresses
                   ) as any[];
 
-                if (
-                  networks.length > 0 &&
-                  networks[0].length > 0
-                ) {
+                for (const network of networks) {
 
-                  hostIp =
-                    networks[0][0]?.addr || "N/A";
+                  for (const addr of network as any[]) {
+
+                    if (
+                      addr["OS-EXT-IPS:type"] === "floating"
+                    ) {
+
+                      publicIp =
+                        addr.addr;
+
+                    } else {
+
+                      privateIp =
+                        addr.addr;
+
+                    }
+
+                  }
 
                 }
 
               }
+
+              hostIp =
+                publicIp ||
+                privateIp ||
+                "N/A";
 
               const serverId =
                 server.id || "N/A";
@@ -227,6 +248,9 @@ export async function getHuaweiECSInventory() {
                 service:
                   "ECS",
 
+                resourceType:
+                  "COMPUTE_INSTANCE",
+
                 name:
                   server.name || "N/A",
 
@@ -235,6 +259,16 @@ export async function getHuaweiECSInventory() {
 
                 host:
                   hostIp,
+
+                privateIp,
+
+                publicIp,
+
+                publiclyExposed:
+                  !!publicIp,
+
+                internetFacing:
+                  !!publicIp,
 
                 status:
 
@@ -245,11 +279,42 @@ export async function getHuaweiECSInventory() {
                     : server.status || "UNKNOWN",
 
                 operatingSystem:
-                  "Linux",
+                  server.metadata?.os_type || "Linux",
+
+                platform:
+                  server["OS-EXT-SRV-ATTR:hypervisor_hostname"],
+
+                architecture:
+                  server.metadata?.arch || "x86_64",
+
+                instanceType:
+                  server.flavor?.name ||
+                  server.flavor?.id,
+
+                availabilityZone:
+                  server["OS-EXT-AZ:availability_zone"],
+
+                launchTime:
+                  server.created,
+
+                imageId:
+                  server.image?.id,
+
+                vpcId:
+                  server.metadata?.vpc_id,
+
+                subnetId:
+                  server.metadata?.subnet_id,
 
                 securityGroups,
 
-                tags
+                topologyType:
+                  "compute",
+
+                tags,
+
+                raw:
+                  server
 
               };
 

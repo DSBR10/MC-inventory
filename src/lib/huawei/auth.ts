@@ -1,8 +1,11 @@
 import axios from "axios";
+
 import crypto from "crypto";
+
 import https from "https";
 
 type HuaweiRequestParams = {
+
   method: string;
 
   host: string;
@@ -16,35 +19,47 @@ type HuaweiRequestParams = {
   projectId: string;
 
   body?: any;
+
 };
 
-// Helper function to get Huawei IAM token
-export async function getHuaweiToken(account: any): Promise<string> {
-  // For Huawei Cloud, we use signature-based auth, not tokens
-  // This is a placeholder that returns empty string
-  // The actual auth is done in huaweiRequest via signatures
+export async function getHuaweiToken(): Promise<string> {
+
   return "";
+
 }
 
 export async function huaweiRequest({
+
   method,
   host,
   uri,
   ak,
   sk,
   projectId,
-  body,
+  body
+
 }: HuaweiRequestParams) {
+
   try {
-    const cleanUri = uri.endsWith("/") ? uri.slice(0, -1) : uri;
 
-    const canonicalUri = cleanUri + "/";
+    const cleanUri =
+      uri.endsWith("/")
+        ? uri.slice(0, -1)
+        : uri;
 
-    const endpoint = `https://${host}${cleanUri}`;
+    const canonicalUri =
+      cleanUri + "/";
 
-    const timestamp = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+    const endpoint =
+      `https://${host}${cleanUri}`;
+
+    const timestamp =
+      new Date()
+        .toISOString()
+        .replace(/[:-]|\.\d{3}/g, "");
 
     const signedHeaders =
+
       "content-type;host;x-project-id;x-sdk-content-sha256;x-sdk-date";
 
     const canonicalRequest = `${method}
@@ -59,70 +74,132 @@ x-sdk-date:${timestamp}
 ${signedHeaders}
 UNSIGNED-PAYLOAD`;
 
-    const hashedCanonicalRequest = crypto
-      .createHash("sha256")
-      .update(canonicalRequest)
-      .digest("hex");
+    const hashedCanonicalRequest =
+
+      crypto
+        .createHash("sha256")
+        .update(canonicalRequest)
+        .digest("hex");
 
     const stringToSign = `SDK-HMAC-SHA256
 ${timestamp}
 ${hashedCanonicalRequest}`;
 
-    const signature = crypto
-      .createHmac("sha256", sk)
-      .update(stringToSign)
-      .digest("hex");
+    const signature =
 
-    const authorization = `SDK-HMAC-SHA256 Access=${ak}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+      crypto
+        .createHmac("sha256", sk)
+        .update(stringToSign)
+        .digest("hex");
+
+    const authorization =
+
+      `SDK-HMAC-SHA256 Access=${ak}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     const headers = {
-      "Content-Type": "application/json;charset=UTF-8",
 
-      Host: host,
+      "Content-Type":
+        "application/json;charset=UTF-8",
 
-      "X-Project-Id": projectId,
+      Host:
+        host,
 
-      "X-Sdk-Date": timestamp,
+      "X-Project-Id":
+        projectId,
 
-      "X-Sdk-Content-Sha256": "UNSIGNED-PAYLOAD",
+      "X-Sdk-Date":
+        timestamp,
 
-      Authorization: authorization,
+      "X-Sdk-Content-Sha256":
+        "UNSIGNED-PAYLOAD",
+
+      Authorization:
+        authorization
+
     };
 
-    const httpsAgent = new https.Agent({
-      rejectUnauthorized: false,
-    });
+    const httpsAgent =
+      new https.Agent({
 
-    const response = await axios({
-      method,
+        rejectUnauthorized:
+          false
 
-      url: endpoint,
+      });
 
-      headers,
+    const response =
+      await axios({
 
-      httpsAgent,
+        method,
 
-      data: body,
+        url:
+          endpoint,
 
-      validateStatus: () => true,
-    });
+        headers,
 
-    if (response.status >= 400) {
-      // 404s are expected when a service doesn't exist in the region - suppress noise
-      if (response.status !== 404) {
+        httpsAgent,
+
+        data:
+          body,
+
+        validateStatus:
+          () => true
+
+      });
+
+    if (
+      response.status >= 400
+    ) {
+
+      if (
+        response.status !== 404
+      ) {
+
         console.error(
+
           "HUAWEI API ERROR:",
+
           response.status,
-          JSON.stringify(response.data, null, 2),
+
+          JSON.stringify(
+            response.data,
+            null,
+            2
+          )
+
         );
+
       }
-      return null;
+
     }
 
-    return response.data;
-  } catch (error: any) {
-    console.error("HUAWEI REQUEST ERROR:", error?.response?.data || error);
+    return {
 
-    return null;
+      status:
+        response.status,
+
+      data:
+        response.data
+
+    };
+
+  } catch (error: any) {
+
+    console.error(
+
+      "HUAWEI REQUEST ERROR:",
+
+      error?.response?.data || error
+
+    );
+
+    return {
+
+      status: 500,
+
+      data: null
+
+    };
+
   }
+
 }

@@ -1,12 +1,24 @@
 import {
   InventoryItem,
-  Relationship,
-  RiskLevel
+  Relationship
 } from "@/types/inventory";
 
+import {
+  calculateRiskLevel
+} from "./risk";
+
+import {
+  normalizeInventory
+} from "./normalize";
+
 export function enrichRelationships(
-  inventory: InventoryItem[]
+  rawInventory: InventoryItem[]
 ): InventoryItem[] {
+
+  const inventory =
+    normalizeInventory(
+      rawInventory
+    );
 
   const itemMap =
     new Map<string, InventoryItem>();
@@ -22,17 +34,15 @@ export function enrichRelationships(
 
   return inventory.map((item) => {
 
-    const relationships: Relationship[] = [];
+    const relationships: Relationship[] = [
 
-    let publiclyExposed =
-      false;
+      ...(item.relationships || [])
 
-    let riskLevel: RiskLevel =
-      "SAFE";
+    ];
 
-    /* ───────────────────────────── */
-    /* EC2 -> SUBNET */
-    /* ───────────────────────────── */
+    /* ───────────────────────── */
+    /* SUBNET */
+    /* ───────────────────────── */
 
     if (item.subnetId) {
 
@@ -61,9 +71,9 @@ export function enrichRelationships(
 
     }
 
-    /* ───────────────────────────── */
-    /* SUBNET -> VPC */
-    /* ───────────────────────────── */
+    /* ───────────────────────── */
+    /* VPC */
+    /* ───────────────────────── */
 
     if (item.vpcId) {
 
@@ -92,103 +102,58 @@ export function enrichRelationships(
 
     }
 
-    /* ───────────────────────────── */
-    /* ELB -> TARGETS */
-    /* ───────────────────────────── */
+    /* ───────────────────────── */
+    /* CLUSTER CHILDREN */
+    /* ───────────────────────── */
 
-    if (
-      item.targetGroups &&
-      item.targetGroups.length > 0
-    ) {
+    for (const child of (item.children || [])) {
 
-      for (const tg of item.targetGroups) {
+      relationships.push({
 
-        if (
-          tg.targets &&
-          tg.targets.length > 0
-        ) {
+        type:
+          "HAS_CHILD",
 
-          for (const target of tg.targets) {
+        targetId:
+          child.id,
 
-            const targetItem =
-              itemMap.get(
-                target.id || ""
-              );
+        targetName:
+          child.name,
 
-            relationships.push({
+        targetService:
+          child.service
 
-              type:
-                "TARGETS",
+      });
 
-              targetId:
-                target.id || "N/A",
+    }
 
-              targetName:
-                targetItem?.name ||
-                target.id,
+    /* ───────────────────────── */
+    /* TARGET GROUPS */
+    /* ───────────────────────── */
 
-              targetService:
-                targetItem?.service ||
-                "UNKNOWN"
+    for (const tg of (item.targetGroups || [])) {
 
-            });
+      for (const target of (tg.targets || [])) {
 
-          }
+        relationships.push({
 
-        }
+          type:
+            "TARGETS",
+
+          targetId:
+            target.id || "N/A"
+
+        });
 
       }
 
     }
 
-    /* ───────────────────────────── */
+    /* ───────────────────────── */
     /* PUBLIC EXPOSURE */
-    /* ───────────────────────────── */
+    /* ───────────────────────── */
 
-    for (const sg of (item.securityGroups || [])) {
-
-      for (const rule of (sg.inboundRules || [])) {
-
-        const isPublic =
-
-          rule.cidr === "0.0.0.0/0";
-
-        const dangerousPorts = [
-
-          22,
-          3389,
-          5432,
-          3306,
-          6379,
-          27017
-
-        ];
-
-        const dangerous =
-
-          dangerousPorts.includes(
-            rule.fromPort || 0
-          );
-
-        if (isPublic) {
-
-          publiclyExposed =
-            true;
-
-          riskLevel =
-            dangerous
-              ? "CRITICAL"
-              : "HIGH";
-
-        }
-
-      }
-
-    }
-
-    /* ───────────────────────────── */
-    /* PUBLIC IP */
-    /* ───────────────────────────── */
+    let publiclyExposed =
+      false;
 
     if (
       item.publicIp &&
@@ -198,72 +163,31 @@ export function enrichRelationships(
       publiclyExposed =
         true;
 
-      if (
-        riskLevel === "SAFE"
-      ) {
-
-        riskLevel =
-          "MEDIUM";
-
-      }
-
     }
 
-    /* ───────────────────────────── */
-    /* ELB INTERNET FACING */
-    /* ───────────────────────────── */
-
     if (
-      item.service === "ELB" &&
-      item.host !== "N/A"
+      item.internetFacing
     ) {
 
       publiclyExposed =
         true;
 
-      if (
-        riskLevel === "SAFE"
-      ) {
+    }
 
-        riskLevel =
-          "LOW";
+    for (const sg of (item.securityGroups || [])) {
+
+      for (const rule of (sg.inboundRules || [])) {
+
+        if (
+          rule.cidr === "0.0.0.0/0"
+        ) {
+
+          publiclyExposed =
+            true;
+
+        }
 
       }
-
-    }
-
-    /* ───────────────────────────── */
-    /* TOPOLOGY TYPE */
-    /* ───────────────────────────── */
-
-    let topologyType =
-      "resource";
-
-    if (
-      item.service === "ELB"
-    ) {
-
-      topologyType =
-        "entrypoint";
-
-    }
-
-    if (
-      item.service === "EC2" ||
-      item.service === "ECS"
-    ) {
-
-      topologyType =
-        "compute";
-
-    }
-
-    if (
-      item.service === "VPC"
-    ) {
-
-      topologyType =
-        "network";
 
     }
 
@@ -271,13 +195,12 @@ export function enrichRelationships(
 
       ...item,
 
-      relationships,
-
       publiclyExposed,
 
-      riskLevel,
+      riskLevel:
+        calculateRiskLevel(item),
 
-      topologyType
+      relationships
 
     };
 

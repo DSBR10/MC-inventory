@@ -80,6 +80,9 @@ export async function getHuaweiRDSInventory() {
 
                 });
 
+              const privateIp =
+                db.private_ips?.[0];
+
               return {
 
                 uniqueKey:
@@ -97,6 +100,9 @@ export async function getHuaweiRDSInventory() {
                 service:
                   "RDS",
 
+                resourceType:
+                  "DATABASE",
+
                 name:
                   db.name || "N/A",
 
@@ -104,15 +110,56 @@ export async function getHuaweiRDSInventory() {
                   dbId,
 
                 host:
-                  db.private_ips?.[0] || "N/A",
+                  privateIp || "N/A",
+
+                privateIp,
+
+                publicIp:
+                  undefined,
+
+                publiclyExposed:
+                  false,
+
+                internetFacing:
+                  false,
 
                 status:
-                  db.status === "ACTIVE" ? "running" : db.status === "SHUTOFF" ? "stopped" : db.status === "SHUTDOWN" ? "stopped" : db.status || "UNKNOWN",
+                  db.status === "ACTIVE"
+                    ? "running"
+                    : db.status === "SHUTOFF"
+                    ? "stopped"
+                    : db.status === "SHUTDOWN"
+                    ? "stopped"
+                    : db.status || "UNKNOWN",
 
                 operatingSystem:
                   `${db.datastore?.type || "RDS"} ${db.datastore?.version || ""}`,
 
-                tags
+                platform:
+                  db.datastore?.type,
+
+                architecture:
+                  db.mode,
+
+                instanceType:
+                  db.flavor_ref,
+
+                availabilityZone:
+                  db.availability_zone,
+
+                vpcId:
+                  db.vpc_id,
+
+                subnetId:
+                  db.subnet_id,
+
+                topologyType:
+                  "database",
+
+                tags,
+
+                raw:
+                  db
 
               };
 

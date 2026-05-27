@@ -1,3 +1,35 @@
+const TAG_ALIASES: Record<string, string[]> = {
+
+  cliente: [
+    "cliente",
+    "client",
+    "customer",
+    "CLIENTE",
+    "CLIENT"
+  ],
+
+  proyecto: [
+    "proyecto",
+    "project",
+    "application",
+    "app",
+    "PROYECTO"
+  ],
+
+  environment: [
+    "environment",
+    "env",
+    "ENV",
+    "Environment"
+  ],
+
+  owner: [
+    "owner",
+    "OWNER"
+  ]
+
+};
+
 export function formatTags(
   tags?: Record<string, string>
 ): string[] {
@@ -11,52 +43,46 @@ export function formatTags(
 
   }
 
-  const priorityKeys = [
-
-    "cliente",
-    "proyecto",
-    "environment",
-    "env",
-    "owner",
-    "application"
-
-  ];
-
   const formatted: string[] = [];
 
-  for (const key of priorityKeys) {
+  for (const [label, aliases] of Object.entries(TAG_ALIASES)) {
 
-    const value =
+    for (const alias of aliases) {
 
-      tags[key] ||
-      tags[key.toUpperCase()] ||
-      tags[key.toLowerCase()];
+      const value =
+        tags[alias];
 
-    if (
-      value &&
-      value.trim() !== ""
-    ) {
+      if (
+        value &&
+        value.trim() !== ""
+      ) {
 
-      formatted.push(
-        `${key}: ${value}`
-      );
+        formatted.push(
+          `${label}: ${value}`
+        );
+
+        break;
+
+      }
 
     }
 
   }
 
-  if (formatted.length > 0) {
+  if (
+    formatted.length > 0
+  ) {
 
     return formatted;
 
   }
 
   return Object.entries(tags)
+
     .slice(0, 3)
+
     .map(
-
       ([k, v]) => `${k}: ${v}`
-
     );
 
 }

@@ -148,4 +148,38 @@ export type InventoryItem = {
 
   children?: InventoryItem[];
 
+  clusterId?: string;
+
+  clusterName?: string;
+
+  parentId?: string;
+
+  parentName?: string;
+
+  dnsName?: string;
+
+  ports?: number[];
+
+  engine?: string;
+
+  engineVersion?: string;
+
+  encrypted?: boolean;
+
+  backupEnabled?: boolean;
+
+  multiAz?: boolean;
+
+  storageType?: string;
+
+  cidr?: string;
+
+  environment?: string;
+
+  owner?: string;
+
+  project?: string;
+
+  criticality?: string;
+
 };

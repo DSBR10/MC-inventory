@@ -100,6 +100,9 @@ export async function getHuaweiSubnetInventory() {
                 service:
                   "Subnet",
 
+                resourceType:
+                  "SUBNET",
+
                 name:
                   subnet.name || "N/A",
 
@@ -110,12 +113,23 @@ export async function getHuaweiSubnetInventory() {
                   subnet.cidr || "N/A",
 
                 status:
-                  subnet.status === "ACTIVE" ? "available" : subnet.status || "UNKNOWN",
+                  subnet.status === "ACTIVE"
+                    ? "available"
+                    : subnet.status || "UNKNOWN",
 
                 operatingSystem:
                   "N/A",
 
-                tags
+                vpcId:
+                  subnet.vpc_id,
+
+                topologyType:
+                  "network",
+
+                tags,
+
+                raw:
+                  subnet
 
               };
 

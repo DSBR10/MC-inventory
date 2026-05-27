@@ -4,6 +4,10 @@ import {
   getHuaweiAccounts
 } from "@/lib/huawei/accounts";
 
+import {
+  normalizeInventoryItem
+} from "./normalize";
+
 export async function getHuaweiOBSInventory() {
 
   try {
@@ -33,24 +37,8 @@ export async function getHuaweiOBSInventory() {
           const result =
             await obsClient.listBuckets();
 
-          console.log(
-
-            `HUAWEI OBS STATUS (${account.name}):`,
-
-            result.CommonMsg.Status
-
-          );
-
           const buckets =
             result.InterfaceResult?.Buckets || [];
-
-          console.log(
-
-            `HUAWEI OBS COUNT (${account.name}):`,
-
-            buckets.length
-
-          );
 
           return await Promise.all(
 
@@ -66,10 +54,6 @@ export async function getHuaweiOBSInventory() {
 
                 "unknown-bucket";
 
-              /* ───────────────────────────── */
-              /* TAGS */
-              /* ───────────────────────────── */
-
               let tags:
                 Record<string, string> = {};
 
@@ -83,7 +67,6 @@ export async function getHuaweiOBSInventory() {
 
                   });
 
-
                 const tagSet =
 
                   tagResult
@@ -93,10 +76,6 @@ export async function getHuaweiOBSInventory() {
                   tagResult
                     ?.InterfaceResult
                     ?.Tagging
-                    ?.TagSet ||
-
-                  tagResult
-                    ?.InterfaceResult
                     ?.TagSet ||
 
                   [];
@@ -115,19 +94,9 @@ export async function getHuaweiOBSInventory() {
 
                 }
 
-              } catch (err) {
+              } catch {}
 
-                console.error(
-
-                  `OBS TAG ERROR (${bucketName}):`,
-
-                  err
-
-                );
-
-              }
-
-              return {
+              return normalizeInventoryItem({
 
                 uniqueKey:
                   `HUAWEI-${account.projectId}-OBS-${bucketName}`,
@@ -144,6 +113,9 @@ export async function getHuaweiOBSInventory() {
                 service:
                   "OBS",
 
+                resourceType:
+                  "bucket",
+
                 name:
                   bucketName,
 
@@ -151,7 +123,7 @@ export async function getHuaweiOBSInventory() {
                   bucketName,
 
                 host:
-                  "N/A",
+                  `${bucketName}.obs.${account.region}.myhuaweicloud.com`,
 
                 status:
                   "available",
@@ -159,9 +131,27 @@ export async function getHuaweiOBSInventory() {
                 operatingSystem:
                   "N/A",
 
-                tags
+                platform:
+                  "Object Storage",
 
-              };
+                architecture:
+                  account.region,
+
+                availabilityZone:
+                  account.region,
+
+                publiclyExposed:
+                  false,
+
+                internetFacing:
+                  false,
+
+                tags,
+
+                raw:
+                  bucket
+
+              });
 
             })
 

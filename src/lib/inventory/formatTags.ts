@@ -5,7 +5,9 @@ const TAG_ALIASES: Record<string, string[]> = {
     "client",
     "customer",
     "CLIENTE",
-    "CLIENT"
+    "CLIENT",
+    "Cliente",
+    "Client"
   ],
 
   proyecto: [
@@ -13,19 +15,9 @@ const TAG_ALIASES: Record<string, string[]> = {
     "project",
     "application",
     "app",
-    "PROYECTO"
-  ],
-
-  environment: [
-    "environment",
-    "env",
-    "ENV",
-    "Environment"
-  ],
-
-  owner: [
-    "owner",
-    "OWNER"
+    "PROYECTO",
+    "Proyecto",
+    "Project"
   ]
 
 };
@@ -77,12 +69,7 @@ export function formatTags(
 
   }
 
-  return Object.entries(tags)
-
-    .slice(0, 3)
-
-    .map(
-      ([k, v]) => `${k}: ${v}`
-    );
+  // Si no hay tags de cliente o proyecto, devolver "Sin tags"
+  return ["Sin tags"];
 
 }

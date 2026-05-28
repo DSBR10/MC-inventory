@@ -38,7 +38,7 @@ async function getAccountDDSInventory(
     const host =
       `dds.${account.region}.myhuaweicloud.com`;
 
-    const data =
+    const response =
       await huaweiRequest({
 
         method: "GET",
@@ -59,8 +59,11 @@ async function getAccountDDSInventory(
 
       });
 
-    if (!data) {
+    const data = response?.data;
 
+    if (!data || response?.status >= 400) {
+
+      console.log(`[HUAWEI DDS] No data for account ${account.name}`);
       return [];
 
     }
@@ -74,14 +77,14 @@ async function getAccountDDSInventory(
 
       try {
 
-        const detailData =
+           const detailResponse =
           await huaweiRequest({
 
             method: "GET",
 
             host,
 
-            uri:
+         uri:
               `/v3/${account.projectId}/instances/${instance.id}`,
 
             ak:
@@ -96,7 +99,7 @@ async function getAccountDDSInventory(
           });
 
         const instanceDetail =
-          detailData?.instance || {};
+          detailResponse?.data?.instance || {};
 
         const tags =
           await getHuaweiTags({
@@ -162,7 +165,7 @@ async function getAccountDDSInventory(
             false,
 
           status:
-            instance.status || "UNKNOWN",
+            instance.status === "normal" ? "running" : instance.status?.toLowerCase() || "running", // Nunca UNKNOWN
 
           operatingSystem:
             instanceDetail.engine || "mongodb",

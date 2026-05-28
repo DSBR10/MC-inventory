@@ -184,13 +184,18 @@ ${hashedCanonicalRequest}`;
 
   } catch (error: any) {
 
-    console.error(
+    // Silenciar errores de TMS (Tag Management Service) que no está disponible en algunas regiones
+    const isTmsError = host?.includes('tms.');
 
-      "HUAWEI REQUEST ERROR:",
+    if (!isTmsError) {
+      console.error(
 
-      error?.response?.data || error
+        "HUAWEI REQUEST ERROR:",
 
-    );
+        error?.response?.data || error?.message || error
+
+      );
+    }
 
     return {
 

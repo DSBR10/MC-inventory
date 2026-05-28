@@ -75,17 +75,40 @@ async function buildInventory() {
     "inventory-build"
   );
 
+  // 1. Primero obtener CCE para extraer los server IDs de los nodos
+  let cceInventory: any[] = [];
+  let cceNodeServerIds: string[] = [];
+
+  try {
+    cceInventory = await getHuaweiCCEInventory();
+
+    // Extraer server IDs de todos los nodos CCE
+    for (const item of cceInventory) {
+      if (item.children && Array.isArray(item.children)) {
+        for (const child of item.children) {
+          if (child.raw?.status?.serverId) {
+            cceNodeServerIds.push(child.raw.status.serverId);
+          }
+        }
+      }
+    }
+
+    console.log(`✅ [CCE]: ${cceInventory.length} clusters, ${cceNodeServerIds.length} nodos detectados`);
+  } catch (error) {
+    console.error(`❌ INVENTORY FETCH FAILED [CCE]:`, error);
+  }
+
+  // 2. Luego obtener el resto de servicios, pasando los IDs a excluir en ECS
   const results = await Promise.allSettled([
 
     getAWSInventory(),
 
-    getHuaweiECSInventory(),
+    getHuaweiECSInventory(cceNodeServerIds),
     getHuaweiRDSInventory(),
     getHuaweiVPCInventory(),
     getHuaweiSubnetInventory(),
     getHuaweiOBSInventory(),
     getHuaweiELBInventory(),
-    getHuaweiCCEInventory(),
     getHuaweiCDNInventory(),
     getHuaweiDDSInventory()
 
@@ -94,9 +117,11 @@ async function buildInventory() {
   // Extract successful results, log failures
   const getData = (result: PromiseSettledResult<any[]>, name: string) => {
     if (result.status === "fulfilled") {
-      return result.value || [];
+      const data = result.value || [];
+      console.log(`✅ [${name}]: ${data.length} items fetched`);
+      return data;
     }
-    console.error(`INVENTORY FETCH FAILED [${name}]:`, result.reason);
+    console.error(`❌ INVENTORY FETCH FAILED [${name}]:`, result.reason);
     return [];
   };
 
@@ -110,9 +135,9 @@ async function buildInventory() {
     ...getData(results[4], "Huawei-Subnet"),
     ...getData(results[5], "Huawei-OBS"),
     ...getData(results[6], "Huawei-ELB"),
-    ...getData(results[7], "Huawei-CCE"),
-    ...getData(results[8], "Huawei-CDN"),
-    ...getData(results[9], "Huawei-DDS")
+    ...cceInventory, // Ya obtenido arriba
+    ...getData(results[7], "Huawei-CDN"),
+    ...getData(results[8], "Huawei-DDS")
 
   ];
 

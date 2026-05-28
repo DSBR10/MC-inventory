@@ -5,6 +5,12 @@
  *   npx tsx scripts/test-huawei-auth.ts
  */
 
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Cargar variables de entorno desde .env.local
+config({ path: resolve(process.cwd(), '.env.local') });
+
 import { getHuaweiAccounts } from "../src/lib/huawei/accounts";
 import { huaweiRequest } from "../src/lib/huawei/auth";
 

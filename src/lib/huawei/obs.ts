@@ -125,8 +125,8 @@ export async function getHuaweiOBSInventory() {
                 host:
                   `${bucketName}.obs.${account.region}.myhuaweicloud.com`,
 
-                status:
-                  "available",
+              status:
+                  "running",
 
                 operatingSystem:
                   "N/A",

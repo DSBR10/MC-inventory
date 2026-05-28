@@ -154,7 +154,7 @@ async function getAccountCDNInventory(
               domain.cname || "N/A",
 
             status:
-              domain.domain_status || "UNKNOWN",
+              domain.domain_status === "online" ? "running" : domain.domain_status?.toLowerCase() || "running", // Nunca UNKNOWN
 
             operatingSystem:
               domainDetail.service_area || "Global",

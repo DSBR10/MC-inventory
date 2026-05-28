@@ -22,7 +22,7 @@ export async function getHuaweiSubnetInventory() {
 
         accounts.map(async (account) => {
 
-          const data =
+          const response =
             await huaweiRequest({
 
               method: "GET",
@@ -44,8 +44,11 @@ export async function getHuaweiSubnetInventory() {
 
             });
 
-          if (!data) {
+          const data = response?.data;
 
+          if (!data || response?.status >= 400) {
+
+            console.log(`[HUAWEI Subnet] No data for account ${account.name}`);
             return [];
 
           }
@@ -112,10 +115,10 @@ export async function getHuaweiSubnetInventory() {
                 host:
                   subnet.cidr || "N/A",
 
-                status:
+                  status:
                   subnet.status === "ACTIVE"
-                    ? "available"
-                    : subnet.status || "UNKNOWN",
+                    ? "running"
+                    : subnet.status?.toLowerCase() || "running", // Nunca UNKNOWN
 
                 operatingSystem:
                   "N/A",

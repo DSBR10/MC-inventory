@@ -6,6 +6,10 @@ import MonitoringCharts from "@/components/monitoring/MonitoringCharts";
 import LogFilters from '@/components/monitoring/LogFilters';
 import LogsViewer from '@/components/monitoring/LogsViewer';
 import AlertsPanel from '@/components/monitoring/AlertsPanel';
+import AWSMetricsView from './components/AWSMetricsView';
+import AWSLogsView from './components/AWSLogsView';
+import MonitoringDashboard from './components/MonitoringDashboard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { LogEntry, LogFilters as LogFiltersType } from '@/types/monitoring';
 
 export default function MonitoringPage() {
@@ -108,7 +112,7 @@ export default function MonitoringPage() {
         <div>
           <h1 className="text-3xl font-bold">Monitoreo</h1>
           <p className="text-[var(--text-secondary)] mt-1">
-            Métricas y logs en tiempo real de AWS y Huawei Cloud.
+            Métricas, logs y eventos en tiempo real de AWS y Huawei Cloud.
           </p>
         </div>
         <button
@@ -132,22 +136,42 @@ export default function MonitoringPage() {
         </button>
       </div>
 
-      <MetricsGrid />
+      <Tabs defaultValue="dashboard" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="overview">Vista General</TabsTrigger>
+          <TabsTrigger value="aws-metrics">Métricas AWS</TabsTrigger>
+          <TabsTrigger value="aws-logs">Logs AWS</TabsTrigger>
+        </TabsList>
 
-      <MonitoringCharts />
+        <TabsContent value="dashboard" className="space-y-6">
+          <MonitoringDashboard />
+        </TabsContent>
 
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold mb-6">Logs del Sistema</h2>
-        <LogFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onApply={handleApplyFilters}
-          accounts={accounts}
-        />
-        <LogsViewer logs={logs} loading={loading || refreshing} />
-      </div>
+        <TabsContent value="overview" className="space-y-6">
+          <MetricsGrid />
+          <MonitoringCharts />
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold mb-6">Logs del Sistema</h2>
+            <LogFilters
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onApply={handleApplyFilters}
+              accounts={accounts}
+            />
+            <LogsViewer logs={logs} loading={loading || refreshing} />
+          </div>
+          <AlertsPanel />
+        </TabsContent>
 
-      <AlertsPanel />
+        <TabsContent value="aws-metrics">
+          <AWSMetricsView />
+        </TabsContent>
+
+        <TabsContent value="aws-logs">
+          <AWSLogsView />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

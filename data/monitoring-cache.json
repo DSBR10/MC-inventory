@@ -1,0 +1,3693 @@
+{
+  "timestamp": 1779948582384,
+  "data": {
+    "accounts": {
+      "264450776943": {
+        "accountId": "264450776943",
+        "accountName": "MC Inventory",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-09d012fc48cb107d6",
+              "instanceType": "t3.micro",
+              "state": "running",
+              "cpuUtilization": 0.14997787847919133,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-06d6e713b6c7f7ad6",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 0.2249644397165208,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "running": 2,
+            "stopped": 0,
+            "avgCpu": 0.18747115909785605
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "mc-inventory-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 0
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948565656
+      },
+      "171158266043": {
+        "accountId": "171158266043",
+        "accountName": "invictus-dev",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0ff88cee8ffccd566",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "running": 0,
+            "stopped": 1,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 27.028134139756062,
+              "databaseConnections": 2,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 26.419693798433183,
+              "databaseConnections": 6,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 2,
+            "avgCpu": 26.723913969094625,
+            "totalConnections": 8
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 42,
+              "servicesCount": 42
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 42,
+            "totalServices": 42,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948565750
+      },
+      "954669981484": {
+        "accountId": "954669981484",
+        "accountName": "QA",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0be5d98e0453855bd",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.7333177279629219,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-01dce7df409260491",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.0747971749234,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-017d81817f21ddeb4",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.2113116600296516,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0b82b5fb9fce3b161",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 20.001412148542187,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-043e41fed14e004fd",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.8314096906768078,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-07aac437cc1ea90ac",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.9528302063821098,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-09ad3c8a1dfae10b2",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.602616684189889,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0fb1f52d6b80dc485",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.0291536871193223,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-08b9d933d7d9e6d9d",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.116180575925421,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0fbb221b1dc14d39e",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.1020833333333333,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-004364e34975a419d",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.5428642207546104,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-06aaf8545ddec8983",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-015a84a561751b874",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-07a425baa00430bb4",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-095f373afe7fd4525",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-082f553266d5b7695",
+              "instanceType": "t3.micro",
+              "state": "running",
+              "cpuUtilization": 0.518870422887647,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-06a6a78ff289fc680",
+              "instanceType": "t3.xlarge",
+              "state": "terminated",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 17,
+            "running": 12,
+            "stopped": 4,
+            "avgCpu": 3.143070627727275
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "ganadllo",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 6.936690081559917,
+              "databaseConnections": 18,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictusreplicaloteria-instance-1",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 6.937499999999999,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "matricap",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "matrixdev",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 5.872916666666667,
+              "databaseConnections": 34,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "mongo-multiempresa-dllo",
+              "engine": "docdb",
+              "status": "available",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "mongo-multiempresa-qa",
+              "engine": "docdb",
+              "status": "available",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "postgres-web-dllomultiempresa",
+              "engine": "postgres",
+              "status": "available",
+              "cpuUtilization": 3.82059534177033,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "postgres-web-qamultiempresa",
+              "engine": "postgres",
+              "status": "available",
+              "cpuUtilization": 3.336104692744602,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "pruganaweb",
+              "engine": "postgres",
+              "status": "available",
+              "cpuUtilization": 3.5569819087178463,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "sigadllo",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 4.61563380538192,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "uxintegracion",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 5.040274760697678,
+              "databaseConnections": 4,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 11,
+            "available": 10,
+            "avgCpu": 4.011669725753896,
+            "totalConnections": 56
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948567725
+      },
+      "501445982782": {
+        "accountId": "501445982782",
+        "accountName": "Admin-alianza",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0044ee964fc200903",
+              "instanceType": "m5.2xlarge",
+              "state": "running",
+              "cpuUtilization": 13.906249999999998,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-064fd889b9e338416",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 2.5672444028403274,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0068d8577dd9d82fa",
+              "instanceType": "t2.small",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 2,
+            "stopped": 1,
+            "avgCpu": 8.236747201420163
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "alianza",
+              "engine": "postgres",
+              "status": "backing-up",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "histalianza",
+              "engine": "postgres",
+              "status": "available",
+              "cpuUtilization": 6.347408708293401,
+              "databaseConnections": 4,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 1,
+            "avgCpu": 6.347408708293401,
+            "totalConnections": 4
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948565847
+      },
+      "423028650986": {
+        "accountId": "423028650986",
+        "accountName": "Admin-Reditos",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0478a1ca39f0e8eb9",
+              "instanceType": "t3a.medium",
+              "state": "running",
+              "cpuUtilization": 4.050059683434389,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0cd754f22b048b5da",
+              "instanceType": "t3a.large",
+              "state": "running",
+              "cpuUtilization": 3.2467187738511307,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0490e75f5dcf17d33",
+              "instanceType": "c5ad.2xlarge",
+              "state": "running",
+              "cpuUtilization": 12.319583333333334,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02daefca2712fdcd4",
+              "instanceType": "c5ad.2xlarge",
+              "state": "running",
+              "cpuUtilization": 18.64625,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-00120bbe47a17a39d",
+              "instanceType": "c5ad.2xlarge",
+              "state": "running",
+              "cpuUtilization": 7.494166666666667,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-00fff04d773222170",
+              "instanceType": "c5.2xlarge",
+              "state": "running",
+              "cpuUtilization": 2.51125,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-07274302e78f4499c",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0744c93d0e7f6de57",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-07acfe34a6226fbfc",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.413249172340598,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0738330bc294dee2b",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.0581019388984925,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0cc2431596a6eb6ba",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 9.476651663816568,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0fea949ba3e7b1c42",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 14.487727124773416,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 12,
+            "running": 10,
+            "stopped": 2,
+            "avgCpu": 7.47037583571146
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "capacitacion",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "documentosprod",
+              "engine": "docdb",
+              "status": "available",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "prismaprod",
+              "engine": "mysql",
+              "status": "available",
+              "cpuUtilization": 15.221400821247473,
+              "databaseConnections": 33.2,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "resultados-digitales",
+              "engine": "docdb",
+              "status": "available",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "vigiapru",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 5,
+            "available": 3,
+            "avgCpu": 5.073800273749158,
+            "totalConnections": 33.2
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948566985
+      },
+      "945005718351": {
+        "accountId": "945005718351",
+        "accountName": "Deploy-EcoDig",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948568385
+      },
+      "861262569826": {
+        "accountId": "861262569826",
+        "accountName": "Deployment",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948568426
+      },
+      "464783675999": {
+        "accountId": "464783675999",
+        "accountName": "Developer",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0a48f1065c60c1957",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-04420ea35d51344fa",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "running": 0,
+            "stopped": 2,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "credits-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "legacy-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "raspa-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "bff-integration-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "hierarchies-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "wiretransfer-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "microfrontend-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "online-games-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "biometrics-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "dynamic-storage-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-astro-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "siga-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "conciliation-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "generic-services-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "bff-sellers-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "msnotifier-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "bff-administration-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-recharges-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-lg-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "recharges-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "sellers-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "ecs-metabase-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "payment-voucher-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "external-wager-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "millonario-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "lotteries-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "astro-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "payments-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "correspondent-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "products-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "security-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-notifier-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "lotteries-games-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "papelery-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "promotional-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "collected-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "awards-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "notifications-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "remittances-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "raffles-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "scheduler-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "money-control-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            }
+          ],
+          "summary": {
+            "totalClusters": 43,
+            "totalTasks": 0,
+            "totalServices": 43,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948569071
+      },
+      "815983288204": {
+        "accountId": "815983288204",
+        "accountName": "Gana-plus",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948568486
+      },
+      "152266913008": {
+        "accountId": "152266913008",
+        "accountName": "invictus-antioquia",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-09deb11df11d9ab37",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 2.0417347348148507,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0efa4515a5685f5a3",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.0273113810900432,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-00a1a86a064ac8240",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 12.234663692948697,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-07dcc01747c9806af",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.6124680631523907,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02bc1f9dab44de866",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-004fb8677a22699e2",
+              "instanceType": "t3.micro",
+              "state": "running",
+              "cpuUtilization": 0.7522999247243511,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 6,
+            "running": 5,
+            "stopped": 1,
+            "avgCpu": 3.7336955593460663
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictusescritura",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 1.7208727785717046,
+              "databaseConnections": 28,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictuslectura",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 13.520905350184544,
+              "databaseConnections": 70.6,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 2,
+            "avgCpu": 7.620889064378124,
+            "totalConnections": 98.6
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "security-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "bff-integration-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "bff-sellers-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-lg-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "legacy-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "generic-services-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "collected-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-recharges-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "papelery-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "bff-administration-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "promotional-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "millonario-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "payment-voucher-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "products-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-astro-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "hierarchies-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "biometrics-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-notifier-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "sellers-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "payments-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "lotteries-games-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 5,
+              "servicesCount": 2
+            },
+            {
+              "clusterName": "money-control-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "shopping-cart-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "recharges-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "raffles-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "conciliation-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "siga-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "wiretransfer-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "external-wager-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "msnotifier-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "scheduler-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "transaction-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "lotteries-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "dynamic-storage-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "awards-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "remittances-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "online-games-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "ecs-metabase-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            },
+            {
+              "clusterName": "astro-ms-cluster",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 1,
+              "servicesCount": 1
+            }
+          ],
+          "summary": {
+            "totalClusters": 39,
+            "totalTasks": 42,
+            "totalServices": 40,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948569465
+      },
+      "557701608708": {
+        "accountId": "557701608708",
+        "accountName": "invictus-qa",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-056ee1560c6ad2f5e",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.14376275836369393,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "running": 1,
+            "stopped": 0,
+            "avgCpu": 0.14376275836369393
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 30.733217427010388,
+              "databaseConnections": 4,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 33.92984695297764,
+              "databaseConnections": 53,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 2,
+            "avgCpu": 32.331532189994014,
+            "totalConnections": 57
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 42,
+              "servicesCount": 42
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 42,
+            "totalServices": 42,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948571089
+      },
+      "805149720478": {
+        "accountId": "805149720478",
+        "accountName": "invictus-cap-antioquia",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948570719
+      },
+      "500133512632": {
+        "accountId": "500133512632",
+        "accountName": "invictus-cauca",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-024210b4d01479eec",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.0166639294773785,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-08714228c0055c38a",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 2.7393099911483563,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0d92b89f451b4bda7",
+              "instanceType": "t2.small",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 3,
+            "stopped": 0,
+            "avgCpu": 1.2519913068752448
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 30.971303061659953,
+              "databaseConnections": 5.4,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 28.902274180458118,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 2,
+            "avgCpu": 29.936788621059037,
+            "totalConnections": 5.4
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 41,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 41,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948571068
+      },
+      "816069142009": {
+        "accountId": "816069142009",
+        "accountName": "invictus-huila",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0be4fc89543fa2b1b",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0a0c46f0d23fcc63b",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 2.0756945927566623,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-03555f8791790de09",
+              "instanceType": "t2.small",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 2,
+            "stopped": 1,
+            "avgCpu": 1.0378472963783312
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948570827
+      },
+      "108405836057": {
+        "accountId": "108405836057",
+        "accountName": "invictus-nacional-qa",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 31.210179011205256,
+              "databaseConnections": 2,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "available",
+              "cpuUtilization": 31.48380445625162,
+              "databaseConnections": 6,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 2,
+            "avgCpu": 31.346991733728437,
+            "totalConnections": 8
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 42,
+              "servicesCount": 42
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 42,
+            "totalServices": 42,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948571162
+      },
+      "367957183454": {
+        "accountId": "367957183454",
+        "accountName": "invictus-putumayo",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-042efccc71f887b6a",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.9581067567928743,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0b8f4079a32fe7291",
+              "instanceType": "t2.micro",
+              "state": "running",
+              "cpuUtilization": 3.541260429268335,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0953669a656fd5b8e",
+              "instanceType": "t2.small",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 3,
+            "stopped": 0,
+            "avgCpu": 1.499789062020403
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948572755
+      },
+      "641532809632": {
+        "accountId": "641532809632",
+        "accountName": "invictus-santander",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-024462cec98c59a39",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-018be8c48e762247c",
+              "instanceType": "t2.micro",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-040d5a877aa80819a",
+              "instanceType": "t2.small",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 2,
+            "stopped": 1,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948572606
+      },
+      "344385930155": {
+        "accountId": "344385930155",
+        "accountName": "invictus-tolima",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0ad5ba100338e26e1",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 11.708012406806695,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0ad576a83be4eb404",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0d354522a790e9897",
+              "instanceType": "t2.small",
+              "state": "running",
+              "cpuUtilization": 5.120812027719424,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 2,
+            "stopped": 1,
+            "avgCpu": 8.41441221726306
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948572687
+      },
+      "498273944946": {
+        "accountId": "498273944946",
+        "accountName": "Networking",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0c509ae6e98bc6724",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 3.0404161430070165,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "running": 1,
+            "stopped": 0,
+            "avgCpu": 3.0404161430070165
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948572516
+      },
+      "896298633834": {
+        "accountId": "896298633834",
+        "accountName": "Produccion-EcoDig",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948572393
+      },
+      "986996466546": {
+        "accountId": "986996466546",
+        "accountName": "QA-EcoDig",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948574246
+      },
+      "701708342926": {
+        "accountId": "701708342926",
+        "accountName": "siga-boyaca",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-09cbc35641f2741f2",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.8836758294776115,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-09e330c501987df01",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.7348898064745284,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-093ea1b2f4e28f67b",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.6955606580515312,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0c99d6f3e75ada97a",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 4.623852767094551,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0004622cf6962012d",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0bf52acd87d311c84",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.1050431598583295,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0de5ec1265fbfc611",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.3845678410541205,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-04a358b7b2aafbe28",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.0449962879105263,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0c5fc38fbc0fa07a9",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 9,
+            "running": 7,
+            "stopped": 2,
+            "avgCpu": 2.0675123357030283
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "hjer",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga",
+              "engine": "oracle-ee",
+              "status": "available",
+              "cpuUtilization": 3.9908402488800068,
+              "databaseConnections": 248,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 1,
+            "avgCpu": 3.9908402488800068,
+            "totalConnections": 248
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948575446
+      },
+      "135717303246": {
+        "accountId": "135717303246",
+        "accountName": "siga-narino",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-03a79e2380e93d466",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.171680087393579,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-05a79bd8be0a6adfa",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 0.819588608647404,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02e9d14aba8b143b0",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-068c8483d9cedfc05",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 4,
+            "running": 2,
+            "stopped": 2,
+            "avgCpu": 1.4956343480204914
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "siga",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 4.1374002146691735,
+              "databaseConnections": 58,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "available": 1,
+            "avgCpu": 4.1374002146691735,
+            "totalConnections": 58
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948574994
+      },
+      "032880538196": {
+        "accountId": "032880538196",
+        "accountName": "siga-putumayo",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-08c4e943315ffeaf8",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.8964868871388477,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0c06dffd64bf16529",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 1.3545659000676689,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02338878bdcdfb7db",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.024318637180599,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-01568a54f8ef8456f",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 0.9499566230338434,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0668d36938c152e7d",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.6854166666666666,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0ce94673e046d1297",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-077b424f8c67bf55e",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02ab2830457c5730f",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 3.853968651842009,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 8,
+            "running": 6,
+            "stopped": 2,
+            "avgCpu": 1.627452227654939
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "siga",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 7.953077786386663,
+              "databaseConnections": 189,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 1,
+            "available": 1,
+            "avgCpu": 7.953077786386663,
+            "totalConnections": 189
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948575453
+      },
+      "839026370246": {
+        "accountId": "839026370246",
+        "accountName": "siga-tolima",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0a4049c68701a19e8",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.866615796440603,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-08d5cbb80439b03eb",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.8501129479776264,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0f06b2bd188150adc",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.8415787872281737,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-058df7b563aed4f8a",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 2.1762948095222456,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02935b080788fb60a",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.518294674643702,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0d27a1bd3baf5618d",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 2.0861633217502438,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02d41448ec0cda583",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.4436960775698493,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-07cb3183ff8152f7a",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 1.306435105013099,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0e178d02ef2f46d26",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0fdc2a5d5167e3e37",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0a25f0f1a2a8319f8",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 4.17805905134321,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 11,
+            "running": 9,
+            "stopped": 2,
+            "avgCpu": 2.140805619054306
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "htolima",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 3.5110130925975036,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "mongo-multiempresa-prod",
+              "engine": "docdb",
+              "status": "available",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "postgres-webmultiempresa-prod",
+              "engine": "postgres",
+              "status": "available",
+              "cpuUtilization": 3.9456147252587273,
+              "databaseConnections": 1,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga",
+              "engine": "oracle-ee",
+              "status": "available",
+              "cpuUtilization": 4.140618692813818,
+              "databaseConnections": 275.2,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 4,
+            "available": 4,
+            "avgCpu": 2.899311627667512,
+            "totalConnections": 276.2
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948575663
+      },
+      "631729062535": {
+        "accountId": "631729062535",
+        "accountName": "invictus-boyaca",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0300c33c5c5b2785f",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-035deecfcdd55e2d9",
+              "instanceType": "t2.micro",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-06dc68bcda3ca5b87",
+              "instanceType": "t2.small",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "running": 2,
+            "stopped": 1,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "invictus-instance-db",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "invictus-instance-db-reader",
+              "engine": "aurora-mysql",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [
+            {
+              "clusterName": "invictus",
+              "status": "ACTIVE",
+              "cpuUtilization": 0,
+              "memoryUtilization": 0,
+              "runningTasksCount": 0,
+              "servicesCount": 41
+            }
+          ],
+          "summary": {
+            "totalClusters": 1,
+            "totalTasks": 0,
+            "totalServices": 41,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948577830
+      },
+      "427359219874": {
+        "accountId": "427359219874",
+        "accountName": "Audit",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948577685
+      },
+      "981890057366": {
+        "accountId": "981890057366",
+        "accountName": "Developer-EcoDig",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948577731
+      },
+      "791595947316": {
+        "accountId": "791595947316",
+        "accountName": "invictus_devops",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948577746
+      },
+      "297524569881": {
+        "accountId": "297524569881",
+        "accountName": "Log archive",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948577755
+      },
+      "617287376123": {
+        "accountId": "617287376123",
+        "accountName": "siga-antioquia",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0eb7bdce07eee77f5",
+              "instanceType": "m5.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-03aa5d96474d3f2f3",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 4.254718267703576,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "running": 1,
+            "stopped": 1,
+            "avgCpu": 4.254718267703576
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "hgana",
+              "engine": "oracle-se2",
+              "status": "available",
+              "cpuUtilization": 1.31535525688669,
+              "databaseConnections": 1,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "redex",
+              "engine": "sqlserver-se",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga",
+              "engine": "oracle-ee",
+              "status": "available",
+              "cpuUtilization": 5.2312961284846615,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "available": 2,
+            "avgCpu": 3.2733256926856757,
+            "totalConnections": 1
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948579635
+      },
+      "493947253495": {
+        "accountId": "493947253495",
+        "accountName": "siga-cauca",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-06df0f77d2b379e4a",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 0.09834015854083605,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-01de0a53d4909c9e2",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 4.932406050567457,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "running": 2,
+            "stopped": 0,
+            "avgCpu": 2.5153731045541465
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "hcauca",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga3",
+              "engine": "oracle-ee",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga7",
+              "engine": "oracle-ee",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948579084
+      },
+      "410435420643": {
+        "accountId": "410435420643",
+        "accountName": "siga-huila",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-04053f53f0d8d10fe",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.7124943342211377,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-002e3676674530eb7",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.4735580538810875,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-008d66e40e23e8417",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.4972600627597865,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-05c37243445ad58b1",
+              "instanceType": "t3.xlarge",
+              "state": "running",
+              "cpuUtilization": 1.5235610896558143,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-050d19d504d100fba",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 2.5601176606259806,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0ee8da614554d789b",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 4.41498559020882,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0008f0a5fe795e389",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0c55dcd3b92b94c85",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 8,
+            "running": 6,
+            "stopped": 2,
+            "avgCpu": 2.030329465225438
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "hhuila",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga",
+              "engine": "oracle-ee",
+              "status": "available",
+              "cpuUtilization": 2.2253379118435244,
+              "databaseConnections": 198,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 1,
+            "avgCpu": 2.2253379118435244,
+            "totalConnections": 198
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948579963
+      },
+      "071180301341": {
+        "accountId": "071180301341",
+        "accountName": "siga-santander",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0582d5ea85c5b14ab",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0e1975915469488bc",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0f021e46f8a7b99ee",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-006ad7eef1f9d130d",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-02875d5a51e45889c",
+              "instanceType": "t3.large",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0dd92097b7d966e5e",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-06c05bc47b2b82e6d",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-074cedc1075fac1d5",
+              "instanceType": "t3.medium",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-04afe73545df0848b",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0e701470cd24b7cd2",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-04afb0f36898c3cca",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 11,
+            "running": 0,
+            "stopped": 11,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "hsanta",
+              "engine": "oracle-se2",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga3",
+              "engine": "oracle-ee",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "siga7",
+              "engine": "oracle-ee",
+              "status": "stopped",
+              "cpuUtilization": 0,
+              "databaseConnections": 0,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 3,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948579157
+      },
+      "068830314423": {
+        "accountId": "068830314423",
+        "accountName": "mtxcore-master-aws",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "running": 0,
+            "stopped": 0,
+            "avgCpu": 0
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948578867
+      },
+      "185793273623": {
+        "accountId": "185793273623",
+        "accountName": "SharedServices",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0c641534dedff370a",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 2.1815819253422117,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0725230283d2f1d5d",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 15.11194190697874,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0b3afd44969003f99",
+              "instanceType": "m5.2xlarge",
+              "state": "running",
+              "cpuUtilization": 3.3989346748300155,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0146e65c519ae75b3",
+              "instanceType": "t2.medium",
+              "state": "running",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0e1407e9255c7929b",
+              "instanceType": "t3.small",
+              "state": "running",
+              "cpuUtilization": 4.172077528638758,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-09c6cf00ac80e7185",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.5540710958574733,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-0a3d10abd692bb65f",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.28172449456195364,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-001968fc4582b87a2",
+              "instanceType": "t3.medium",
+              "state": "running",
+              "cpuUtilization": 0.52480397571813,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-06bd87588ba88f1b5",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 3.8814586032191087,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-044cf3ee191911f7d",
+              "instanceType": "t3.xlarge",
+              "state": "stopped",
+              "cpuUtilization": 0,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 10,
+            "running": 9,
+            "stopped": 1,
+            "avgCpu": 3.345177133905155
+          }
+        },
+        "rds": {
+          "instances": [],
+          "summary": {
+            "total": 0,
+            "available": 0,
+            "avgCpu": 0,
+            "totalConnections": 0
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948582380
+      },
+      "509565608358": {
+        "accountId": "509565608358",
+        "accountName": "Admin-acertemos",
+        "region": "us-east-1",
+        "ec2": {
+          "instances": [
+            {
+              "instanceId": "i-0f7315c2500b4cead",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 2.5440539958708306,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-026a5ac44b43b99a8",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 6.4955799058886665,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-05d1951865fdd72da",
+              "instanceType": "t3.2xlarge",
+              "state": "running",
+              "cpuUtilization": 3.1160395493796367,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-05ea0c03df6e2446e",
+              "instanceType": "t3.large",
+              "state": "running",
+              "cpuUtilization": 2.7261109433453052,
+              "networkIn": 0,
+              "networkOut": 0
+            },
+            {
+              "instanceId": "i-05ff75e11815147ab",
+              "instanceType": "t3.2xlarge",
+              "state": "running",
+              "cpuUtilization": 8.892971930760693,
+              "networkIn": 0,
+              "networkOut": 0
+            }
+          ],
+          "summary": {
+            "total": 5,
+            "running": 5,
+            "stopped": 0,
+            "avgCpu": 4.7549512650490255
+          }
+        },
+        "rds": {
+          "instances": [
+            {
+              "dbInstanceIdentifier": "manager-1",
+              "engine": "oracle-ee",
+              "status": "available",
+              "cpuUtilization": 1.5288124045034985,
+              "databaseConnections": 36,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            },
+            {
+              "dbInstanceIdentifier": "manager-2",
+              "engine": "oracle-ee",
+              "status": "available",
+              "cpuUtilization": 1.305487430665833,
+              "databaseConnections": 17,
+              "freeableMemory": 0,
+              "freeStorageSpace": 0
+            }
+          ],
+          "summary": {
+            "total": 2,
+            "available": 2,
+            "avgCpu": 1.4171499175846658,
+            "totalConnections": 53
+          }
+        },
+        "ecs": {
+          "clusters": [],
+          "summary": {
+            "totalClusters": 0,
+            "totalTasks": 0,
+            "totalServices": 0,
+            "avgCpu": 0,
+            "avgMemory": 0
+          }
+        },
+        "lastUpdated": 1779948581737
+      }
+    }
+  }
+}

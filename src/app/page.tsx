@@ -17,6 +17,7 @@ import {
   LayoutGrid,
   List,
 } from "lucide-react";
+import Image from "next/image";
 
 import { InventoryItem } from "@/types/inventory";
 import InventoryTable from "@/components/inventory/InventoryTable";
@@ -523,8 +524,7 @@ export default function Home() {
                     icon={<Cloud className="w-4 h-4" />}
                     accentColor="#06b6d4"
                   >
-                    <FilterSection
-                      title="Provider"
+                    <ProviderFilterSection
                       values={providers}
                       selected={selectedProviders}
                       setSelected={setSelectedProviders}
@@ -603,10 +603,14 @@ export default function Home() {
           {/* Inventory view */}
           {(() => {
             // Only show ECS hierarchical view when explicitly filtered to ECS only
-            const isECSFiltered = selectedServices.length === 1 && selectedServices[0] === "ECS";
+            const isECSFiltered =
+              selectedServices.length === 1 && selectedServices[0] === "ECS";
 
             if (isECSFiltered) {
-              const hasECSResources = filteredData.some(item => item.service === "ECS" && item.resourceType === "CLUSTER");
+              const hasECSResources = filteredData.some(
+                (item) =>
+                  item.service === "ECS" && item.resourceType === "CLUSTER",
+              );
               if (hasECSResources) {
                 return (
                   <ECSHierarchicalView
@@ -618,7 +622,12 @@ export default function Home() {
             }
 
             if (mobileView || viewMode === "cards") {
-              return <InventoryCards data={filteredData} onSelect={setSelectedItem} />;
+              return (
+                <InventoryCards
+                  data={filteredData}
+                  onSelect={setSelectedItem}
+                />
+              );
             }
 
             return (
@@ -679,6 +688,55 @@ function FilterBlock({ title, icon, accentColor, children }: any) {
           {children}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── Provider Filter Section (with logos) ── */
+function ProviderFilterSection({ values, selected, setSelected }: any) {
+  const getProviderLogo = (provider: string) => {
+    if (provider === "AWS") return "/logos/aws.svg";
+    if (provider === "HUAWEI CLOUD") return "/logos/huawei.svg";
+    return null;
+  };
+
+  return (
+    <div className="pt-3">
+      <p className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/25 mb-2.5">
+        Provider
+      </p>
+      <div className="flex flex-wrap gap-3">
+        {values.map((value: string) => {
+          const active = selected.includes(value);
+          const logo = getProviderLogo(value);
+          return (
+            <button
+              key={value}
+              onClick={() =>
+                setSelected((p: string[]) =>
+                  active ? p.filter((v) => v !== value) : [...p, value],
+                )
+              }
+              title={value}
+              className={`p-3 rounded-lg border transition-all flex items-center justify-center ${
+                active
+                  ? "bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20 scale-105"
+                  : "bg-[var(--bg-card)]/60 border-[var(--border)] hover:border-cyan-500/30 hover:bg-[var(--bg-hover)]"
+              }`}
+            >
+              {logo && (
+                <Image
+                  src={logo}
+                  alt={value}
+                  width={32}
+                  height={32}
+                  className="transition-transform"
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -759,7 +817,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
           style={{
             background: "var(--bg-card)",
             backdropFilter: "blur(12px)",
-            boxShadow: "0 10px 30px var(--shadow-color)"
+            boxShadow: "0 10px 30px var(--shadow-color)",
           }}
         >
           {values.map((value: string) => {

@@ -22,7 +22,7 @@ export async function getHuaweiRDSInventory() {
 
         accounts.map(async (account) => {
 
-          const data =
+          const response =
             await huaweiRequest({
 
               method: "GET",
@@ -44,8 +44,11 @@ export async function getHuaweiRDSInventory() {
 
             });
 
-          if (!data) {
+          const data = response?.data;
 
+          if (!data || response?.status >= 400) {
+
+            console.log(`[HUAWEI RDS] No data for account ${account.name}`);
             return [];
 
           }
@@ -130,7 +133,7 @@ export async function getHuaweiRDSInventory() {
                     ? "stopped"
                     : db.status === "SHUTDOWN"
                     ? "stopped"
-                    : db.status || "UNKNOWN",
+                    : db.status?.toLowerCase() || "running", // Nunca UNKNOWN
 
                 operatingSystem:
                   `${db.datastore?.type || "RDS"} ${db.datastore?.version || ""}`,

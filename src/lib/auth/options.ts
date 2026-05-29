@@ -114,12 +114,57 @@ function uniqueStrings(values: string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
+async function getAzureAdMemberGroups(accessToken?: string) {
+  if (!accessToken) return [];
+
+  try {
+    const groups: string[] = [];
+    let url =
+      "https://graph.microsoft.com/v1.0/me/memberOf?$select=id,displayName";
+
+    while (url) {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.warn("Azure AD groups lookup failed", response.status);
+        return groups;
+      }
+
+      const data = (await response.json()) as {
+        value?: Array<{ id?: string; displayName?: string }>;
+        "@odata.nextLink"?: string;
+      };
+
+      for (const group of data.value || []) {
+        if (group.displayName) groups.push(group.displayName);
+        if (group.id) groups.push(group.id);
+      }
+
+      url = data["@odata.nextLink"] || "";
+    }
+
+    return groups;
+  } catch (error) {
+    console.warn("Azure AD groups lookup error", error);
+    return [];
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID || "",
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET || "",
       tenantId: process.env.AZURE_AD_TENANT_ID || "",
+      authorization: {
+        params: {
+          scope: "openid profile email User.Read",
+        },
+      },
     }),
     CredentialsProvider({
       name: "Local",
@@ -169,10 +214,12 @@ export const authOptions: NextAuthOptions = {
 
       if (account?.provider === "azure-ad") {
         const idTokenClaims = decodeJwtClaims(account.id_token);
+        const graphGroups = await getAzureAdMemberGroups(account.access_token);
         const email = getProfileEmail(profile, token.email);
         const groups = uniqueStrings([
           ...getProfileGroups(profile),
           ...getProfileGroups(idTokenClaims),
+          ...graphGroups,
         ]);
         const role = getUserRole(email, groups);
         token.email = email || token.email;

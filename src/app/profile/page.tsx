@@ -99,6 +99,9 @@ export default function ProfilePage() {
   const userInitial = session.user.name?.charAt(0).toUpperCase() || "U";
   const userEmail = session.user.email || "usuario@ejemplo.com";
   const userName = session.user.name || "Usuario";
+  const userGroups = session.user.groups?.length
+    ? session.user.groups.join(", ")
+    : "Sin grupos detectados en la sesion";
 
   return (
     <main className="min-h-screen bg-[var(--bg-dark)]">
@@ -148,6 +151,7 @@ export default function ProfilePage() {
                 label="Ultimo acceso"
                 value={lastLogin ? new Date(lastLogin).toLocaleString() : "Primera vez"}
               />
+              <InfoCard label="Grupos detectados" value={userGroups} />
             </div>
 
             <div className="border-t border-[var(--border)] my-6" />

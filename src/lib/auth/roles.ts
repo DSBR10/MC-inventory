@@ -21,6 +21,8 @@ export const GROUP_ROLE_MAP: Record<string, Role> = {
   UX_INVENTORY_AUDIT: "audit",
 };
 
+export type GroupRoleMap = Record<string, Role>;
+
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   admin: [
     "inventory:view",
@@ -72,11 +74,27 @@ export const ROLE_INFO: Record<Role, { label: string; description: string; color
   },
 };
 
-export function mapGroupsToRole(groups: string[]): Role {
-  if (groups.includes("UX_INVENTORY")) return "admin";
-  if (groups.includes("UX_INVENTORY_PLATAFORMAS")) return "plataformas";
-  if (groups.includes("UX_INVENTORY_OPERACIONES")) return "operaciones";
-  if (groups.includes("UX_INVENTORY_AUDIT")) return "audit";
+const ROLE_PRIORITY: Role[] = ["admin", "plataformas", "operaciones", "audit"];
+
+export function normalizeGroupClaim(group: string) {
+  return group.trim().toLowerCase();
+}
+
+export function mapGroupsToRole(groups: string[], extraMap: GroupRoleMap = {}): Role {
+  const roleByGroup = new Map<string, Role>();
+
+  for (const [group, role] of Object.entries({ ...GROUP_ROLE_MAP, ...extraMap })) {
+    roleByGroup.set(normalizeGroupClaim(group), role);
+  }
+
+  const matchedRoles = groups
+    .map((group) => roleByGroup.get(normalizeGroupClaim(group)))
+    .filter((role): role is Role => Boolean(role));
+
+  for (const role of ROLE_PRIORITY) {
+    if (matchedRoles.includes(role)) return role;
+  }
+
   return "audit";
 }
 

@@ -2,13 +2,34 @@ import type { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { getPermissions, mapGroupsToRole, type Role } from "@/lib/auth/roles";
+import { getPermissions, mapGroupsToRole, type GroupRoleMap, type Role } from "@/lib/auth/roles";
 
 function parseCsv(value?: string) {
   return (value || "")
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
+}
+
+function parseList(...values: Array<string | undefined>) {
+  return values
+    .flatMap((value) => (value || "").split(","))
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function buildEnvGroupRoleMap(): GroupRoleMap {
+  const entries: Array<[Role, string[]]> = [
+    ["admin", parseList(process.env.ROLE_ADMIN_GROUPS, process.env.AZURE_AD_ADMIN_GROUPS)],
+    ["plataformas", parseList(process.env.ROLE_PLATAFORMAS_GROUPS, process.env.AZURE_AD_PLATAFORMAS_GROUPS)],
+    ["operaciones", parseList(process.env.ROLE_OPERACIONES_GROUPS, process.env.AZURE_AD_OPERACIONES_GROUPS)],
+    ["audit", parseList(process.env.ROLE_AUDIT_GROUPS, process.env.AZURE_AD_AUDIT_GROUPS)],
+  ];
+
+  return entries.reduce<GroupRoleMap>((acc, [role, groups]) => {
+    for (const group of groups) acc[group] = role;
+    return acc;
+  }, {});
 }
 
 function isAllowedEmail(email?: string | null) {
@@ -22,7 +43,7 @@ function getUserRole(email?: string | null, groups: string[] = []): Role {
   const adminEmails = parseCsv(process.env.ADMIN_EMAILS);
 
   if (adminEmails.includes(emailLower)) return "admin";
-  if (groups.length > 0) return mapGroupsToRole(groups);
+  if (groups.length > 0) return mapGroupsToRole(groups, buildEnvGroupRoleMap());
   if (emailLower.includes("admin") || emailLower.includes("administrator")) {
     return "admin";
   }
@@ -54,14 +75,43 @@ function getProfileEmail(profile: unknown, fallback?: string | null) {
 }
 
 function getProfileGroups(profile: unknown) {
-  if (profile && typeof profile === "object") {
-    const candidate = profile as { groups?: unknown };
-    return Array.isArray(candidate.groups)
-      ? candidate.groups.filter((group): group is string => typeof group === "string")
-      : [];
-  }
+  if (!profile || typeof profile !== "object") return [];
 
-  return [];
+  const candidate = profile as Record<string, unknown>;
+  const claimNames = [
+    "groups",
+    "roles",
+    "wids",
+    "http://schemas.microsoft.com/ws/2008/06/identity/claims/groups",
+    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+  ];
+
+  return claimNames.flatMap((claimName) => {
+    const claim = candidate[claimName];
+
+    if (Array.isArray(claim)) {
+      return claim.filter((group): group is string => typeof group === "string");
+    }
+
+    return typeof claim === "string" ? [claim] : [];
+  });
+}
+
+function decodeJwtClaims(token?: string) {
+  if (!token) return {};
+
+  try {
+    const [, payload] = token.split(".");
+    if (!payload) return {};
+
+    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+function uniqueStrings(values: string[]) {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
 export const authOptions: NextAuthOptions = {
@@ -118,8 +168,12 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (account?.provider === "azure-ad") {
+        const idTokenClaims = decodeJwtClaims(account.id_token);
         const email = getProfileEmail(profile, token.email);
-        const groups = getProfileGroups(profile);
+        const groups = uniqueStrings([
+          ...getProfileGroups(profile),
+          ...getProfileGroups(idTokenClaims),
+        ]);
         const role = getUserRole(email, groups);
         token.email = email || token.email;
         token.role = role;

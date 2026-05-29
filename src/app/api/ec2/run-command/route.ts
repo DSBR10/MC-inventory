@@ -1,141 +1,101 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireApiSession } from "@/lib/auth/server";
 import {
-  SSMClient,
-  SendCommandCommand,
   GetCommandInvocationCommand,
+  SendCommandCommand,
+  SSMClient,
 } from "@aws-sdk/client-ssm";
 
-const region = process.env.AWS_REGION || "us-east-1";
+import { requireApiSession } from "@/lib/auth/server";
 
-/* ===============================
-   BLOCKLIST DE COMANDOS PELIGROSOS
-   =============================== */
+type OsType = "linux" | "windows";
+type ExecutionStatus = "success" | "failed" | "timedOut" | "cancelled" | "error";
 
-const DANGEROUS_PATTERNS: RegExp[] = [
-  // Borrado masivo
-  /rm\s+(-[a-zA-Z]*f[a-zA-Z]*|-[a-zA-Z]*r[a-zA-Z]*|-rf|-fr)\s+[\/\*~]/i,
-  /rm\s+.*\*+/i,
-  /rm\s+-rf/i,
+type CommandTarget = {
+  instanceId: string;
+  accountId: string;
+  accountName?: string;
+  name?: string;
+  osType?: OsType;
+};
 
-  // Formateo y particiones
-  /mkfs/i,
-  /fdisk/i,
-  /parted/i,
-  /dd\s+.*of=\/dev\//i,
+type CommandResult = {
+  instanceId: string;
+  accountId: string;
+  accountName?: string;
+  name?: string;
+  status: ExecutionStatus;
+  commandId?: string;
+  output?: string;
+  error?: string;
+  durationMs?: number;
+};
 
-  // Apagado y reinicio
-  /\breboot\b/i,
-  /\bshutdown\b/i,
-  /\bhalt\b/i,
-  /\bpoweroff\b/i,
-  /\binit\s+[06]\b/i,
-  /systemctl\s+(reboot|poweroff|halt|shutdown)/i,
-
-  // Escalada de privilegios peligrosa
-  /\bchmod\s+(-R\s+)?[0-7]*7[0-7]*\s+\/\b/i,   // chmod en raíz
-  /\bchown\s+.*\/$/i,                             // chown en raíz
-  /\bsudo\s+su\b/i,
-  /\bsudo\s+-i\b/i,
-
-  // Truncar o sobreescribir archivos críticos
-  />\s*\/etc\/(passwd|shadow|sudoers|hosts|fstab|crontab)/i,
-  />\s*\/dev\/(sda|hda|vda|xvda|nvme)/i,
-
-  // Eliminar directorios del sistema
-  /rm\s+.*\/(etc|bin|sbin|lib|lib64|usr|boot|sys|proc|dev|root)\b/i,
-
-  // Fork bomb
-  /:\(\)\s*\{.*\}/i,
-  /\(\)\s*\{\s*:\|:&\s*\}/i,
-
-  // Pipes destructivas
-  /curl.*\|\s*(ba)?sh/i,
-  /wget.*\|\s*(ba)?sh/i,
-  /\|\s*bash\s*$/i,
-  /\|\s*sh\s*$/i,
-
-  // Manipulación de servicios críticos del sistema
-  /systemctl\s+(stop|disable|mask)\s+(sshd|ssh|network|NetworkManager|firewalld|iptables|auditd|ssm-agent|amazon-ssm-agent)/i,
-  /service\s+(sshd|ssh|network|ssm-agent)\s+(stop|disable)/i,
-
-  // Borrar logs de auditoría
-  />\s*\/var\/log\/(audit|secure|messages|wtmp|btmp)/i,
-  /rm\s+.*\/var\/log\//i,
-
-  // Manipulación de firewall masiva
-  /iptables\s+-F/i,           // flush todas las reglas
-  /iptables\s+-X/i,
-  /nft\s+flush/i,
-
-  // Historial
-  /history\s+-[cw]/i,
-  />\s*~\/\.bash_history/i,
-  /unset\s+HISTFILE/i,
-
-  // Exploits comunes
-  /base64\s+.*\|\s*(ba)?sh/i,
-  /python.*-c.*exec/i,
-  /perl.*-e.*system/i,
-  /php.*-r.*system/i,
-];
-
-/* ===============================
-   WHITELIST DE COMANDOS SEGUROS
-   (opcional — activar si se quiere
-   modo restrictivo total)
-   =============================== */
-
-const SAFE_COMMANDS_WHITELIST: RegExp[] = [
-  /^(ls|pwd|whoami|hostname|uptime|df|du|free|top|ps|cat|tail|head|grep|find|echo|date|uname|id|env|printenv|netstat|ss|curl\s+https?:\/\/|ping|traceroute|dig|nslookup|systemctl\s+status|journalctl|aws\s+s3|aws\s+ec2)/i,
-];
-
-/* ===============================
-   VALIDADOR PRINCIPAL
-   =============================== */
-
-interface ValidationResult {
+type ValidationResult = {
   blocked: boolean;
   reason?: string;
-}
+};
 
-function validateCommand(command: string): ValidationResult {
+const region = process.env.AWS_REGION || "us-east-1";
+const maxTargets = Number(process.env.COMMAND_MAX_TARGETS || 50);
+const maxCommandLength = Number(process.env.COMMAND_MAX_LENGTH || 4000);
+
+const sharedDangerousPatterns: Array<[RegExp, string]> = [
+  [/\b(reboot|shutdown|halt|poweroff)\b/i, "Apagado o reinicio del sistema"],
+  [/\b(init\s+[06])\b/i, "Cambio de runlevel para apagar o reiniciar"],
+  [/\bmkfs\b|\bfdisk\b|\bparted\b|\bdd\s+.*of=\/dev\//i, "Formateo o manipulación de discos"],
+  [/curl\b.*\|\s*(ba)?sh\b|wget\b.*\|\s*(ba)?sh\b/i, "Ejecución remota por pipe"],
+  [/\|\s*(bash|sh|powershell|pwsh)\s*$/i, "Pipe directo a intérprete"],
+  [/base64\s+.*\|\s*(ba)?sh|encodedcommand|frombase64string/i, "Ofuscación con base64"],
+  [/\bpython\b.*-c.*exec|\bperl\b.*-e.*system|\bphp\b.*-r.*system/i, "Ejecución dinámica ofuscada"],
+];
+
+const linuxDangerousPatterns: Array<[RegExp, string]> = [
+  [/\brm\s+(-[a-zA-Z]*f[a-zA-Z]*|-[a-zA-Z]*r[a-zA-Z]*|-rf|-fr)\b/i, "Borrado recursivo o forzado"],
+  [/\brm\b.*(\*|\/etc|\/bin|\/sbin|\/lib|\/lib64|\/usr|\/boot|\/sys|\/proc|\/dev|\/root)\b/i, "Borrado de rutas críticas"],
+  [/\bchmod\s+(-R\s+)?[0-7]*7[0-7]*\s+\/\b/i, "Cambio peligroso de permisos en raíz"],
+  [/\bchown\s+.*\/$/i, "Cambio peligroso de ownership en raíz"],
+  [/\bsudo\s+(su|-i)\b/i, "Escalada interactiva de privilegios"],
+  [/>+\s*\/etc\/(passwd|shadow|sudoers|hosts|fstab|crontab)/i, "Sobrescritura de archivos críticos"],
+  [/>+\s*\/dev\/(sda|hda|vda|xvda|nvme)/i, "Sobrescritura directa de disco"],
+  [/:\(\)\s*\{.*\}|\(\)\s*\{\s*:\|:&\s*\}/i, "Fork bomb"],
+  [/systemctl\s+(reboot|poweroff|halt|shutdown|stop|disable|mask)\s+(sshd|ssh|network|NetworkManager|firewalld|iptables|auditd|ssm-agent|amazon-ssm-agent)?/i, "Manipulación de servicios críticos"],
+  [/service\s+(sshd|ssh|network|ssm-agent)\s+(stop|disable)/i, "Manipulación de servicios críticos"],
+  [/>+\s*\/var\/log\/(audit|secure|messages|wtmp|btmp)|\brm\b.*\/var\/log\//i, "Borrado o truncado de logs"],
+  [/\biptables\s+(-F|-X)\b|\bnft\s+flush\b/i, "Flush de firewall"],
+  [/\bhistory\s+-[cw]\b|>+\s*~\/\.bash_history|\bunset\s+HISTFILE\b/i, "Borrado de historial"],
+];
+
+const windowsDangerousPatterns: Array<[RegExp, string]> = [
+  [/\bRestart-Computer\b|\bStop-Computer\b|\bshutdown(\.exe)?\b/i, "Apagado o reinicio del sistema"],
+  [/\bRemove-Item\b.*(-Recurse|-Force)|\brd\s+\/s\b|\bdel\s+\/[fsq]/i, "Borrado recursivo o forzado"],
+  [/\bFormat-Volume\b|\bClear-Disk\b|\bInitialize-Disk\b|\bdiskpart\b/i, "Formateo o manipulación de discos"],
+  [/\bSet-ExecutionPolicy\b|\bDisable-PSRemoting\b/i, "Cambio sensible de PowerShell"],
+  [/\bRemove-LocalUser\b|\bDisable-LocalUser\b|\bnet\s+user\b.*\/delete/i, "Eliminación o deshabilitación de usuarios"],
+  [/\bClear-EventLog\b|\bwevtutil\s+cl\b/i, "Borrado de eventos de auditoría"],
+  [/\bNew-NetFirewallRule\b|\bSet-NetFirewallProfile\b|\bnetsh\s+advfirewall\s+set\b/i, "Cambios de firewall"],
+  [/\bStop-Service\b.*(WinRM|AmazonSSMAgent|sshd|EventLog)|\bSet-Service\b.*(WinRM|AmazonSSMAgent|sshd|EventLog)/i, "Manipulación de servicios críticos"],
+  [/\breg\s+(delete|add)\b.*(\\sam|\\security|\\system|\\policies)/i, "Cambio de claves críticas del registro"],
+];
+
+function validateCommand(command: string, osType: OsType): ValidationResult {
   const trimmed = command.trim();
 
-  // Rechazar comandos vacíos
-  if (!trimmed) {
-    return { blocked: true, reason: "Empty command" };
+  if (!trimmed) return { blocked: true, reason: "El comando está vacío" };
+  if (trimmed.length > maxCommandLength) {
+    return { blocked: true, reason: `El comando supera ${maxCommandLength} caracteres` };
   }
 
-  // Rechazar comandos muy largos (posible ofuscación)
-  if (trimmed.length > 1000) {
-    return { blocked: true, reason: "Command exceeds maximum length" };
-  }
+  const patterns = [
+    ...sharedDangerousPatterns,
+    ...(osType === "linux" ? linuxDangerousPatterns : windowsDangerousPatterns),
+  ];
 
-  // Detectar ofuscación con base64
-  if (/echo\s+[A-Za-z0-9+/]{20,}={0,2}\s*\|\s*(base64|ba64)/.test(trimmed)) {
-    return { blocked: true, reason: "Possible base64 obfuscation detected" };
-  }
-
-  // Detectar concatenación sospechosa de comandos destructivos
-  const chainedCommands = trimmed.split(/[;&|]+/);
-  for (const part of chainedCommands) {
-    for (const pattern of DANGEROUS_PATTERNS) {
-      if (pattern.test(part.trim())) {
-        return {
-          blocked: true,
-          reason: `Dangerous pattern detected: "${part.trim().slice(0, 60)}"`,
-        };
-      }
-    }
+  for (const [pattern, reason] of patterns) {
+    if (pattern.test(trimmed)) return { blocked: true, reason };
   }
 
   return { blocked: false };
 }
-
-/* ===============================
-   GET ALL ACCOUNTS DYNAMICALLY
-   =============================== */
 
 function getAllAccounts(): { id: string; accessKey: string; secretKey: string }[] {
   const accounts: { id: string; accessKey: string; secretKey: string }[] = [];
@@ -143,182 +103,212 @@ function getAllAccounts(): { id: string; accessKey: string; secretKey: string }[
 
   Object.keys(env).forEach((key) => {
     const match = key.match(/^AWS_ACCOUNT_(\d+)_ID$/);
-    if (match) {
-      const index = match[1];
-      const id = env[`AWS_ACCOUNT_${index}_ID`];
-      const accessKey =
-        env[`AWS_ACCOUNT_${index}_ACCESS_KEY`] ||
-        env[`AWS_ACCOUNT_${index}_ACCESS_KEY_ID`];
-      const secretKey =
-        env[`AWS_ACCOUNT_${index}_SECRET_KEY`] ||
-        env[`AWS_ACCOUNT_${index}_SECRET_ACCESS_KEY`];
-      if (id && accessKey && secretKey) {
-        accounts.push({ id, accessKey, secretKey });
-      }
-    }
+    if (!match) return;
+
+    const index = match[1];
+    const id = env[`AWS_ACCOUNT_${index}_ID`];
+    const accessKey =
+      env[`AWS_ACCOUNT_${index}_ACCESS_KEY`] ||
+      env[`AWS_ACCOUNT_${index}_ACCESS_KEY_ID`];
+    const secretKey =
+      env[`AWS_ACCOUNT_${index}_SECRET_KEY`] ||
+      env[`AWS_ACCOUNT_${index}_SECRET_ACCESS_KEY`];
+
+    if (id && accessKey && secretKey) accounts.push({ id, accessKey, secretKey });
   });
 
   return accounts;
 }
 
-/* ===============================
-   GET CREDS PER ACCOUNT
-   =============================== */
-
 function getCredentials(accountId: string) {
-  const accounts = getAllAccounts();
-  const acc = accounts.find((a) => a.id === accountId);
-  if (!acc) {
-    throw new Error(`Account not configured: ${accountId}`);
-  }
+  const account = getAllAccounts().find((item) => item.id === accountId);
+  if (!account) throw new Error(`Cuenta AWS no configurada: ${accountId}`);
+
   return {
-    accessKeyId: acc.accessKey,
-    secretAccessKey: acc.secretKey,
+    accessKeyId: account.accessKey,
+    secretAccessKey: account.secretKey,
   };
 }
 
-/* ===============================
-   WAIT FOR COMMAND (POLLING)
-   =============================== */
-
-async function waitForCommand(
-  ssm: SSMClient,
-  commandId: string,
-  instanceId: string
-) {
-  const maxAttempts = 15;
+async function waitForCommand(ssm: SSMClient, commandId: string, instanceId: string) {
+  const maxAttempts = 30;
   const delay = 2000;
 
-  for (let i = 0; i < maxAttempts; i++) {
-    await new Promise((r) => setTimeout(r, delay));
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+
     try {
-      const res = await ssm.send(
+      const result = await ssm.send(
         new GetCommandInvocationCommand({
           CommandId: commandId,
           InstanceId: instanceId,
-        })
+        }),
       );
 
-      const status = res.Status;
       if (
-        status === "Success" ||
-        status === "Failed" ||
-        status === "Cancelled" ||
-        status === "TimedOut"
+        result.Status === "Success" ||
+        result.Status === "Failed" ||
+        result.Status === "Cancelled" ||
+        result.Status === "TimedOut"
       ) {
-        return res;
+        return result;
       }
     } catch {
       continue;
     }
   }
 
-  throw new Error("Timeout waiting for command result");
+  throw new Error("Timeout esperando el resultado de SSM");
 }
 
-/* ===============================
-   LOGGER DE AUDITORÍA
-   =============================== */
+function mapSsmStatus(status?: string): ExecutionStatus {
+  if (status === "Success") return "success";
+  if (status === "TimedOut") return "timedOut";
+  if (status === "Cancelled") return "cancelled";
+  if (status === "Failed") return "failed";
+  return "error";
+}
 
 function auditLog(entry: {
   timestamp: string;
+  user?: string | null;
   command: string;
-  instances: any[];
+  osType: OsType;
+  targets: CommandTarget[];
   blocked: boolean;
   reason?: string;
   ip?: string;
 }) {
-  // Aquí puedes enviar a CloudWatch, una DB, o simplemente loguear
-  console.log("[AUDIT]", JSON.stringify(entry));
+  console.log("[COMMAND_AUDIT]", JSON.stringify(entry));
 }
 
-/* ===============================
-   API
-   =============================== */
+async function runOnTarget(target: CommandTarget, command: string, osType: OsType): Promise<CommandResult> {
+  const started = Date.now();
+
+  try {
+    const ssm = new SSMClient({
+      region,
+      credentials: getCredentials(target.accountId),
+    });
+
+    const send = await ssm.send(
+      new SendCommandCommand({
+        InstanceIds: [target.instanceId],
+        DocumentName: osType === "linux" ? "AWS-RunShellScript" : "AWS-RunPowerShellScript",
+        TimeoutSeconds: 3600,
+        Parameters: {
+          commands: [command],
+        },
+      }),
+    );
+
+    const commandId = send.Command?.CommandId;
+    if (!commandId) throw new Error("SSM no retornó CommandId");
+
+    const result = await waitForCommand(ssm, commandId, target.instanceId);
+
+    return {
+      instanceId: target.instanceId,
+      accountId: target.accountId,
+      accountName: target.accountName,
+      name: target.name,
+      status: mapSsmStatus(result.Status),
+      commandId,
+      output: result.StandardOutputContent || "",
+      error: result.StandardErrorContent || "",
+      durationMs: Date.now() - started,
+    };
+  } catch (error) {
+    return {
+      instanceId: target.instanceId,
+      accountId: target.accountId,
+      accountName: target.accountName,
+      name: target.name,
+      status: "error",
+      error: error instanceof Error ? error.message : "Error ejecutando comando",
+      durationMs: Date.now() - started,
+    };
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
     const guard = await requireApiSession("inventory:modify");
     if (guard.response) return guard.response;
 
-    const { instances, command } = await req.json();
+    const body = (await req.json()) as {
+      instances?: CommandTarget[];
+      command?: string;
+      osType?: OsType;
+    };
+
+    const command = body.command || "";
+    const instances = body.instances || [];
+    const osType = body.osType;
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
     const timestamp = new Date().toISOString();
 
-    // Validación básica
-    if (!instances?.length || !command) {
+    if (osType !== "linux" && osType !== "windows") {
+      return NextResponse.json({ error: "Sistema operativo inválido" }, { status: 400 });
+    }
+
+    if (instances.length === 0) {
+      return NextResponse.json({ error: "Selecciona al menos una instancia" }, { status: 400 });
+    }
+
+    if (instances.length > maxTargets) {
       return NextResponse.json(
-        { error: "Missing instances or command" },
-        { status: 400 }
+        { error: `Máximo ${maxTargets} instancias por ejecución` },
+        { status: 400 },
       );
     }
 
-    // ── Validación de seguridad ──
-    const validation = validateCommand(command);
+    const invalidTarget = instances.find((target) => !target.instanceId || !target.accountId);
+    if (invalidTarget) {
+      return NextResponse.json({ error: "Target inválido" }, { status: 400 });
+    }
+
+    const mixedOsTarget = instances.find((target) => target.osType && target.osType !== osType);
+    if (mixedOsTarget) {
+      return NextResponse.json(
+        { error: "No mezcles Linux y Windows en la misma ejecución" },
+        { status: 400 },
+      );
+    }
+
+    const validation = validateCommand(command, osType);
 
     auditLog({
       timestamp,
+      user: guard.session?.user?.email,
       command,
-      instances,
+      osType,
+      targets: instances,
       blocked: validation.blocked,
       reason: validation.reason,
       ip,
     });
 
     if (validation.blocked) {
-      console.warn(`[SECURITY] Blocked command from ${ip}: "${command}" — ${validation.reason}`);
       return NextResponse.json(
         {
-          error: "Command blocked for security reasons",
+          error: "Comando bloqueado por política de seguridad",
           reason: validation.reason,
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    // ── Ejecución ──
-    const results: any[] = [];
-
-    for (const instance of instances) {
-      try {
-        const creds = getCredentials(instance.accountId);
-        const ssm = new SSMClient({ region, credentials: creds });
-
-        const send = await ssm.send(
-          new SendCommandCommand({
-            InstanceIds: [instance.instanceId],
-            DocumentName: "AWS-RunShellScript",
-            Parameters: { commands: [command] },
-          })
-        );
-
-        const commandId = send.Command?.CommandId;
-        if (!commandId) throw new Error("No commandId returned");
-
-        const result = await waitForCommand(ssm, commandId, instance.instanceId);
-
-        results.push({
-          instanceId: instance.instanceId,
-          accountId: instance.accountId,
-          output: result.StandardOutputContent || "",
-          error: result.StandardErrorContent || "",
-        });
-      } catch (err: any) {
-        console.error(`Error on ${instance.instanceId}:`, err.message);
-        results.push({
-          instanceId: instance.instanceId,
-          accountId: instance.accountId,
-          error: "❌ No SSM connection or instance unreachable",
-        });
-      }
-    }
+    const results = await Promise.all(
+      instances.map((target) => runOnTarget(target, command.trim(), osType)),
+    );
 
     return NextResponse.json(results);
   } catch (error) {
-    console.error("Global error:", error);
+    console.error("COMMAND EXECUTION ERROR:", error);
     return NextResponse.json(
-      { error: "Command execution failed" },
-      { status: 500 }
+      { error: "No se pudo ejecutar el comando" },
+      { status: 500 },
     );
   }
 }

@@ -1,5 +1,5 @@
 {
-  "timestamp": 1780070405127,
+  "timestamp": 1780081406547,
   "data": {
     "accounts": {
       "954669981484": {
@@ -12,7 +12,7 @@
               "instanceId": "i-0be5d98e0453855bd",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.7708209165836302,
+              "cpuUtilization": 0.8138888888888888,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -20,7 +20,7 @@
               "instanceId": "i-01dce7df409260491",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.094692372656152,
+              "cpuUtilization": 2.1064800222189386,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -28,7 +28,7 @@
               "instanceId": "i-017d81817f21ddeb4",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.926666845503015,
+              "cpuUtilization": 2.3751151508448594,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -36,7 +36,7 @@
               "instanceId": "i-0b82b5fb9fce3b161",
               "instanceType": "t3.small",
               "state": "running",
-              "cpuUtilization": 19.999929365262734,
+              "cpuUtilization": 20.000107175984752,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -44,7 +44,7 @@
               "instanceId": "i-043e41fed14e004fd",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.8466585567154491,
+              "cpuUtilization": 0.9583281811307245,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -52,7 +52,7 @@
               "instanceId": "i-07aac437cc1ea90ac",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.9714922708344146,
+              "cpuUtilization": 0.9777942187000335,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -60,7 +60,7 @@
               "instanceId": "i-09ad3c8a1dfae10b2",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.7183346403949082,
+              "cpuUtilization": 2.827654998016502,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -68,7 +68,7 @@
               "instanceId": "i-0fb1f52d6b80dc485",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.3333398073019356,
+              "cpuUtilization": 1.4416666666666667,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -76,7 +76,7 @@
               "instanceId": "i-08b9d933d7d9e6d9d",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.9099607855000253,
+              "cpuUtilization": 3.2333410190925953,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -84,7 +84,7 @@
               "instanceId": "i-0fbb221b1dc14d39e",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.131814133826863,
+              "cpuUtilization": 2.272222222222222,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -92,7 +92,7 @@
               "instanceId": "i-004364e34975a419d",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.502066771317133,
+              "cpuUtilization": 2.6832208701852553,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -132,7 +132,7 @@
               "instanceId": "i-082f553266d5b7695",
               "instanceType": "t3.micro",
               "state": "running",
-              "cpuUtilization": 0.5184317849450215,
+              "cpuUtilization": 0.5692786732383108,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -141,7 +141,7 @@
             "total": 16,
             "running": 12,
             "stopped": 4,
-            "avgCpu": 3.2270173542367733
+            "avgCpu": 3.354924840599146
           }
         },
         "rds": {
@@ -150,8 +150,8 @@
               "dbInstanceIdentifier": "ganadllo",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 9.347398125369415,
-              "databaseConnections": 31.2,
+              "cpuUtilization": 8.915654988197021,
+              "databaseConnections": 31,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -159,7 +159,7 @@
               "dbInstanceIdentifier": "invictusreplicaloteria-instance-1",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 6.988333333333334,
+              "cpuUtilization": 7.352083333333333,
               "databaseConnections": 1,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -168,7 +168,7 @@
               "dbInstanceIdentifier": "matricap",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 4.139595105316554,
+              "cpuUtilization": 4.629181805807875,
               "databaseConnections": 11,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -177,8 +177,8 @@
               "dbInstanceIdentifier": "matrixdev",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 6.016666666666667,
-              "databaseConnections": 40,
+              "cpuUtilization": 6.911111111111111,
+              "databaseConnections": 39.4,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -204,7 +204,7 @@
               "dbInstanceIdentifier": "postgres-web-dllomultiempresa",
               "engine": "postgres",
               "status": "available",
-              "cpuUtilization": 3.7233278756654413,
+              "cpuUtilization": 4.068531143678661,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -213,7 +213,7 @@
               "dbInstanceIdentifier": "postgres-web-qamultiempresa",
               "engine": "postgres",
               "status": "available",
-              "cpuUtilization": 3.5005443378630416,
+              "cpuUtilization": 3.596298615552163,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -222,7 +222,7 @@
               "dbInstanceIdentifier": "pruganaweb",
               "engine": "postgres",
               "status": "available",
-              "cpuUtilization": 3.468333333333333,
+              "cpuUtilization": 3.77525287695483,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -231,7 +231,7 @@
               "dbInstanceIdentifier": "sigadllo",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 4.879016616144499,
+              "cpuUtilization": 5.271845905355391,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -240,8 +240,8 @@
               "dbInstanceIdentifier": "uxintegracion",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 4.838259137025943,
-              "databaseConnections": 3.4,
+              "cpuUtilization": 5.454604688261331,
+              "databaseConnections": 4,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -249,8 +249,8 @@
           "summary": {
             "total": 11,
             "available": 11,
-            "avgCpu": 4.263770411883475,
-            "totalConnections": 86.60000000000001
+            "avgCpu": 4.5431422243865205,
+            "totalConnections": 86.4
           }
         },
         "ecs": {
@@ -263,7 +263,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070392116
+        "lastUpdated": 1780081392658
       },
       "185793273623": {
         "accountId": "185793273623",
@@ -275,7 +275,7 @@
               "instanceId": "i-0c641534dedff370a",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 2.3262866817260326,
+              "cpuUtilization": 2.6924525460453026,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -283,7 +283,7 @@
               "instanceId": "i-0725230283d2f1d5d",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 15.764591214766106,
+              "cpuUtilization": 20.556921715706853,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -291,7 +291,7 @@
               "instanceId": "i-0b3afd44969003f99",
               "instanceType": "m5.2xlarge",
               "state": "running",
-              "cpuUtilization": 1.5493333333333335,
+              "cpuUtilization": 1.5766666666666664,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -307,7 +307,7 @@
               "instanceId": "i-0e1407e9255c7929b",
               "instanceType": "t3.small",
               "state": "running",
-              "cpuUtilization": 5.558333333333334,
+              "cpuUtilization": 5.578293575119903,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -315,7 +315,7 @@
               "instanceId": "i-09c6cf00ac80e7185",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.5208333333333333,
+              "cpuUtilization": 0.9028139721368947,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -323,7 +323,7 @@
               "instanceId": "i-0a3d10abd692bb65f",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 7.464994611562962,
+              "cpuUtilization": 9.354451969331032,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -331,7 +331,7 @@
               "instanceId": "i-001968fc4582b87a2",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.5483333333333333,
+              "cpuUtilization": 1.2081634057785584,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -339,7 +339,7 @@
               "instanceId": "i-06bd87588ba88f1b5",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 3.6904122381387183,
+              "cpuUtilization": 5.740404442338786,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -347,7 +347,7 @@
               "instanceId": "i-044cf3ee191911f7d",
               "instanceType": "m7i.xlarge",
               "state": "running",
-              "cpuUtilization": 1.7579166666666668,
+              "cpuUtilization": 1.31,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -356,7 +356,7 @@
             "total": 10,
             "running": 10,
             "stopped": 0,
-            "avgCpu": 4.018103474619382
+            "avgCpu": 4.8920168293124
           }
         },
         "rds": {
@@ -378,7 +378,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070389147
+        "lastUpdated": 1780081390670
       },
       "509565608358": {
         "accountId": "509565608358",
@@ -390,7 +390,7 @@
               "instanceId": "i-0f7315c2500b4cead",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 3.079882752837029,
+              "cpuUtilization": 4.514368601235309,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -398,7 +398,7 @@
               "instanceId": "i-026a5ac44b43b99a8",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 6.408559730494762,
+              "cpuUtilization": 7.02577698784014,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -406,7 +406,7 @@
               "instanceId": "i-05d1951865fdd72da",
               "instanceType": "t3.2xlarge",
               "state": "running",
-              "cpuUtilization": 3.6896173642185524,
+              "cpuUtilization": 5.325291008077913,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -414,7 +414,7 @@
               "instanceId": "i-05ea0c03df6e2446e",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 2.6224852382480566,
+              "cpuUtilization": 2.5999213138102024,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -422,7 +422,7 @@
               "instanceId": "i-05ff75e11815147ab",
               "instanceType": "t3.2xlarge",
               "state": "running",
-              "cpuUtilization": 10.105963101666623,
+              "cpuUtilization": 13.342777777777778,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -431,7 +431,7 @@
             "total": 5,
             "running": 5,
             "stopped": 0,
-            "avgCpu": 5.1813016374930045
+            "avgCpu": 6.561627137748269
           }
         },
         "rds": {
@@ -440,8 +440,8 @@
               "dbInstanceIdentifier": "manager-1",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 1.5026055186276923,
-              "databaseConnections": 31,
+              "cpuUtilization": 1.6895389597320793,
+              "databaseConnections": 32.2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -449,7 +449,7 @@
               "dbInstanceIdentifier": "manager-2",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 2.4359999534124785,
+              "cpuUtilization": 2.1173352898236804,
               "databaseConnections": 18,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -458,8 +458,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 1.9693027360200854,
-            "totalConnections": 49
+            "avgCpu": 1.9034371247778799,
+            "totalConnections": 50.2
           }
         },
         "ecs": {
@@ -472,7 +472,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070388358
+        "lastUpdated": 1780081389609
       },
       "501445982782": {
         "accountId": "501445982782",
@@ -484,7 +484,7 @@
               "instanceId": "i-0044ee964fc200903",
               "instanceType": "m5.2xlarge",
               "state": "running",
-              "cpuUtilization": 14.234666666666666,
+              "cpuUtilization": 14.151111111111112,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -492,7 +492,7 @@
               "instanceId": "i-064fd889b9e338416",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 4.334898303324962,
+              "cpuUtilization": 2.3679131941223286,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -509,7 +509,7 @@
             "total": 3,
             "running": 2,
             "stopped": 1,
-            "avgCpu": 9.284782484995814
+            "avgCpu": 8.25951215261672
           }
         },
         "rds": {
@@ -518,7 +518,7 @@
               "dbInstanceIdentifier": "alianza",
               "engine": "postgres",
               "status": "available",
-              "cpuUtilization": 83.86880715547514,
+              "cpuUtilization": 81.07972849883927,
               "databaseConnections": 75,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -527,7 +527,7 @@
               "dbInstanceIdentifier": "histalianza",
               "engine": "postgres",
               "status": "available",
-              "cpuUtilization": 5.577024258768066,
+              "cpuUtilization": 5.727804807652278,
               "databaseConnections": 5,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -536,7 +536,7 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 44.7229157071216,
+            "avgCpu": 43.403766653245775,
             "totalConnections": 80
           }
         },
@@ -550,7 +550,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070388021
+        "lastUpdated": 1780081389496
       },
       "423028650986": {
         "accountId": "423028650986",
@@ -562,7 +562,7 @@
               "instanceId": "i-0478a1ca39f0e8eb9",
               "instanceType": "t3a.medium",
               "state": "running",
-              "cpuUtilization": 4.223157529381243,
+              "cpuUtilization": 4.274766611383428,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -570,7 +570,7 @@
               "instanceId": "i-0cd754f22b048b5da",
               "instanceType": "t3a.large",
               "state": "running",
-              "cpuUtilization": 3.47378753262401,
+              "cpuUtilization": 3.5811771259578165,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -578,7 +578,7 @@
               "instanceId": "i-0490e75f5dcf17d33",
               "instanceType": "c5ad.2xlarge",
               "state": "running",
-              "cpuUtilization": 9.480417251303933,
+              "cpuUtilization": 10.535059000983349,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -586,7 +586,7 @@
               "instanceId": "i-02daefca2712fdcd4",
               "instanceType": "c5ad.2xlarge",
               "state": "running",
-              "cpuUtilization": 16.299999999999997,
+              "cpuUtilization": 20.485,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -594,7 +594,7 @@
               "instanceId": "i-00120bbe47a17a39d",
               "instanceType": "c5ad.2xlarge",
               "state": "running",
-              "cpuUtilization": 8.072,
+              "cpuUtilization": 8.476666666666667,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -602,7 +602,7 @@
               "instanceId": "i-00fff04d773222170",
               "instanceType": "c5.2xlarge",
               "state": "running",
-              "cpuUtilization": 3.6026666666666665,
+              "cpuUtilization": 4.547777777777777,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -610,7 +610,7 @@
               "instanceId": "i-07274302e78f4499c",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.4645512486786685,
+              "cpuUtilization": 2.650353062323502,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -618,7 +618,7 @@
               "instanceId": "i-0744c93d0e7f6de57",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 22.751069918486184,
+              "cpuUtilization": 24.838759290720578,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -626,7 +626,7 @@
               "instanceId": "i-07acfe34a6226fbfc",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 9.82424675029813,
+              "cpuUtilization": 10.330665793986352,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -634,7 +634,7 @@
               "instanceId": "i-0738330bc294dee2b",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.0624524661456887,
+              "cpuUtilization": 1.089192081090529,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -642,7 +642,7 @@
               "instanceId": "i-0cc2431596a6eb6ba",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 7.000840750181657,
+              "cpuUtilization": 22.836158569140412,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -650,7 +650,7 @@
               "instanceId": "i-0fea949ba3e7b1c42",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 15.118377381620107,
+              "cpuUtilization": 15.34188734491912,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -659,7 +659,7 @@
             "total": 12,
             "running": 12,
             "stopped": 0,
-            "avgCpu": 8.614463957948857
+            "avgCpu": 10.748955277079128
           }
         },
         "rds": {
@@ -668,7 +668,7 @@
               "dbInstanceIdentifier": "capacitacion",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 3.8216666666666663,
+              "cpuUtilization": 4.66875,
               "databaseConnections": 84,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -686,8 +686,8 @@
               "dbInstanceIdentifier": "prismaprod",
               "engine": "mysql",
               "status": "available",
-              "cpuUtilization": 15.245879563896665,
-              "databaseConnections": 32.6,
+              "cpuUtilization": 10.822916666666668,
+              "databaseConnections": 33.2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -704,7 +704,7 @@
               "dbInstanceIdentifier": "vigiapru",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 4.04274163302274,
+              "cpuUtilization": 4.257604208471346,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -713,8 +713,8 @@
           "summary": {
             "total": 5,
             "available": 5,
-            "avgCpu": 4.622057572717214,
-            "totalConnections": 116.6
+            "avgCpu": 3.9498541750276024,
+            "totalConnections": 117.2
           }
         },
         "ecs": {
@@ -727,7 +727,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070389815
+        "lastUpdated": 1780081391035
       },
       "945005718351": {
         "accountId": "945005718351",
@@ -761,7 +761,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070392733
+        "lastUpdated": 1780081393156
       },
       "861262569826": {
         "accountId": "861262569826",
@@ -795,7 +795,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070392834
+        "lastUpdated": 1780081393160
       },
       "464783675999": {
         "accountId": "464783675999",
@@ -1201,7 +1201,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070393100
+        "lastUpdated": 1780081393788
       },
       "815983288204": {
         "accountId": "815983288204",
@@ -1235,7 +1235,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070392822
+        "lastUpdated": 1780081393168
       },
       "152266913008": {
         "accountId": "152266913008",
@@ -1247,7 +1247,7 @@
               "instanceId": "i-09deb11df11d9ab37",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 24.585833333333333,
+              "cpuUtilization": 7.842058764871468,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1255,7 +1255,7 @@
               "instanceId": "i-0efa4515a5685f5a3",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.0204125041447414,
+              "cpuUtilization": 2.1160735808597617,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1263,7 +1263,7 @@
               "instanceId": "i-00a1a86a064ac8240",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 12.47702940516466,
+              "cpuUtilization": 2.7165901948328828,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1271,7 +1271,7 @@
               "instanceId": "i-07dcc01747c9806af",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.7537717278884326,
+              "cpuUtilization": 2.7305555555555556,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1287,7 +1287,7 @@
               "instanceId": "i-004fb8677a22699e2",
               "instanceType": "t3.micro",
               "state": "running",
-              "cpuUtilization": 0.7395909271215733,
+              "cpuUtilization": 0.724987580554539,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -1296,7 +1296,7 @@
             "total": 6,
             "running": 5,
             "stopped": 1,
-            "avgCpu": 8.515327579530549
+            "avgCpu": 3.2260531353348414
           }
         },
         "rds": {
@@ -1305,8 +1305,8 @@
               "dbInstanceIdentifier": "invictusescritura",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 1.3722822010943763,
-              "databaseConnections": 63.2,
+              "cpuUtilization": 1.1868475900383733,
+              "databaseConnections": 46,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -1314,8 +1314,8 @@
               "dbInstanceIdentifier": "invictuslectura",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 7.198496765939235,
-              "databaseConnections": 1045.2,
+              "cpuUtilization": 6.564610101131344,
+              "databaseConnections": 1072.6,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -1323,8 +1323,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 4.285389483516806,
-            "totalConnections": 1108.4
+            "avgCpu": 3.8757288455848586,
+            "totalConnections": 1118.6
           }
         },
         "ecs": {
@@ -1358,7 +1358,7 @@
               "status": "ACTIVE",
               "cpuUtilization": 0,
               "memoryUtilization": 0,
-              "runningTasksCount": 9,
+              "runningTasksCount": 8,
               "servicesCount": 1
             },
             {
@@ -1438,7 +1438,7 @@
               "status": "ACTIVE",
               "cpuUtilization": 0,
               "memoryUtilization": 0,
-              "runningTasksCount": 7,
+              "runningTasksCount": 6,
               "servicesCount": 1
             },
             {
@@ -1494,7 +1494,7 @@
               "status": "ACTIVE",
               "cpuUtilization": 0,
               "memoryUtilization": 0,
-              "runningTasksCount": 16,
+              "runningTasksCount": 14,
               "servicesCount": 2
             },
             {
@@ -1558,7 +1558,7 @@
               "status": "ACTIVE",
               "cpuUtilization": 0,
               "memoryUtilization": 0,
-              "runningTasksCount": 3,
+              "runningTasksCount": 2,
               "servicesCount": 1
             },
             {
@@ -1644,13 +1644,13 @@
           ],
           "summary": {
             "totalClusters": 39,
-            "totalTasks": 129,
+            "totalTasks": 124,
             "totalServices": 40,
             "avgCpu": 0,
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070394000
+        "lastUpdated": 1780081394349
       },
       "171158266043": {
         "accountId": "171158266043",
@@ -1680,7 +1680,7 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 26.48528960546097,
+              "cpuUtilization": 27.170659142063744,
               "databaseConnections": 2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -1689,7 +1689,7 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 27.46811939315514,
+              "cpuUtilization": 27.359825161953566,
               "databaseConnections": 11,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -1698,7 +1698,7 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 26.976704499308056,
+            "avgCpu": 27.265242152008653,
             "totalConnections": 13
           }
         },
@@ -1721,7 +1721,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070395630
+        "lastUpdated": 1780081395464
       },
       "557701608708": {
         "accountId": "557701608708",
@@ -1733,7 +1733,7 @@
               "instanceId": "i-056ee1560c6ad2f5e",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.14663146874853364,
+              "cpuUtilization": 0.152831378420811,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -1742,7 +1742,7 @@
             "total": 1,
             "running": 1,
             "stopped": 0,
-            "avgCpu": 0.14663146874853364
+            "avgCpu": 0.152831378420811
           }
         },
         "rds": {
@@ -1751,7 +1751,7 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 30.535959518401274,
+              "cpuUtilization": 30.890218085041887,
               "databaseConnections": 4,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -1760,8 +1760,8 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 34.11912569072116,
-              "databaseConnections": 60.8,
+              "cpuUtilization": 34.23239122537848,
+              "databaseConnections": 56,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -1769,8 +1769,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 32.327542604561216,
-            "totalConnections": 64.8
+            "avgCpu": 32.56130465521018,
+            "totalConnections": 60
           }
         },
         "ecs": {
@@ -1792,7 +1792,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070395436
+        "lastUpdated": 1780081395843
       },
       "805149720478": {
         "accountId": "805149720478",
@@ -1813,8 +1813,8 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 31.75848033844137,
-              "databaseConnections": 7,
+              "cpuUtilization": 31.713210508479648,
+              "databaseConnections": 6.6,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -1822,7 +1822,7 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 28.67691808717768,
+              "cpuUtilization": 28.885046447609064,
               "databaseConnections": 2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -1831,8 +1831,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 30.217699212809524,
-            "totalConnections": 9
+            "avgCpu": 30.299128478044356,
+            "totalConnections": 8.6
           }
         },
         "ecs": {
@@ -1854,7 +1854,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070395912
+        "lastUpdated": 1780081395620
       },
       "500133512632": {
         "accountId": "500133512632",
@@ -1866,7 +1866,7 @@
               "instanceId": "i-024210b4d01479eec",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.103474536161081,
+              "cpuUtilization": 1.1252629662369145,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1874,7 +1874,7 @@
               "instanceId": "i-08714228c0055c38a",
               "instanceType": "t3.small",
               "state": "running",
-              "cpuUtilization": 2.898742948889388,
+              "cpuUtilization": 3.030589291118408,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1891,7 +1891,7 @@
             "total": 3,
             "running": 3,
             "stopped": 0,
-            "avgCpu": 1.334072495016823
+            "avgCpu": 1.3852840857851074
           }
         },
         "rds": {
@@ -1900,8 +1900,8 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 32.495022224667174,
-              "databaseConnections": 10,
+              "cpuUtilization": 32.51573028823215,
+              "databaseConnections": 10.2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -1909,7 +1909,7 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 28.790878124891734,
+              "cpuUtilization": 29.21124508771114,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -1918,8 +1918,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 30.642950174779454,
-            "totalConnections": 10
+            "avgCpu": 30.863487687971645,
+            "totalConnections": 10.2
           }
         },
         "ecs": {
@@ -1941,7 +1941,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070395629
+        "lastUpdated": 1780081395663
       },
       "816069142009": {
         "accountId": "816069142009",
@@ -1953,7 +1953,7 @@
               "instanceId": "i-0be4fc89543fa2b1b",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.6116818778748319,
+              "cpuUtilization": 1.6329131764381304,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1961,7 +1961,7 @@
               "instanceId": "i-0a0c46f0d23fcc63b",
               "instanceType": "t3.small",
               "state": "running",
-              "cpuUtilization": 2.2149547616826597,
+              "cpuUtilization": 2.24423683070561,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -1978,7 +1978,7 @@
             "total": 3,
             "running": 3,
             "stopped": 0,
-            "avgCpu": 1.2755455465191639
+            "avgCpu": 1.29238333571458
           }
         },
         "rds": {
@@ -1987,8 +1987,8 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 34.088118518723256,
-              "databaseConnections": 35,
+              "cpuUtilization": 34.79162485075832,
+              "databaseConnections": 36,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -1996,7 +1996,7 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 30.818319508160943,
+              "cpuUtilization": 30.81875502538408,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2005,8 +2005,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 32.4532190134421,
-            "totalConnections": 35
+            "avgCpu": 32.805189938071194,
+            "totalConnections": 36
           }
         },
         "ecs": {
@@ -2016,19 +2016,19 @@
               "status": "ACTIVE",
               "cpuUtilization": 0,
               "memoryUtilization": 0,
-              "runningTasksCount": 40,
+              "runningTasksCount": 41,
               "servicesCount": 41
             }
           ],
           "summary": {
             "totalClusters": 1,
-            "totalTasks": 40,
+            "totalTasks": 41,
             "totalServices": 41,
             "avgCpu": 0,
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070395629
+        "lastUpdated": 1780081395555
       },
       "108405836057": {
         "accountId": "108405836057",
@@ -2049,7 +2049,7 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 31.296289894239216,
+              "cpuUtilization": 31.432105543884173,
               "databaseConnections": 2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2058,8 +2058,8 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 32.12844650297242,
-              "databaseConnections": 8,
+              "cpuUtilization": 31.861638833200978,
+              "databaseConnections": 8.6,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2067,8 +2067,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 31.71236819860582,
-            "totalConnections": 10
+            "avgCpu": 31.646872188542574,
+            "totalConnections": 10.6
           }
         },
         "ecs": {
@@ -2090,7 +2090,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070397506
+        "lastUpdated": 1780081397164
       },
       "367957183454": {
         "accountId": "367957183454",
@@ -2102,7 +2102,7 @@
               "instanceId": "i-042efccc71f887b6a",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.068478848028983,
+              "cpuUtilization": 1.1139312350925574,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2110,7 +2110,7 @@
               "instanceId": "i-0b8f4079a32fe7291",
               "instanceType": "t2.micro",
               "state": "running",
-              "cpuUtilization": 3.6078858940195415,
+              "cpuUtilization": 3.5005120737532853,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2127,7 +2127,7 @@
             "total": 3,
             "running": 3,
             "stopped": 0,
-            "avgCpu": 1.558788247349508
+            "avgCpu": 1.538147769615281
           }
         },
         "rds": {
@@ -2136,7 +2136,7 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 28.87637222015807,
+              "cpuUtilization": 29.087439754061677,
               "databaseConnections": 1,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2145,8 +2145,8 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 31.251878962177102,
-              "databaseConnections": 8.4,
+              "cpuUtilization": 30.915322373224,
+              "databaseConnections": 5.8,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2154,8 +2154,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 30.06412559116759,
-            "totalConnections": 9.4
+            "avgCpu": 30.00138106364284,
+            "totalConnections": 6.8
           }
         },
         "ecs": {
@@ -2177,7 +2177,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070397506
+        "lastUpdated": 1780081397278
       },
       "641532809632": {
         "accountId": "641532809632",
@@ -2189,7 +2189,7 @@
               "instanceId": "i-024462cec98c59a39",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.19,
+              "cpuUtilization": 1.3305555555555557,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2197,7 +2197,7 @@
               "instanceId": "i-018be8c48e762247c",
               "instanceType": "t2.micro",
               "state": "running",
-              "cpuUtilization": 1.3321304902497437,
+              "cpuUtilization": 0,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2214,7 +2214,7 @@
             "total": 3,
             "running": 3,
             "stopped": 0,
-            "avgCpu": 0.8407101634165812
+            "avgCpu": 0.4435185185185186
           }
         },
         "rds": {
@@ -2223,7 +2223,7 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 29.794628914872447,
+              "cpuUtilization": 29.72215110040166,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2232,8 +2232,8 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 43.09456158585962,
-              "databaseConnections": 10.6,
+              "cpuUtilization": 32.60915686980622,
+              "databaseConnections": 8.2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2241,8 +2241,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 36.444595250366035,
-            "totalConnections": 10.6
+            "avgCpu": 31.16565398510394,
+            "totalConnections": 8.2
           }
         },
         "ecs": {
@@ -2264,7 +2264,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070397635
+        "lastUpdated": 1780081397215
       },
       "344385930155": {
         "accountId": "344385930155",
@@ -2276,7 +2276,7 @@
               "instanceId": "i-0ad5ba100338e26e1",
               "instanceType": "t3.small",
               "state": "running",
-              "cpuUtilization": 11.946661751357869,
+              "cpuUtilization": 11.947051137474661,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2284,7 +2284,7 @@
               "instanceId": "i-0ad576a83be4eb404",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.3583432474808896,
+              "cpuUtilization": 2.213888888888889,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2292,7 +2292,7 @@
               "instanceId": "i-0d354522a790e9897",
               "instanceType": "t2.small",
               "state": "running",
-              "cpuUtilization": 5.250017405722275,
+              "cpuUtilization": 5.14922784746864,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -2301,7 +2301,7 @@
             "total": 3,
             "running": 3,
             "stopped": 0,
-            "avgCpu": 6.518340801520345
+            "avgCpu": 6.43672262461073
           }
         },
         "rds": {
@@ -2310,8 +2310,8 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 1.643097185491508,
-              "databaseConnections": 89.4,
+              "cpuUtilization": 1.51342724603821,
+              "databaseConnections": 69.6,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -2319,7 +2319,7 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 1.0368189491552102,
+              "cpuUtilization": 1.0280875322176533,
               "databaseConnections": 13,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2328,8 +2328,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 1.339958067323359,
-            "totalConnections": 102.4
+            "avgCpu": 1.2707573891279318,
+            "totalConnections": 82.6
           }
         },
         "ecs": {
@@ -2351,7 +2351,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070397616
+        "lastUpdated": 1780081397082
       },
       "498273944946": {
         "accountId": "498273944946",
@@ -2363,7 +2363,7 @@
               "instanceId": "i-0c509ae6e98bc6724",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 5.038864590178369,
+              "cpuUtilization": 5.94199003027349,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -2372,7 +2372,7 @@
             "total": 1,
             "running": 1,
             "stopped": 0,
-            "avgCpu": 5.038864590178369
+            "avgCpu": 5.94199003027349
           }
         },
         "rds": {
@@ -2394,7 +2394,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070396977
+        "lastUpdated": 1780081397073
       },
       "896298633834": {
         "accountId": "896298633834",
@@ -2428,7 +2428,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070398173
+        "lastUpdated": 1780081397776
       },
       "986996466546": {
         "accountId": "986996466546",
@@ -2462,7 +2462,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070398184
+        "lastUpdated": 1780081397776
       },
       "701708342926": {
         "accountId": "701708342926",
@@ -2474,7 +2474,7 @@
               "instanceId": "i-09cbc35641f2741f2",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 26.72626403180926,
+              "cpuUtilization": 2.9623368065887483,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2482,7 +2482,7 @@
               "instanceId": "i-09e330c501987df01",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.8443333333333332,
+              "cpuUtilization": 2.953940279490798,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2490,7 +2490,7 @@
               "instanceId": "i-093ea1b2f4e28f67b",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.2664686250734354,
+              "cpuUtilization": 1.1975616950305457,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2498,7 +2498,7 @@
               "instanceId": "i-0c99d6f3e75ada97a",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 7.106129561442957,
+              "cpuUtilization": 6.463802736503358,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2514,7 +2514,7 @@
               "instanceId": "i-0bf52acd87d311c84",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.5527854442215747,
+              "cpuUtilization": 2.211038805369954,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2522,7 +2522,7 @@
               "instanceId": "i-0de5ec1265fbfc611",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.4108195897358895,
+              "cpuUtilization": 1.788865226156089,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2530,7 +2530,7 @@
               "instanceId": "i-04a358b7b2aafbe28",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.258273746886046,
+              "cpuUtilization": 3.804270594617433,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2538,7 +2538,7 @@
               "instanceId": "i-0c5fc38fbc0fa07a9",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 6.798099278675407,
+              "cpuUtilization": 5.12220246457373,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -2547,7 +2547,7 @@
             "total": 9,
             "running": 8,
             "stopped": 1,
-            "avgCpu": 6.1203967013972385
+            "avgCpu": 3.3130023260413317
           }
         },
         "rds": {
@@ -2565,8 +2565,8 @@
               "dbInstanceIdentifier": "siga",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 21.043690012131126,
-              "databaseConnections": 312.2,
+              "cpuUtilization": 13.441413645035516,
+              "databaseConnections": 294.2,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2574,8 +2574,8 @@
           "summary": {
             "total": 2,
             "available": 1,
-            "avgCpu": 21.043690012131126,
-            "totalConnections": 312.2
+            "avgCpu": 13.441413645035516,
+            "totalConnections": 294.2
           }
         },
         "ecs": {
@@ -2588,7 +2588,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070399794
+        "lastUpdated": 1780081399155
       },
       "135717303246": {
         "accountId": "135717303246",
@@ -2600,7 +2600,7 @@
               "instanceId": "i-03a79e2380e93d466",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.9062631817542947,
+              "cpuUtilization": 0.9832861241713947,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2608,7 +2608,7 @@
               "instanceId": "i-05a79bd8be0a6adfa",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.4234205991929452,
+              "cpuUtilization": 2.1388394264278263,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2624,7 +2624,7 @@
               "instanceId": "i-068c8483d9cedfc05",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 3.9919689053716803,
+              "cpuUtilization": 3.2333287506350294,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -2633,7 +2633,7 @@
             "total": 4,
             "running": 3,
             "stopped": 1,
-            "avgCpu": 2.1072175621063067
+            "avgCpu": 2.1184847670780833
           }
         },
         "rds": {
@@ -2642,8 +2642,8 @@
               "dbInstanceIdentifier": "siga",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 5.520793578108955,
-              "databaseConnections": 83.4,
+              "cpuUtilization": 5.171805988388676,
+              "databaseConnections": 81,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2651,8 +2651,8 @@
           "summary": {
             "total": 1,
             "available": 1,
-            "avgCpu": 5.520793578108955,
-            "totalConnections": 83.4
+            "avgCpu": 5.171805988388676,
+            "totalConnections": 81
           }
         },
         "ecs": {
@@ -2665,7 +2665,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070399132
+        "lastUpdated": 1780081398505
       },
       "032880538196": {
         "accountId": "032880538196",
@@ -2677,7 +2677,7 @@
               "instanceId": "i-08c4e943315ffeaf8",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 0.8701530232235782,
+              "cpuUtilization": 0.9138816410307232,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2685,7 +2685,7 @@
               "instanceId": "i-0c06dffd64bf16529",
               "instanceType": "t3.small",
               "state": "running",
-              "cpuUtilization": 1.4163575841204898,
+              "cpuUtilization": 1.3667806403894094,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2693,7 +2693,7 @@
               "instanceId": "i-02338878bdcdfb7db",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 0.94443665673623,
+              "cpuUtilization": 1.8353815089427254,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2701,7 +2701,7 @@
               "instanceId": "i-01568a54f8ef8456f",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.1279093726417213,
+              "cpuUtilization": 4.663841473421822,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2709,7 +2709,7 @@
               "instanceId": "i-0668d36938c152e7d",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.7292141101154026,
+              "cpuUtilization": 4.430939462899749,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2717,7 +2717,7 @@
               "instanceId": "i-0ce94673e046d1297",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 3.114610845605618,
+              "cpuUtilization": 3.043550705576171,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2725,7 +2725,7 @@
               "instanceId": "i-077b424f8c67bf55e",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 3.1420923569618813,
+              "cpuUtilization": 2.917551042159016,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2733,7 +2733,7 @@
               "instanceId": "i-02ab2830457c5730f",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 3.6566413318479762,
+              "cpuUtilization": 3.1919298559658054,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -2742,7 +2742,7 @@
             "total": 8,
             "running": 8,
             "stopped": 0,
-            "avgCpu": 2.000176910156612
+            "avgCpu": 2.795482041298178
           }
         },
         "rds": {
@@ -2751,8 +2751,8 @@
               "dbInstanceIdentifier": "siga",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 11.496333598500621,
-              "databaseConnections": 252,
+              "cpuUtilization": 12.376017046100559,
+              "databaseConnections": 244.8,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2760,8 +2760,8 @@
           "summary": {
             "total": 1,
             "available": 1,
-            "avgCpu": 11.496333598500621,
-            "totalConnections": 252
+            "avgCpu": 12.376017046100559,
+            "totalConnections": 244.8
           }
         },
         "ecs": {
@@ -2774,7 +2774,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070399555
+        "lastUpdated": 1780081399432
       },
       "839026370246": {
         "accountId": "839026370246",
@@ -2786,7 +2786,7 @@
               "instanceId": "i-0a4049c68701a19e8",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.850775693249961,
+              "cpuUtilization": 2.4947561300164716,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2794,7 +2794,7 @@
               "instanceId": "i-08d5cbb80439b03eb",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.6052777795952846,
+              "cpuUtilization": 2.086839524143277,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2802,7 +2802,7 @@
               "instanceId": "i-0f06b2bd188150adc",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.938217010939112,
+              "cpuUtilization": 2.290967296100176,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2810,7 +2810,7 @@
               "instanceId": "i-058df7b563aed4f8a",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 7.27235657768845,
+              "cpuUtilization": 13.502740974908178,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2818,7 +2818,7 @@
               "instanceId": "i-02935b080788fb60a",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.6502182747782186,
+              "cpuUtilization": 1.5775639565893878,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2826,7 +2826,7 @@
               "instanceId": "i-0d27a1bd3baf5618d",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 26.41432496939865,
+              "cpuUtilization": 9.216714108385826,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2834,7 +2834,7 @@
               "instanceId": "i-02d41448ec0cda583",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.4164862464643053,
+              "cpuUtilization": 2.528352963420195,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2842,7 +2842,7 @@
               "instanceId": "i-07cb3183ff8152f7a",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.16987849860751,
+              "cpuUtilization": 5.471528320632384,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2850,7 +2850,7 @@
               "instanceId": "i-0e178d02ef2f46d26",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 10.004801375166812,
+              "cpuUtilization": 7.858403869865975,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2866,7 +2866,7 @@
               "instanceId": "i-0a25f0f1a2a8319f8",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 9.322364432816649,
+              "cpuUtilization": 7.761151482154332,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -2875,7 +2875,7 @@
             "total": 11,
             "running": 10,
             "stopped": 1,
-            "avgCpu": 6.464470085870495
+            "avgCpu": 5.47890186262162
           }
         },
         "rds": {
@@ -2884,7 +2884,7 @@
               "dbInstanceIdentifier": "htolima",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 3.74498053068423,
+              "cpuUtilization": 4.301666890100906,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2902,8 +2902,8 @@
               "dbInstanceIdentifier": "postgres-webmultiempresa-prod",
               "engine": "postgres",
               "status": "available",
-              "cpuUtilization": 3.5998678624106786,
-              "databaseConnections": 2,
+              "cpuUtilization": 3.6348719746301468,
+              "databaseConnections": 2.8,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -2911,8 +2911,8 @@
               "dbInstanceIdentifier": "siga",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 12.294293677087154,
-              "databaseConnections": 344.8,
+              "cpuUtilization": 13.306656701728404,
+              "databaseConnections": 319.6,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -2920,8 +2920,8 @@
           "summary": {
             "total": 4,
             "available": 4,
-            "avgCpu": 4.909785517545515,
-            "totalConnections": 346.8
+            "avgCpu": 5.310798891614864,
+            "totalConnections": 322.40000000000003
           }
         },
         "ecs": {
@@ -2934,7 +2934,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070401920
+        "lastUpdated": 1780081401626
       },
       "631729062535": {
         "accountId": "631729062535",
@@ -2946,7 +2946,7 @@
               "instanceId": "i-0300c33c5c5b2785f",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.0895783335624987,
+              "cpuUtilization": 1.111111111111111,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -2971,7 +2971,7 @@
             "total": 3,
             "running": 3,
             "stopped": 0,
-            "avgCpu": 0.3631927778541662
+            "avgCpu": 0.3703703703703703
           }
         },
         "rds": {
@@ -2980,8 +2980,8 @@
               "dbInstanceIdentifier": "invictus-instance-db",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 29.247036447537415,
-              "databaseConnections": 10.2,
+              "cpuUtilization": 29.267244346825045,
+              "databaseConnections": 10,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             },
@@ -2989,7 +2989,7 @@
               "dbInstanceIdentifier": "invictus-instance-db-reader",
               "engine": "aurora-mysql",
               "status": "available",
-              "cpuUtilization": 28.02049421935177,
+              "cpuUtilization": 27.621035714144806,
               "databaseConnections": 1,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -2998,8 +2998,8 @@
           "summary": {
             "total": 2,
             "available": 2,
-            "avgCpu": 28.633765333444593,
-            "totalConnections": 11.2
+            "avgCpu": 28.444140030484924,
+            "totalConnections": 11
           }
         },
         "ecs": {
@@ -3021,7 +3021,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070401288
+        "lastUpdated": 1780081400770
       },
       "427359219874": {
         "accountId": "427359219874",
@@ -3055,7 +3055,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070400317
+        "lastUpdated": 1780081399935
       },
       "981890057366": {
         "accountId": "981890057366",
@@ -3089,7 +3089,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070400438
+        "lastUpdated": 1780081399941
       },
       "791595947316": {
         "accountId": "791595947316",
@@ -3123,7 +3123,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070400443
+        "lastUpdated": 1780081399944
       },
       "297524569881": {
         "accountId": "297524569881",
@@ -3157,7 +3157,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070402583
+        "lastUpdated": 1780081402151
       },
       "617287376123": {
         "accountId": "617287376123",
@@ -3169,7 +3169,7 @@
               "instanceId": "i-0eb7bdce07eee77f5",
               "instanceType": "m5.xlarge",
               "state": "running",
-              "cpuUtilization": 2.55375,
+              "cpuUtilization": 2.970555555555555,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3177,7 +3177,7 @@
               "instanceId": "i-03aa5d96474d3f2f3",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 3.872760792343488,
+              "cpuUtilization": 3.836954301867791,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -3186,7 +3186,7 @@
             "total": 2,
             "running": 2,
             "stopped": 0,
-            "avgCpu": 3.213255396171744
+            "avgCpu": 3.403754928711673
           }
         },
         "rds": {
@@ -3195,7 +3195,7 @@
               "dbInstanceIdentifier": "hgana",
               "engine": "oracle-se2",
               "status": "available",
-              "cpuUtilization": 1.2325127810228524,
+              "cpuUtilization": 1.525249384035211,
               "databaseConnections": 1,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -3213,7 +3213,7 @@
               "dbInstanceIdentifier": "siga",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 4.253424147358155,
+              "cpuUtilization": 4.87256448520998,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -3222,7 +3222,7 @@
           "summary": {
             "total": 3,
             "available": 2,
-            "avgCpu": 2.7429684641905037,
+            "avgCpu": 3.198906934622596,
             "totalConnections": 1
           }
         },
@@ -3236,7 +3236,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070403582
+        "lastUpdated": 1780081402896
       },
       "493947253495": {
         "accountId": "493947253495",
@@ -3248,7 +3248,7 @@
               "instanceId": "i-06df0f77d2b379e4a",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 0.09832978537762804,
+              "cpuUtilization": 0.1105349526905649,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3256,7 +3256,7 @@
               "instanceId": "i-01de0a53d4909c9e2",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 5.100737680531809,
+              "cpuUtilization": 5.287284970745716,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -3265,7 +3265,7 @@
             "total": 2,
             "running": 2,
             "stopped": 0,
-            "avgCpu": 2.599533732954719
+            "avgCpu": 2.6989099617181407
           }
         },
         "rds": {
@@ -3283,7 +3283,7 @@
               "dbInstanceIdentifier": "siga3",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 2.402166441093891,
+              "cpuUtilization": 2.7661276223776228,
               "databaseConnections": 0,
               "freeableMemory": 0,
               "freeStorageSpace": 0
@@ -3301,7 +3301,7 @@
           "summary": {
             "total": 3,
             "available": 2,
-            "avgCpu": 1.2010832205469455,
+            "avgCpu": 1.3830638111888114,
             "totalConnections": 0
           }
         },
@@ -3315,7 +3315,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070403324
+        "lastUpdated": 1780081402856
       },
       "410435420643": {
         "accountId": "410435420643",
@@ -3327,7 +3327,7 @@
               "instanceId": "i-04053f53f0d8d10fe",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 1.2649987779129623,
+              "cpuUtilization": 3.905522825008479,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3335,7 +3335,7 @@
               "instanceId": "i-002e3676674530eb7",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.4942371618062757,
+              "cpuUtilization": 1.7760929372710574,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3343,7 +3343,7 @@
               "instanceId": "i-008d66e40e23e8417",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.9880598166253567,
+              "cpuUtilization": 3.222708184337076,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3351,7 +3351,7 @@
               "instanceId": "i-05c37243445ad58b1",
               "instanceType": "t3.xlarge",
               "state": "running",
-              "cpuUtilization": 1.7517127158753916,
+              "cpuUtilization": 19.57814396792261,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3359,7 +3359,7 @@
               "instanceId": "i-050d19d504d100fba",
               "instanceType": "t3.medium",
               "state": "running",
-              "cpuUtilization": 2.5869271321276437,
+              "cpuUtilization": 2.390742436773443,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3367,7 +3367,7 @@
               "instanceId": "i-0ee8da614554d789b",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 7.32588730815813,
+              "cpuUtilization": 6.258796542946783,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3375,7 +3375,7 @@
               "instanceId": "i-0008f0a5fe795e389",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 20.442449199227745,
+              "cpuUtilization": 5.675055375592652,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3383,7 +3383,7 @@
               "instanceId": "i-0c55dcd3b92b94c85",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 7.1906663729637685,
+              "cpuUtilization": 6.047210587879284,
               "networkIn": 0,
               "networkOut": 0
             }
@@ -3392,7 +3392,7 @@
             "total": 8,
             "running": 8,
             "stopped": 0,
-            "avgCpu": 5.5056173105871595
+            "avgCpu": 6.106784107216423
           }
         },
         "rds": {
@@ -3410,8 +3410,8 @@
               "dbInstanceIdentifier": "siga",
               "engine": "oracle-ee",
               "status": "available",
-              "cpuUtilization": 3.522048504641867,
-              "databaseConnections": 276.6,
+              "cpuUtilization": 3.583774682491018,
+              "databaseConnections": 266.8,
               "freeableMemory": 0,
               "freeStorageSpace": 0
             }
@@ -3419,8 +3419,8 @@
           "summary": {
             "total": 2,
             "available": 1,
-            "avgCpu": 3.522048504641867,
-            "totalConnections": 276.6
+            "avgCpu": 3.583774682491018,
+            "totalConnections": 266.8
           }
         },
         "ecs": {
@@ -3433,7 +3433,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070404439
+        "lastUpdated": 1780081403493
       },
       "071180301341": {
         "accountId": "071180301341",
@@ -3461,7 +3461,7 @@
               "instanceId": "i-0f021e46f8a7b99ee",
               "instanceType": "t3.large",
               "state": "running",
-              "cpuUtilization": 5.501025784121663,
+              "cpuUtilization": 4.523183831295799,
               "networkIn": 0,
               "networkOut": 0
             },
@@ -3534,7 +3534,7 @@
             "total": 11,
             "running": 1,
             "stopped": 10,
-            "avgCpu": 5.501025784121663
+            "avgCpu": 4.523183831295799
           }
         },
         "rds": {
@@ -3584,7 +3584,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070403174
+        "lastUpdated": 1780081406066
       },
       "068830314423": {
         "accountId": "068830314423",
@@ -3618,7 +3618,7 @@
             "avgMemory": 0
           }
         },
-        "lastUpdated": 1780070405126
+        "lastUpdated": 1780081406546
       }
     }
   }

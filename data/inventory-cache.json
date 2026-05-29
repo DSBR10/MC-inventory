@@ -1,5 +1,5 @@
 {
-  "timestamp": 1780070398651,
+  "timestamp": 1780081346728,
   "data": [
     {
       "uniqueKey": "AWS-954669981484-EC2-i-0be5d98e0453855bd",
@@ -20453,34 +20453,6 @@
       "riskLevel": "SAFE"
     },
     {
-      "uniqueKey": "AWS-945005718351-Subnet-subnet-054c7b15b24821211",
-      "provider": "AWS",
-      "accountName": "Deploy-EcoDig",
-      "accountId": "945005718351",
-      "service": "Subnet",
-      "name": "Private subnet 1B",
-      "operatingSystem": "N/A",
-      "id": "subnet-054c7b15b24821211",
-      "host": "10.150.139.64/28",
-      "status": "running",
-      "tags": {
-        "aws:cloudformation:logical-id": "PrivateSubnet1B",
-        "Network": "Private",
-        "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-east-1:945005718351:stack/VPCDeployEcodig/babf7d40-d28f-11eb-a851-12fa5e526083",
-        "aws:cloudformation:stack-name": "VPCDeployEcodig",
-        "Name": "Private subnet 1B"
-      },
-      "resourceType": "Subnet",
-      "topologyType": "network",
-      "relationships": [],
-      "securityGroups": [],
-      "listeners": [],
-      "targetGroups": [],
-      "children": [],
-      "publiclyExposed": false,
-      "riskLevel": "SAFE"
-    },
-    {
       "uniqueKey": "AWS-945005718351-Subnet-subnet-0d1bfdbb65072d1a9",
       "provider": "AWS",
       "accountName": "Deploy-EcoDig",
@@ -20497,6 +20469,34 @@
         "Name": "Private subnet 2A",
         "aws:cloudformation:logical-id": "PrivateSubnet2A",
         "Network": "Private"
+      },
+      "resourceType": "Subnet",
+      "topologyType": "network",
+      "relationships": [],
+      "securityGroups": [],
+      "listeners": [],
+      "targetGroups": [],
+      "children": [],
+      "publiclyExposed": false,
+      "riskLevel": "SAFE"
+    },
+    {
+      "uniqueKey": "AWS-945005718351-Subnet-subnet-054c7b15b24821211",
+      "provider": "AWS",
+      "accountName": "Deploy-EcoDig",
+      "accountId": "945005718351",
+      "service": "Subnet",
+      "name": "Private subnet 1B",
+      "operatingSystem": "N/A",
+      "id": "subnet-054c7b15b24821211",
+      "host": "10.150.139.64/28",
+      "status": "running",
+      "tags": {
+        "aws:cloudformation:logical-id": "PrivateSubnet1B",
+        "Network": "Private",
+        "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-east-1:945005718351:stack/VPCDeployEcodig/babf7d40-d28f-11eb-a851-12fa5e526083",
+        "aws:cloudformation:stack-name": "VPCDeployEcodig",
+        "Name": "Private subnet 1B"
       },
       "resourceType": "Subnet",
       "topologyType": "network",
@@ -20537,34 +20537,6 @@
       "riskLevel": "SAFE"
     },
     {
-      "uniqueKey": "AWS-945005718351-Subnet-subnet-044998f9910c9e574",
-      "provider": "AWS",
-      "accountName": "Deploy-EcoDig",
-      "accountId": "945005718351",
-      "service": "Subnet",
-      "name": "Private subnet 1A",
-      "operatingSystem": "N/A",
-      "id": "subnet-044998f9910c9e574",
-      "host": "10.150.139.32/28",
-      "status": "running",
-      "tags": {
-        "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-east-1:945005718351:stack/VPCDeployEcodig/babf7d40-d28f-11eb-a851-12fa5e526083",
-        "Network": "Private",
-        "aws:cloudformation:stack-name": "VPCDeployEcodig",
-        "aws:cloudformation:logical-id": "PrivateSubnet1A",
-        "Name": "Private subnet 1A"
-      },
-      "resourceType": "Subnet",
-      "topologyType": "network",
-      "relationships": [],
-      "securityGroups": [],
-      "listeners": [],
-      "targetGroups": [],
-      "children": [],
-      "publiclyExposed": false,
-      "riskLevel": "SAFE"
-    },
-    {
       "uniqueKey": "AWS-945005718351-Subnet-subnet-0a2f038fa31f4cd4d",
       "provider": "AWS",
       "accountName": "Deploy-EcoDig",
@@ -20581,6 +20553,34 @@
         "aws:cloudformation:stack-name": "VPCDeployEcodig",
         "Network": "Public",
         "Name": "Public subnet 2"
+      },
+      "resourceType": "Subnet",
+      "topologyType": "network",
+      "relationships": [],
+      "securityGroups": [],
+      "listeners": [],
+      "targetGroups": [],
+      "children": [],
+      "publiclyExposed": false,
+      "riskLevel": "SAFE"
+    },
+    {
+      "uniqueKey": "AWS-945005718351-Subnet-subnet-044998f9910c9e574",
+      "provider": "AWS",
+      "accountName": "Deploy-EcoDig",
+      "accountId": "945005718351",
+      "service": "Subnet",
+      "name": "Private subnet 1A",
+      "operatingSystem": "N/A",
+      "id": "subnet-044998f9910c9e574",
+      "host": "10.150.139.32/28",
+      "status": "running",
+      "tags": {
+        "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-east-1:945005718351:stack/VPCDeployEcodig/babf7d40-d28f-11eb-a851-12fa5e526083",
+        "Network": "Private",
+        "aws:cloudformation:stack-name": "VPCDeployEcodig",
+        "aws:cloudformation:logical-id": "PrivateSubnet1A",
+        "Name": "Private subnet 1A"
       },
       "resourceType": "Subnet",
       "topologyType": "network",
@@ -38675,12 +38675,7 @@
               "health": "healthy"
             },
             {
-              "id": "10.150.59.48",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
-              "id": "10.150.60.55",
+              "id": "10.150.60.74",
               "port": 8080,
               "health": "healthy"
             }
@@ -38772,11 +38767,6 @@
           "targetType": "ip",
           "targets": [
             {
-              "id": "10.150.59.239",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
               "id": "10.150.59.227",
               "port": 8080,
               "health": "healthy"
@@ -38787,7 +38777,7 @@
               "health": "healthy"
             },
             {
-              "id": "10.150.59.38",
+              "id": "10.150.59.164",
               "port": 8080,
               "health": "healthy"
             },
@@ -38797,17 +38787,12 @@
               "health": "healthy"
             },
             {
-              "id": "10.150.59.124",
+              "id": "10.150.59.71",
               "port": 8080,
               "health": "healthy"
             },
             {
-              "id": "10.150.60.63",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
-              "id": "10.150.60.126",
+              "id": "10.150.60.35",
               "port": 8080,
               "health": "healthy"
             },
@@ -39001,16 +38986,6 @@
           "targetType": "ip",
           "targets": [
             {
-              "id": "10.150.60.165",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
-              "id": "10.150.59.152",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
               "id": "10.150.60.180",
               "port": 8080,
               "health": "healthy"
@@ -39027,6 +39002,11 @@
             },
             {
               "id": "10.150.59.12",
+              "port": 8080,
+              "health": "healthy"
+            },
+            {
+              "id": "10.150.60.165",
               "port": 8080,
               "health": "healthy"
             },
@@ -39249,7 +39229,7 @@
               "health": "healthy"
             },
             {
-              "id": "10.150.59.226",
+              "id": "10.150.60.190",
               "port": 8080,
               "health": "healthy"
             },
@@ -39259,17 +39239,12 @@
               "health": "healthy"
             },
             {
+              "id": "10.150.59.165",
+              "port": 8080,
+              "health": "healthy"
+            },
+            {
               "id": "10.150.59.54",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
-              "id": "10.150.60.189",
-              "port": 8080,
-              "health": "healthy"
-            },
-            {
-              "id": "10.150.59.254",
               "port": 8080,
               "health": "healthy"
             },
@@ -39463,11 +39438,7 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.59.48"
-        },
-        {
-          "type": "TARGETS",
-          "targetId": "10.150.60.55"
+          "targetId": "10.150.60.74"
         },
         {
           "type": "TARGETS",
@@ -39515,10 +39486,6 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.59.239"
-        },
-        {
-          "type": "TARGETS",
           "targetId": "10.150.59.227"
         },
         {
@@ -39527,7 +39494,7 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.59.38"
+          "targetId": "10.150.59.164"
         },
         {
           "type": "TARGETS",
@@ -39535,15 +39502,11 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.59.124"
+          "targetId": "10.150.59.71"
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.60.63"
-        },
-        {
-          "type": "TARGETS",
-          "targetId": "10.150.60.126"
+          "targetId": "10.150.60.35"
         },
         {
           "type": "TARGETS",
@@ -39647,14 +39610,6 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.60.165"
-        },
-        {
-          "type": "TARGETS",
-          "targetId": "10.150.59.152"
-        },
-        {
-          "type": "TARGETS",
           "targetId": "10.150.60.180"
         },
         {
@@ -39668,6 +39623,10 @@
         {
           "type": "TARGETS",
           "targetId": "10.150.59.12"
+        },
+        {
+          "type": "TARGETS",
+          "targetId": "10.150.60.165"
         },
         {
           "type": "TARGETS",
@@ -39771,7 +39730,7 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.150.59.226"
+          "targetId": "10.150.60.190"
         },
         {
           "type": "TARGETS",
@@ -39779,15 +39738,11 @@
         },
         {
           "type": "TARGETS",
+          "targetId": "10.150.59.165"
+        },
+        {
+          "type": "TARGETS",
           "targetId": "10.150.59.54"
-        },
-        {
-          "type": "TARGETS",
-          "targetId": "10.150.60.189"
-        },
-        {
-          "type": "TARGETS",
-          "targetId": "10.150.59.254"
         },
         {
           "type": "TARGETS",
@@ -40527,7 +40482,7 @@
       "tags": {},
       "raw": {
         "registeredContainerInstancesCount": 0,
-        "runningTasksCount": 3,
+        "runningTasksCount": 2,
         "pendingTasksCount": 0,
         "activeServicesCount": 1
       },
@@ -40552,30 +40507,30 @@
           "raw": {
             "clusterName": "external-wager-ms-cluster",
             "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdganamsexternalwagerstackexternalwagermstaskdefinition7A1620B8:36",
-            "desiredCount": 3,
-            "runningCount": 3,
+            "desiredCount": 2,
+            "runningCount": 2,
             "pendingCount": 0
           },
           "children": [
             {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/external-wager-ms-cluster/89dbc17e5c6b4dc79880ad042c30523b",
+              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/external-wager-ms-cluster/904db91060f640c6b52836b3823acb90",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
               "accountId": "152266913008",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "89dbc17e5c6b4dc79880ad042c30523b",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/external-wager-ms-cluster/89dbc17e5c6b4dc79880ad042c30523b",
+              "name": "904db91060f640c6b52836b3823acb90",
+              "id": "arn:aws:ecs:us-east-1:152266913008:task/external-wager-ms-cluster/904db91060f640c6b52836b3823acb90",
               "host": "external-wager-ms-cluster",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
               "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
+              "availabilityZone": "us-east-1b",
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdganamsexternalwagerstackexternalwagermstaskdefinition7A1620B8:36",
-                "createdAt": "2026-05-29T15:46:27.054Z",
-                "startedAt": "2026-05-29T15:47:23.256Z",
+                "createdAt": "2026-05-29T17:47:25.108Z",
+                "startedAt": "2026-05-29T17:48:14.904Z",
                 "cpu": "256",
                 "memory": "512",
                 "containers": 2
@@ -40600,30 +40555,6 @@
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdganamsexternalwagerstackexternalwagermstaskdefinition7A1620B8:36",
                 "createdAt": "2026-05-29T10:47:25.629Z",
                 "startedAt": "2026-05-29T10:48:16.124Z",
-                "cpu": "256",
-                "memory": "512",
-                "containers": 2
-              }
-            },
-            {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/external-wager-ms-cluster/d50a680e83c54e5f816b8d3916b2e895",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "d50a680e83c54e5f816b8d3916b2e895",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/external-wager-ms-cluster/d50a680e83c54e5f816b8d3916b2e895",
-              "host": "external-wager-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1b",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdganamsexternalwagerstackexternalwagermstaskdefinition7A1620B8:36",
-                "createdAt": "2026-05-29T10:47:37.324Z",
-                "startedAt": "2026-05-29T10:48:21.207Z",
                 "cpu": "256",
                 "memory": "512",
                 "containers": 2
@@ -42215,7 +42146,7 @@
       "tags": {},
       "raw": {
         "registeredContainerInstancesCount": 0,
-        "runningTasksCount": 7,
+        "runningTasksCount": 6,
         "pendingTasksCount": 0,
         "activeServicesCount": 1
       },
@@ -42240,8 +42171,8 @@
           "raw": {
             "clusterName": "products-ms-cluster",
             "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmsproductstackproductsmstaskdefinition071A92AF:45",
-            "desiredCount": 7,
-            "runningCount": 7,
+            "desiredCount": 6,
+            "runningCount": 6,
             "pendingCount": 0
           },
           "children": [
@@ -42336,30 +42267,6 @@
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmsproductstackproductsmstaskdefinition071A92AF:45",
                 "createdAt": "2026-05-29T13:27:59.876Z",
                 "startedAt": "2026-05-29T13:28:38.147Z",
-                "cpu": "512",
-                "memory": "1024",
-                "containers": 2
-              }
-            },
-            {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/products-ms-cluster/cbef11c03a83431397ee9b3f99ae3ddc",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "cbef11c03a83431397ee9b3f99ae3ddc",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/products-ms-cluster/cbef11c03a83431397ee9b3f99ae3ddc",
-              "host": "products-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmsproductstackproductsmstaskdefinition071A92AF:45",
-                "createdAt": "2026-05-29T13:32:04.559Z",
-                "startedAt": "2026-05-29T13:32:50.171Z",
                 "cpu": "512",
                 "memory": "1024",
                 "containers": 2
@@ -43597,7 +43504,7 @@
       "tags": {},
       "raw": {
         "registeredContainerInstancesCount": 0,
-        "runningTasksCount": 9,
+        "runningTasksCount": 8,
         "pendingTasksCount": 0,
         "activeServicesCount": 1
       },
@@ -43622,8 +43529,8 @@
           "raw": {
             "clusterName": "transaction-lg-ms-cluster",
             "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacmstransactionlotteriesgamesstacktransactionlgmstaskdefinition88DB27DC:41",
-            "desiredCount": 9,
-            "runningCount": 9,
+            "desiredCount": 8,
+            "runningCount": 8,
             "pendingCount": 0
           },
           "children": [
@@ -43652,14 +43559,14 @@
               }
             },
             {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/13f16346975849a1b41b58a594e831e3",
+              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/1511ec8fbba64bc08d5c5d9eb0aac063",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
               "accountId": "152266913008",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "13f16346975849a1b41b58a594e831e3",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/13f16346975849a1b41b58a594e831e3",
+              "name": "1511ec8fbba64bc08d5c5d9eb0aac063",
+              "id": "arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/1511ec8fbba64bc08d5c5d9eb0aac063",
               "host": "transaction-lg-ms-cluster",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
@@ -43668,8 +43575,8 @@
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacmstransactionlotteriesgamesstacktransactionlgmstaskdefinition88DB27DC:41",
-                "createdAt": "2026-05-29T10:47:31.592Z",
-                "startedAt": "2026-05-29T10:48:19.866Z",
+                "createdAt": "2026-05-29T18:27:03.629Z",
+                "startedAt": "2026-05-29T18:27:57.716Z",
                 "cpu": "512",
                 "memory": "1024",
                 "containers": 2
@@ -43724,6 +43631,30 @@
               }
             },
             {
+              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/98877dd9eea544669b8e4e104b5c66fd",
+              "provider": "AWS",
+              "accountName": "invictus-antioquia",
+              "accountId": "152266913008",
+              "service": "ECS",
+              "resourceType": "TASK",
+              "name": "98877dd9eea544669b8e4e104b5c66fd",
+              "id": "arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/98877dd9eea544669b8e4e104b5c66fd",
+              "host": "transaction-lg-ms-cluster",
+              "status": "RUNNING",
+              "operatingSystem": "1.4.0",
+              "platform": "FARGATE",
+              "availabilityZone": "us-east-1a",
+              "tags": {},
+              "raw": {
+                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacmstransactionlotteriesgamesstacktransactionlgmstaskdefinition88DB27DC:41",
+                "createdAt": "2026-05-29T18:29:07.066Z",
+                "startedAt": "2026-05-29T18:29:57.560Z",
+                "cpu": "512",
+                "memory": "1024",
+                "containers": 2
+              }
+            },
+            {
               "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/9be55c2cf03f4caaa36abfff7852a138",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
@@ -43748,30 +43679,6 @@
               }
             },
             {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/dc268acb6a244e369d8447a55316d508",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "dc268acb6a244e369d8447a55316d508",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/dc268acb6a244e369d8447a55316d508",
-              "host": "transaction-lg-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacmstransactionlotteriesgamesstacktransactionlgmstaskdefinition88DB27DC:41",
-                "createdAt": "2026-05-29T10:47:31.592Z",
-                "startedAt": "2026-05-29T10:48:30.453Z",
-                "cpu": "512",
-                "memory": "1024",
-                "containers": 2
-              }
-            },
-            {
               "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/deb250be4b444415a27939a85f945b9c",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
@@ -43790,30 +43697,6 @@
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacmstransactionlotteriesgamesstacktransactionlgmstaskdefinition88DB27DC:41",
                 "createdAt": "2026-05-29T14:04:08.618Z",
                 "startedAt": "2026-05-29T14:05:02.401Z",
-                "cpu": "512",
-                "memory": "1024",
-                "containers": 2
-              }
-            },
-            {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/e93fe2e5308a457585c6d04f30fde9be",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "e93fe2e5308a457585c6d04f30fde9be",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/transaction-lg-ms-cluster/e93fe2e5308a457585c6d04f30fde9be",
-              "host": "transaction-lg-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacmstransactionlotteriesgamesstacktransactionlgmstaskdefinition88DB27DC:41",
-                "createdAt": "2026-05-29T10:47:21.681Z",
-                "startedAt": "2026-05-29T10:48:04.108Z",
                 "cpu": "512",
                 "memory": "1024",
                 "containers": 2
@@ -44209,7 +44092,7 @@
       "tags": {},
       "raw": {
         "registeredContainerInstancesCount": 0,
-        "runningTasksCount": 16,
+        "runningTasksCount": 14,
         "pendingTasksCount": 0,
         "activeServicesCount": 2
       },
@@ -44357,8 +44240,8 @@
           "raw": {
             "clusterName": "lotteries-games-ms-cluster",
             "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
-            "desiredCount": 12,
-            "runningCount": 12,
+            "desiredCount": 10,
+            "runningCount": 10,
             "pendingCount": 0
           },
           "children": [
@@ -44435,14 +44318,14 @@
               }
             },
             {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/50d5502fcc2a480186d42f25c5f79c8b",
+              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/273778252f3040baa2febf44e511a2b9",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
               "accountId": "152266913008",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "50d5502fcc2a480186d42f25c5f79c8b",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/50d5502fcc2a480186d42f25c5f79c8b",
+              "name": "273778252f3040baa2febf44e511a2b9",
+              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/273778252f3040baa2febf44e511a2b9",
               "host": "lotteries-games-ms-cluster",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
@@ -44451,8 +44334,32 @@
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
-                "createdAt": "2026-05-29T13:27:32.432Z",
-                "startedAt": "2026-05-29T13:28:35.115Z",
+                "createdAt": "2026-05-29T18:39:29.890Z",
+                "startedAt": "2026-05-29T18:40:22.372Z",
+                "cpu": "1024",
+                "memory": "4096",
+                "containers": 2
+              }
+            },
+            {
+              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/45409a2931154a83bc66f15cd612a001",
+              "provider": "AWS",
+              "accountName": "invictus-antioquia",
+              "accountId": "152266913008",
+              "service": "ECS",
+              "resourceType": "TASK",
+              "name": "45409a2931154a83bc66f15cd612a001",
+              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/45409a2931154a83bc66f15cd612a001",
+              "host": "lotteries-games-ms-cluster",
+              "status": "RUNNING",
+              "operatingSystem": "1.4.0",
+              "platform": "FARGATE",
+              "availabilityZone": "us-east-1a",
+              "tags": {},
+              "raw": {
+                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
+                "createdAt": "2026-05-29T18:40:26.904Z",
+                "startedAt": "2026-05-29T18:41:12.664Z",
                 "cpu": "1024",
                 "memory": "4096",
                 "containers": 2
@@ -44507,30 +44414,6 @@
               }
             },
             {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/70a6a8e1f1304eb38766d0865f046e66",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "70a6a8e1f1304eb38766d0865f046e66",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/70a6a8e1f1304eb38766d0865f046e66",
-              "host": "lotteries-games-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
-                "createdAt": "2026-05-29T10:42:01.859Z",
-                "startedAt": "2026-05-29T10:42:43.280Z",
-                "cpu": "1024",
-                "memory": "4096",
-                "containers": 2
-              }
-            },
-            {
               "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/7fb8be04a85c4a5aaa82ed95fa8e16fb",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
@@ -44555,14 +44438,14 @@
               }
             },
             {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/a62992c7541f4c00af94533725a372db",
+              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/b30ab9eb0d1245d5a184c4380daf5742",
               "provider": "AWS",
               "accountName": "invictus-antioquia",
               "accountId": "152266913008",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "a62992c7541f4c00af94533725a372db",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/a62992c7541f4c00af94533725a372db",
+              "name": "b30ab9eb0d1245d5a184c4380daf5742",
+              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/b30ab9eb0d1245d5a184c4380daf5742",
               "host": "lotteries-games-ms-cluster",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
@@ -44571,32 +44454,8 @@
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
-                "createdAt": "2026-05-29T10:41:10.745Z",
-                "startedAt": "2026-05-29T10:42:07.962Z",
-                "cpu": "1024",
-                "memory": "4096",
-                "containers": 2
-              }
-            },
-            {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/bc1b8fbb2f2f4bdda34291b041c676a7",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "bc1b8fbb2f2f4bdda34291b041c676a7",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/bc1b8fbb2f2f4bdda34291b041c676a7",
-              "host": "lotteries-games-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1b",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
-                "createdAt": "2026-05-29T10:41:39.789Z",
-                "startedAt": "2026-05-29T10:42:24.436Z",
+                "createdAt": "2026-05-29T18:37:26.399Z",
+                "startedAt": "2026-05-29T18:38:20.740Z",
                 "cpu": "1024",
                 "memory": "4096",
                 "containers": 2
@@ -44621,30 +44480,6 @@
                 "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
                 "createdAt": "2026-05-29T14:16:32.540Z",
                 "startedAt": "2026-05-29T14:17:15.774Z",
-                "cpu": "1024",
-                "memory": "4096",
-                "containers": 2
-              }
-            },
-            {
-              "uniqueKey": "AWS-152266913008-ECS-TASK-arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/fe1a2ebf08d94a328d1b8089a52f3342",
-              "provider": "AWS",
-              "accountName": "invictus-antioquia",
-              "accountId": "152266913008",
-              "service": "ECS",
-              "resourceType": "TASK",
-              "name": "fe1a2ebf08d94a328d1b8089a52f3342",
-              "id": "arn:aws:ecs:us-east-1:152266913008:task/lotteries-games-ms-cluster/fe1a2ebf08d94a328d1b8089a52f3342",
-              "host": "lotteries-games-ms-cluster",
-              "status": "RUNNING",
-              "operatingSystem": "1.4.0",
-              "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
-              "tags": {},
-              "raw": {
-                "taskDefinition": "arn:aws:ecs:us-east-1:152266913008:task-definition/iacprdmslotteriesgamesstacklotteriesgamesmstaskdefinitionAE42FAAC:180",
-                "createdAt": "2026-05-29T14:18:26.046Z",
-                "startedAt": "2026-05-29T14:19:08.760Z",
                 "cpu": "1024",
                 "memory": "4096",
                 "containers": 2
@@ -49848,8 +49683,8 @@
         },
         "ttlEnabled": false,
         "pointInTimeRecovery": true,
-        "itemCount": 96732946,
-        "tableSizeBytes": 1534122936711,
+        "itemCount": 96779965,
+        "tableSizeBytes": 1535263056114,
         "deletionProtection": false
       },
       "resourceType": "DynamoDB",
@@ -52598,28 +52433,6 @@
       "riskLevel": "SAFE"
     },
     {
-      "uniqueKey": "AWS-171158266043-S3-mock-171158266043",
-      "provider": "AWS",
-      "accountName": "invictus-dev",
-      "accountId": "171158266043",
-      "service": "S3",
-      "name": "mock-171158266043",
-      "operatingSystem": "N/A",
-      "id": "mock-171158266043",
-      "host": "N/A",
-      "status": "running",
-      "tags": {},
-      "resourceType": "S3",
-      "topologyType": "storage",
-      "relationships": [],
-      "securityGroups": [],
-      "listeners": [],
-      "targetGroups": [],
-      "children": [],
-      "publiclyExposed": false,
-      "riskLevel": "SAFE"
-    },
-    {
       "uniqueKey": "AWS-171158266043-S3-online-games-171158266043",
       "provider": "AWS",
       "accountName": "invictus-dev",
@@ -52906,32 +52719,6 @@
       "riskLevel": "SAFE"
     },
     {
-      "uniqueKey": "AWS-171158266043-Subnet-subnet-05d25a435b751de13",
-      "provider": "AWS",
-      "accountName": "invictus-dev",
-      "accountId": "171158266043",
-      "service": "Subnet",
-      "name": "vpc-invictus-develop-private-subnet1a",
-      "operatingSystem": "N/A",
-      "id": "subnet-05d25a435b751de13",
-      "host": "10.3.233.0/24",
-      "status": "running",
-      "tags": {
-        "Owner": "invictus-develop",
-        "Environment": "development",
-        "Name": "vpc-invictus-develop-private-subnet1a"
-      },
-      "resourceType": "Subnet",
-      "topologyType": "network",
-      "relationships": [],
-      "securityGroups": [],
-      "listeners": [],
-      "targetGroups": [],
-      "children": [],
-      "publiclyExposed": false,
-      "riskLevel": "SAFE"
-    },
-    {
       "uniqueKey": "AWS-171158266043-Subnet-subnet-05410fb8c7d2784b8",
       "provider": "AWS",
       "accountName": "invictus-dev",
@@ -52946,6 +52733,32 @@
         "Name": "vpc-invictus-develop-private-subnet1c",
         "Owner": "invictus-develop",
         "Environment": "development"
+      },
+      "resourceType": "Subnet",
+      "topologyType": "network",
+      "relationships": [],
+      "securityGroups": [],
+      "listeners": [],
+      "targetGroups": [],
+      "children": [],
+      "publiclyExposed": false,
+      "riskLevel": "SAFE"
+    },
+    {
+      "uniqueKey": "AWS-171158266043-Subnet-subnet-05d25a435b751de13",
+      "provider": "AWS",
+      "accountName": "invictus-dev",
+      "accountId": "171158266043",
+      "service": "Subnet",
+      "name": "vpc-invictus-develop-private-subnet1a",
+      "operatingSystem": "N/A",
+      "id": "subnet-05d25a435b751de13",
+      "host": "10.3.233.0/24",
+      "status": "running",
+      "tags": {
+        "Owner": "invictus-develop",
+        "Environment": "development",
+        "Name": "vpc-invictus-develop-private-subnet1a"
       },
       "resourceType": "Subnet",
       "topologyType": "network",
@@ -53070,7 +52883,7 @@
           "targetType": "ip",
           "targets": [
             {
-              "id": "10.3.233.203",
+              "id": "10.3.233.119",
               "port": 3000,
               "health": "healthy"
             }
@@ -53136,7 +52949,7 @@
         },
         {
           "type": "TARGETS",
-          "targetId": "10.3.233.203"
+          "targetId": "10.3.233.119"
         }
       ],
       "children": [],
@@ -53377,24 +53190,24 @@
           },
           "children": [
             {
-              "uniqueKey": "AWS-171158266043-ECS-TASK-arn:aws:ecs:us-east-1:171158266043:task/invictus/ddb9829aff294b31aa037d999e2f0db9",
+              "uniqueKey": "AWS-171158266043-ECS-TASK-arn:aws:ecs:us-east-1:171158266043:task/invictus/c0fa973d7e1a469581f09558ce4695c9",
               "provider": "AWS",
               "accountName": "invictus-dev",
               "accountId": "171158266043",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "ddb9829aff294b31aa037d999e2f0db9",
-              "id": "arn:aws:ecs:us-east-1:171158266043:task/invictus/ddb9829aff294b31aa037d999e2f0db9",
+              "name": "c0fa973d7e1a469581f09558ce4695c9",
+              "id": "arn:aws:ecs:us-east-1:171158266043:task/invictus/c0fa973d7e1a469581f09558ce4695c9",
               "host": "invictus",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
               "platform": "FARGATE",
-              "availabilityZone": "us-east-1a",
+              "availabilityZone": "us-east-1c",
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:171158266043:task-definition/trino:36",
-                "createdAt": "2026-05-29T11:55:43.470Z",
-                "startedAt": "2026-05-29T11:56:35.352Z",
+                "createdAt": "2026-05-29T16:19:44.381Z",
+                "startedAt": "2026-05-29T16:20:51.881Z",
                 "cpu": "2048",
                 "memory": "4096",
                 "containers": 1
@@ -53530,14 +53343,14 @@
           },
           "children": [
             {
-              "uniqueKey": "AWS-171158266043-ECS-TASK-arn:aws:ecs:us-east-1:171158266043:task/invictus/e1e0f258eaf144a4bb171bbc3a8c5411",
+              "uniqueKey": "AWS-171158266043-ECS-TASK-arn:aws:ecs:us-east-1:171158266043:task/invictus/5d83b27069c84007929d4bf6a2e17eca",
               "provider": "AWS",
               "accountName": "invictus-dev",
               "accountId": "171158266043",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "e1e0f258eaf144a4bb171bbc3a8c5411",
-              "id": "arn:aws:ecs:us-east-1:171158266043:task/invictus/e1e0f258eaf144a4bb171bbc3a8c5411",
+              "name": "5d83b27069c84007929d4bf6a2e17eca",
+              "id": "arn:aws:ecs:us-east-1:171158266043:task/invictus/5d83b27069c84007929d4bf6a2e17eca",
               "host": "invictus",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
@@ -53546,8 +53359,8 @@
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:171158266043:task-definition/metabase:14",
-                "createdAt": "2026-05-29T11:55:47.734Z",
-                "startedAt": "2026-05-29T11:56:29.332Z",
+                "createdAt": "2026-05-29T16:20:12.229Z",
+                "startedAt": "2026-05-29T16:20:57.431Z",
                 "cpu": "2048",
                 "memory": "4096",
                 "containers": 1
@@ -58879,7 +58692,7 @@
           }
         ],
         "resources": {
-          "total": 3,
+          "total": 2,
           "items": [
             {
               "id": "53b7e4",
@@ -58890,15 +58703,79 @@
               ]
             },
             {
-              "id": "htiden",
-              "path": "/reports",
-              "methods": []
-            },
-            {
               "id": "v2tdd4qhzf",
               "path": "/",
               "methods": [
                 "ANY"
+              ]
+            }
+          ]
+        },
+        "usagePlans": 0
+      },
+      "resourceType": "API Gateway",
+      "topologyType": "resource",
+      "relationships": [],
+      "securityGroups": [],
+      "listeners": [],
+      "targetGroups": [],
+      "children": [],
+      "publiclyExposed": false,
+      "riskLevel": "SAFE"
+    },
+    {
+      "uniqueKey": "AWS-171158266043-APIGATEWAY-fhpbqkvvya",
+      "provider": "AWS",
+      "accountName": "invictus-dev",
+      "accountId": "171158266043",
+      "service": "API Gateway",
+      "name": "mock-api",
+      "id": "fhpbqkvvya",
+      "host": "REGIONAL",
+      "status": "running",
+      "operatingSystem": "HEADER",
+      "platform": "REGIONAL",
+      "architecture": "N/A",
+      "instanceType": "N/A",
+      "availabilityZone": "us-east-1",
+      "tags": {
+        "Environment": "development",
+        "Owner": "invictus-develop",
+        "cliente": "ux",
+        "proyecto": "invictus"
+      },
+      "raw": {
+        "arn": "fhpbqkvvya",
+        "description": "API Gateway REST conectado a un NLB",
+        "createdDate": "2026-05-29T18:37:04.000Z",
+        "endpointConfiguration": {
+          "types": [
+            "REGIONAL"
+          ],
+          "ipAddressType": "ipv4"
+        },
+        "stages": [
+          {
+            "stageName": "prod",
+            "deploymentId": "htxku7"
+          }
+        ],
+        "resources": {
+          "total": 2,
+          "items": [
+            {
+              "id": "l2y0od0qy4",
+              "path": "/",
+              "methods": [
+                "ANY"
+              ]
+            },
+            {
+              "id": "qy5r53",
+              "path": "/{proxy+}",
+              "methods": [
+                "ANY",
+                "OPTIONS"
               ]
             }
           ]
@@ -60706,20 +60583,20 @@
       "riskLevel": "SAFE"
     },
     {
-      "uniqueKey": "AWS-557701608708-Subnet-subnet-015a76ecb5ac1768f",
+      "uniqueKey": "AWS-557701608708-Subnet-subnet-0dddfad8a3b812157",
       "provider": "AWS",
       "accountName": "invictus-qa",
       "accountId": "557701608708",
       "service": "Subnet",
-      "name": "vpc-invictus-staging-private-subnet1c",
+      "name": "vpc-invictus-staging-private-subnet1a",
       "operatingSystem": "N/A",
-      "id": "subnet-015a76ecb5ac1768f",
-      "host": "10.3.239.0/24",
+      "id": "subnet-0dddfad8a3b812157",
+      "host": "10.3.237.0/24",
       "status": "running",
       "tags": {
         "Environment": "qa",
-        "Owner": "invictus-staging",
-        "Name": "vpc-invictus-staging-private-subnet1c"
+        "Name": "vpc-invictus-staging-private-subnet1a",
+        "Owner": "invictus-staging"
       },
       "resourceType": "Subnet",
       "topologyType": "network",
@@ -60758,20 +60635,20 @@
       "riskLevel": "SAFE"
     },
     {
-      "uniqueKey": "AWS-557701608708-Subnet-subnet-0dddfad8a3b812157",
+      "uniqueKey": "AWS-557701608708-Subnet-subnet-015a76ecb5ac1768f",
       "provider": "AWS",
       "accountName": "invictus-qa",
       "accountId": "557701608708",
       "service": "Subnet",
-      "name": "vpc-invictus-staging-private-subnet1a",
+      "name": "vpc-invictus-staging-private-subnet1c",
       "operatingSystem": "N/A",
-      "id": "subnet-0dddfad8a3b812157",
-      "host": "10.3.237.0/24",
+      "id": "subnet-015a76ecb5ac1768f",
+      "host": "10.3.239.0/24",
       "status": "running",
       "tags": {
         "Environment": "qa",
-        "Name": "vpc-invictus-staging-private-subnet1a",
-        "Owner": "invictus-staging"
+        "Owner": "invictus-staging",
+        "Name": "vpc-invictus-staging-private-subnet1c"
       },
       "resourceType": "Subnet",
       "topologyType": "network",
@@ -76350,24 +76227,24 @@
           },
           "children": [
             {
-              "uniqueKey": "AWS-500133512632-ECS-TASK-arn:aws:ecs:us-east-1:500133512632:task/invictus/8554a833d9224d6794ca7ae40609b588",
+              "uniqueKey": "AWS-500133512632-ECS-TASK-arn:aws:ecs:us-east-1:500133512632:task/invictus/dccff7744c6a4499a1c8e94566b3b3b7",
               "provider": "AWS",
               "accountName": "invictus-cauca",
               "accountId": "500133512632",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "8554a833d9224d6794ca7ae40609b588",
-              "id": "arn:aws:ecs:us-east-1:500133512632:task/invictus/8554a833d9224d6794ca7ae40609b588",
+              "name": "dccff7744c6a4499a1c8e94566b3b3b7",
+              "id": "arn:aws:ecs:us-east-1:500133512632:task/invictus/dccff7744c6a4499a1c8e94566b3b3b7",
               "host": "invictus",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
               "platform": "FARGATE",
-              "availabilityZone": "us-east-1b",
+              "availabilityZone": "us-east-1a",
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:500133512632:task-definition/payments:25",
-                "createdAt": "2026-05-29T05:14:27.959Z",
-                "startedAt": "2026-05-29T05:15:11.233Z",
+                "createdAt": "2026-05-29T16:28:40.327Z",
+                "startedAt": "2026-05-29T16:29:35.483Z",
                 "cpu": "256",
                 "memory": "512",
                 "containers": 2
@@ -76452,24 +76329,24 @@
           },
           "children": [
             {
-              "uniqueKey": "AWS-500133512632-ECS-TASK-arn:aws:ecs:us-east-1:500133512632:task/invictus/fbfdd6c8d86a4ab28b417d1fea5caa8c",
+              "uniqueKey": "AWS-500133512632-ECS-TASK-arn:aws:ecs:us-east-1:500133512632:task/invictus/262039f4f878482aa5c655c6b1e411bc",
               "provider": "AWS",
               "accountName": "invictus-cauca",
               "accountId": "500133512632",
               "service": "ECS",
               "resourceType": "TASK",
-              "name": "fbfdd6c8d86a4ab28b417d1fea5caa8c",
-              "id": "arn:aws:ecs:us-east-1:500133512632:task/invictus/fbfdd6c8d86a4ab28b417d1fea5caa8c",
+              "name": "262039f4f878482aa5c655c6b1e411bc",
+              "id": "arn:aws:ecs:us-east-1:500133512632:task/invictus/262039f4f878482aa5c655c6b1e411bc",
               "host": "invictus",
               "status": "RUNNING",
               "operatingSystem": "1.4.0",
               "platform": "FARGATE",
-              "availabilityZone": "us-east-1b",
+              "availabilityZone": "us-east-1a",
               "tags": {},
               "raw": {
                 "taskDefinition": "arn:aws:ecs:us-east-1:500133512632:task-definition/legacy:13",
-                "createdAt": "2026-05-29T05:10:18.776Z",
-                "startedAt": "2026-05-29T05:11:33.976Z",
+                "createdAt": "2026-05-29T16:28:34.687Z",
+                "startedAt": "2026-05-29T16:29:24.488Z",
                 "cpu": "256",
                 "memory": "512",
                 "containers": 2
@@ -80720,8 +80597,8 @@
         },
         "ttlEnabled": false,
         "pointInTimeRecovery": false,
-        "itemCount": 5509,
-        "tableSizeBytes": 44727277,
+        "itemCount": 5525,
+        "tableSizeBytes": 44830895,
         "deletionProtection": true
       },
       "resourceType": "DynamoDB",
@@ -110617,8 +110494,8 @@
         },
         "ttlEnabled": false,
         "pointInTimeRecovery": false,
-        "itemCount": 4452,
-        "tableSizeBytes": 148790199,
+        "itemCount": 4507,
+        "tableSizeBytes": 150697309,
         "deletionProtection": true
       },
       "resourceType": "DynamoDB",
@@ -118416,8 +118293,8 @@
         },
         "ttlEnabled": false,
         "pointInTimeRecovery": false,
-        "itemCount": 4478921,
-        "tableSizeBytes": 44403139262,
+        "itemCount": 4488904,
+        "tableSizeBytes": 44510678341,
         "deletionProtection": true
       },
       "resourceType": "DynamoDB",
@@ -131387,7 +131264,7 @@
             {
               "id": "i-0d27a1bd3baf5618d",
               "port": 8090,
-              "health": "unhealthy"
+              "health": "healthy"
             },
             {
               "id": "i-058df7b563aed4f8a",
@@ -139085,8 +138962,8 @@
         },
         "ttlEnabled": false,
         "pointInTimeRecovery": false,
-        "itemCount": 13934,
-        "tableSizeBytes": 110525263,
+        "itemCount": 13984,
+        "tableSizeBytes": 110920762,
         "deletionProtection": true
       },
       "resourceType": "DynamoDB",
@@ -154436,6 +154313,13 @@
             },
             {
               "protocol": "tcp",
+              "fromPort": 22,
+              "toPort": 22,
+              "cidr": "10.5.224.0/22",
+              "direction": "inbound"
+            },
+            {
+              "protocol": "tcp",
               "fromPort": 5672,
               "toPort": 5672,
               "cidr": "10.5.224.0/22",
@@ -169187,7 +169071,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 31.76067259069532,
+        "backup_used_space": 31.760682127438486,
         "order_id": "",
         "associated_with_ddm": false
       },
@@ -169306,7 +169190,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 1.2517543565481901,
+        "backup_used_space": 1.252049995586276,
         "order_id": "",
         "associated_with_ddm": false
       },
@@ -169425,7 +169309,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 8.388836580328643,
+        "backup_used_space": 8.3888747273013,
         "order_id": "",
         "associated_with_ddm": false
       },
@@ -169462,7 +169346,7 @@
       "privateIp": "10.5.20.150",
       "publiclyExposed": false,
       "internetFacing": false,
-      "status": "stopped",
+      "status": "running",
       "operatingSystem": "SQLServer 2014_EE",
       "platform": "SQLServer",
       "instanceType": "rds.mssql.spec.n1.ee.large.2",
@@ -169475,7 +169359,7 @@
       },
       "raw": {
         "id": "cdc2877b04f44caa8a8e74228a11ad02in04",
-        "status": "SHUTDOWN",
+        "status": "ACTIVE",
         "name": "rds-cencon_5",
         "port": 1433,
         "type": "Single",
@@ -169486,7 +169370,7 @@
           "version": "2014_EE"
         },
         "created": "2026-04-24T15:01:47+0000",
-        "updated": "2026-05-24T14:12:08+0000",
+        "updated": "2026-05-29T18:11:34+0000",
         "volume": {
           "type": "CLOUDSSD",
           "size": 40
@@ -169496,7 +169380,7 @@
             "id": "6d623e1746184e75824a2683ccbbe6fcno04",
             "name": "rds-cenco_5_2_node0",
             "role": "master",
-            "status": "SHUTDOWN",
+            "status": "ACTIVE",
             "availability_zone": "la-north-2c"
           }
         ],
@@ -169537,16 +169421,16 @@
           "charge_mode": "postPaid"
         },
         "backup_strategy": {
-          "start_time": "",
-          "keep_days": 0
+          "start_time": "05:00-06:00",
+          "keep_days": 7
         },
         "maintenance_window": "18:00-22:00",
         "related_instance": [],
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "SA Pacific Standard Time",
-        "backup_used_space": 3.9770350456237793,
-        "storage_used_space": 0,
+        "backup_used_space": 1.584460735321045,
+        "storage_used_space": 1.775,
         "order_id": "",
         "associated_with_ddm": false,
         "max_iops": 3800
@@ -169664,7 +169548,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 50.2228779848665,
+        "backup_used_space": 50.226196771487594,
         "order_id": "CS2605090055WOHQ0",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-09T15:59:59Z"
@@ -169785,8 +169669,8 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "SA Pacific Standard Time",
-        "backup_used_space": 540.162793636322,
-        "storage_used_space": 297.4947,
+        "backup_used_space": 540.4468026161194,
+        "storage_used_space": 297.4556,
         "order_id": "CS2605090054X655Q",
         "associated_with_ddm": false,
         "max_iops": 26800,
@@ -170027,7 +169911,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 36.72908516321331,
+        "backup_used_space": 36.761204914189875,
         "order_id": "",
         "associated_with_ddm": false
       },
@@ -170146,7 +170030,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 3.702102955430746,
+        "backup_used_space": 3.722263630479574,
         "order_id": "CS2605010347ZRKUO",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -170275,7 +170159,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 1.2012989902868867,
+        "backup_used_space": 1.2020428562536836,
         "order_id": "CS260501034734G6F",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -170404,7 +170288,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 7.631291350349784,
+        "backup_used_space": 7.632121047005057,
         "order_id": "CS26050103471SVOV",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -170533,7 +170417,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 1498.6792180854827,
+        "backup_used_space": 1498.8178852507845,
         "order_id": "CS2605010347ZASSZ",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -170653,7 +170537,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 2.1435165759176016,
+        "backup_used_space": 2.143745457753539,
         "order_id": "CS260501034701XLB",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -170782,7 +170666,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 639.5197963062674,
+        "backup_used_space": 639.6154879871756,
         "order_id": "CS2605010347ZI61B",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -171159,7 +171043,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 2044.9068611571565,
+        "backup_used_space": 2045.5632561156526,
         "order_id": "CS260501034433M9L",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -171526,7 +171410,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 593.0248132031411,
+        "backup_used_space": 593.0434193890542,
         "order_id": "CS26050103440Z9WJ",
         "associated_with_ddm": false,
         "expiration_time": "2026-06-01T15:59:59Z"
@@ -171655,7 +171539,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC-05:00",
-        "backup_used_space": 1.6891817040741444,
+        "backup_used_space": 1.7068532891571522,
         "order_id": "CS2605250346BZRH4",
         "associated_with_ddm": false,
         "expiration_time": "2026-07-01T15:59:59Z"
@@ -171784,7 +171668,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC",
-        "backup_used_space": 114.41179179865867,
+        "backup_used_space": 114.41821956355125,
         "order_id": "CS26052803488ONHP",
         "associated_with_ddm": false,
         "expiration_time": "2026-07-04T15:59:59Z"
@@ -171913,7 +171797,7 @@
         "disk_encryption_id": "",
         "enterprise_project_id": "0",
         "time_zone": "UTC",
-        "backup_used_space": 135.59159517288208,
+        "backup_used_space": 135.59194803237915,
         "order_id": "",
         "associated_with_ddm": false
       },
@@ -177769,7 +177653,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "56dc1f77-7b5c-44f7-97ca-9d2481d7cbf8",
               "privateIP": "10.5.224.220",
               "configurationUpToDate": true
@@ -177898,7 +177782,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "16d613e3-261b-41a5-a141-4d215dbf5057",
               "privateIP": "10.5.224.228",
               "configurationUpToDate": true
@@ -178027,7 +177911,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "05228585-9cb4-43b3-a45a-dc68f79563ce",
               "privateIP": "10.5.224.79",
               "configurationUpToDate": true
@@ -178157,7 +178041,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "7f4b2828-52e8-4593-b5e4-1c28f989f055",
               "privateIP": "10.5.224.209",
               "configurationUpToDate": true
@@ -178286,7 +178170,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "65c1534b-fe11-4b1d-a493-c5a84bdde11f",
               "privateIP": "10.5.224.193",
               "configurationUpToDate": true
@@ -178416,7 +178300,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "106af74e-7218-45da-ae41-6ecf57274d07",
               "privateIP": "10.5.224.18",
               "configurationUpToDate": true
@@ -178546,7 +178430,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:47.49494+08:00",
+              "lastProbeTime": "2026-05-30T02:59:18.033304+08:00",
               "serverId": "7af54bb8-136c-4733-b1a0-9549c457c3e2",
               "privateIP": "10.5.224.203",
               "configurationUpToDate": true
@@ -178654,21 +178538,21 @@
               "status": "False",
               "reason": "CertificateValid",
               "message": "{\"certType\":\"cluster\",\"msg\":\"cluster certificate valid\",\"expireAt\":\"2031-02-03T22:38:14.160383+08:00\"}",
-              "lastProbeTime": "2026-05-29 15:53:32.542346 +0000 UTC",
+              "lastProbeTime": "2026-05-29 18:53:32.57236 +0000 UTC",
               "lastTransitionTime": "2026-01-14 07:57:56.055114 +0000 UTC"
             },
             {
               "type": "AgencyAvailable",
               "status": "True",
-              "lastProbeTime": "2026-05-29 12:01:28.774703 +0000 UTC",
+              "lastProbeTime": "2026-05-29 16:01:45.543827 +0000 UTC",
               "lastTransitionTime": "2026-05-27 19:54:05.690777 +0000 UTC"
             },
             {
               "type": "ElasticPublicIP",
               "status": "UNBOUND",
               "reason": "UNBOUND",
-              "lastProbeTime": "2026-05-29 15:56:56.36257254 +0000 UTC",
-              "lastTransitionTime": "2026-05-29 15:56:56.362574294 +0000 UTC"
+              "lastProbeTime": "2026-05-29 18:59:31.277374494 +0000 UTC",
+              "lastTransitionTime": "2026-05-29 18:59:31.277375938 +0000 UTC"
             }
           ],
           "endpoints": [
@@ -178779,7 +178663,7 @@
               "name": "cce-reditos-nodepool-rnd4j",
               "uid": "028678c7-2f7d-11ef-859c-0255ac10011d",
               "creationTimestamp": "2024-06-21 03:19:03.158849 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:50.231527 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:30.22314 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -178880,7 +178764,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "7e1d0efc-c30a-4c09-b909-3de8fb040b42",
               "privateIP": "172.25.1.198",
               "conditions": [
@@ -178924,7 +178808,7 @@
               "name": "cce-reditos-nodepool-02ll4",
               "uid": "03b11da6-2f7d-11ef-859c-0255ac10011d",
               "creationTimestamp": "2024-06-21 03:19:05.116339 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:48.225194 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:31.198018 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179025,7 +178909,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "833b7deb-4ea0-4992-b9fe-dc8b2d8c8013",
               "privateIP": "172.25.0.181",
               "conditions": [
@@ -179069,7 +178953,7 @@
               "name": "cce-reditos-nodepool-wf6ow",
               "uid": "6d016b80-3462-11f1-953a-0255ac1000b9",
               "creationTimestamp": "2026-04-09 22:21:16.552909 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:47.204258 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:28.20445 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179159,7 +179043,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "c4f55736-11d4-458c-836a-4f5f7c08d97d",
               "privateIP": "172.25.0.35",
               "conditions": [
@@ -179203,7 +179087,7 @@
               "name": "cce-reditos-nodepool-f8qx4",
               "uid": "6d016ddb-3462-11f1-953a-0255ac1000b9",
               "creationTimestamp": "2026-04-09 22:21:16.552928 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:45.671804 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:26.823787 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179293,7 +179177,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "f28404f4-881f-4fb8-84a8-938dc95f44f1",
               "privateIP": "172.25.0.116",
               "conditions": [
@@ -179337,7 +179221,7 @@
               "name": "cce-reditos-nodepool-8jqra-9mwci",
               "uid": "dbb95c90-16b6-11ee-ada3-0255ac10011e",
               "creationTimestamp": "2023-06-29 19:55:12.131723 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:51.218854 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:32.222489 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179438,7 +179322,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "aa7ff382-93b5-47e4-b0a1-b6fe836f0250",
               "privateIP": "172.25.3.44",
               "conditions": [
@@ -179482,7 +179366,7 @@
               "name": "cce-reditos-nodepool-8jqra-j20nt",
               "uid": "dbb95f23-16b6-11ee-ada3-0255ac10011e",
               "creationTimestamp": "2023-06-29 19:55:12.131744 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:49.233514 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:29.253298 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179583,7 +179467,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "96c0f937-c5e7-472c-9c91-e7680f7935f9",
               "privateIP": "172.25.0.21",
               "conditions": [
@@ -179627,7 +179511,7 @@
               "name": "cce-reditos-nodepool-8jqra-v1z7m",
               "uid": "dbb96081-16b6-11ee-ada3-0255ac10011e",
               "creationTimestamp": "2023-06-29 19:55:12.131758 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:52.184687 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:33.238031 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179728,7 +179612,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "3e79cdeb-8136-4eb4-a1ef-3dc9a90f395f",
               "privateIP": "172.25.3.195",
               "conditions": [
@@ -179772,7 +179656,7 @@
               "name": "cce-reditos-nodepool-ns18k",
               "uid": "ec01f25a-ec3f-11ee-b63e-0255ac100103",
               "creationTimestamp": "2024-03-27 13:42:58.177756 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:56:46.230406 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:57:27.263749 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "d8a914fd-16b6-11ee-ada3-0255ac10011e",
                 "os.architecture": "amd64"
@@ -179873,7 +179757,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:57.446382+08:00",
+              "lastProbeTime": "2026-05-30T02:59:28.375736+08:00",
               "serverId": "74768290-eabc-48f9-90cf-320f6900d4c4",
               "privateIP": "172.25.1.116",
               "conditions": [
@@ -179993,15 +179877,15 @@
               "status": "False",
               "reason": "CertificateValid",
               "message": "{\"certType\":\"cluster\",\"msg\":\"cluster certificate valid\",\"expireAt\":\"2031-02-05T11:43:09.878164+08:00\"}",
-              "lastProbeTime": "2026-05-29 15:52:51.541397 +0000 UTC",
+              "lastProbeTime": "2026-05-29 18:52:51.573832 +0000 UTC",
               "lastTransitionTime": "2026-01-14 08:09:35.715516 +0000 UTC"
             },
             {
               "type": "ElasticPublicIP",
               "status": "UNBOUND",
               "reason": "UNBOUND",
-              "lastProbeTime": "2026-05-29 15:57:01.728648944 +0000 UTC",
-              "lastTransitionTime": "2026-05-29 15:57:01.728650571 +0000 UTC"
+              "lastProbeTime": "2026-05-29 18:59:36.495396856 +0000 UTC",
+              "lastTransitionTime": "2026-05-29 18:59:36.495398756 +0000 UTC"
             }
           ],
           "endpoints": [
@@ -180118,7 +180002,7 @@
               "name": "cce-salo-27989",
               "uid": "20f44c24-9274-11f0-9a2f-0255ac1000bc",
               "creationTimestamp": "2025-09-15 20:39:51.526771 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:53:38.205753 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:54:19.195927 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "DefaultPool",
                 "os.architecture": "amd64"
@@ -180214,7 +180098,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.439509+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.409603+08:00",
               "serverId": "b716aacf-a592-4b3c-ace9-ff28a1c7c22d",
               "privateIP": "10.5.131.163",
               "configurationUpToDate": true
@@ -180252,7 +180136,7 @@
               "name": "cce-salo-06088",
               "uid": "931e022b-9273-11f0-8f65-0255ac1000ca",
               "creationTimestamp": "2025-09-15 20:35:53.56473 +0000 UTC",
-              "updateTimestamp": "2026-05-29 15:53:37.762746 +0000 UTC",
+              "updateTimestamp": "2026-05-29 18:54:18.661207 +0000 UTC",
               "annotations": {
                 "kubernetes.io/node-pool.id": "DefaultPool",
                 "os.architecture": "amd64"
@@ -180348,7 +180232,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.439509+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.409603+08:00",
               "serverId": "56b83b4c-6940-4b54-8bc5-f3692eba5d5e",
               "privateIP": "10.5.131.120",
               "configurationUpToDate": true
@@ -180455,15 +180339,15 @@
               "status": "False",
               "reason": "CertificateValid",
               "message": "{\"certType\":\"cluster\",\"msg\":\"cluster certificate valid\",\"expireAt\":\"2031-02-13T12:01:19.775419+08:00\"}",
-              "lastProbeTime": "2026-05-29 15:52:14.818386 +0000 UTC",
+              "lastProbeTime": "2026-05-29 18:52:15.185681 +0000 UTC",
               "lastTransitionTime": "2026-01-14 07:58:55.054306 +0000 UTC"
             },
             {
               "type": "ElasticPublicIP",
               "status": "UNBOUND",
               "reason": "UNBOUND",
-              "lastProbeTime": "2026-05-29 15:57:12.491287867 +0000 UTC",
-              "lastTransitionTime": "2026-05-29 15:57:12.491290391 +0000 UTC"
+              "lastProbeTime": "2026-05-29 18:59:44.449310406 +0000 UTC",
+              "lastTransitionTime": "2026-05-29 18:59:44.449312004 +0000 UTC"
             }
           ],
           "endpoints": [
@@ -180635,7 +180519,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.707723+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.70627+08:00",
               "serverId": "66dbf3a6-4ed3-4803-bdea-e2b370688f55",
               "privateIP": "10.5.239.206",
               "configurationUpToDate": true
@@ -180764,7 +180648,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.707723+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.70627+08:00",
               "serverId": "2f2b383f-0a55-4b0f-a6f1-9050caf8d38f",
               "privateIP": "10.5.239.162",
               "configurationUpToDate": true
@@ -180890,7 +180774,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.707723+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.70627+08:00",
               "serverId": "7374b6ca-f3b3-4d80-a17b-7e834162228c",
               "privateIP": "10.5.239.207",
               "configurationUpToDate": true
@@ -181016,7 +180900,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.707723+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.70627+08:00",
               "serverId": "116b48e1-4083-444a-b7d7-54dde0221d8b",
               "privateIP": "10.5.238.222",
               "configurationUpToDate": true
@@ -181141,7 +181025,7 @@
             },
             "status": {
               "phase": "Active",
-              "lastProbeTime": "2026-05-29T23:56:56.707723+08:00",
+              "lastProbeTime": "2026-05-30T02:59:27.70627+08:00",
               "serverId": "643ee661-e2c7-4d2f-a0d7-4194b8bbff4e",
               "privateIP": "10.5.239.68",
               "configurationUpToDate": true
@@ -181250,21 +181134,21 @@
               "status": "False",
               "reason": "CertificateValid",
               "message": "{\"certType\":\"cluster\",\"msg\":\"cluster certificate valid\",\"expireAt\":\"2031-02-03T04:49:45.486051+08:00\"}",
-              "lastProbeTime": "2026-05-29 15:53:27.540708 +0000 UTC",
+              "lastProbeTime": "2026-05-29 18:53:27.613428 +0000 UTC",
               "lastTransitionTime": "2026-01-14 07:59:23.053979 +0000 UTC"
             },
             {
               "type": "AgencyAvailable",
               "status": "True",
-              "lastProbeTime": "2026-05-29 12:01:17.002866 +0000 UTC",
+              "lastProbeTime": "2026-05-29 16:02:46.941828 +0000 UTC",
               "lastTransitionTime": "2026-05-27 19:24:42.885534 +0000 UTC"
             },
             {
               "type": "ElasticPublicIP",
               "status": "UNBOUND",
               "reason": "UNBOUND",
-              "lastProbeTime": "2026-05-29 15:57:15.186046887 +0000 UTC",
-              "lastTransitionTime": "2026-05-29 15:57:15.186048529 +0000 UTC"
+              "lastProbeTime": "2026-05-29 18:59:46.642251518 +0000 UTC",
+              "lastTransitionTime": "2026-05-29 18:59:46.642252963 +0000 UTC"
             }
           ],
           "endpoints": [

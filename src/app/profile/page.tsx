@@ -22,7 +22,7 @@ const roleDescriptions: Record<Role, string[]> = {
   ],
   plataformas: [
     "Puede ver inventario, dashboard y monitoreo",
-    "Puede exportar informacion",
+    "Puede exportar información",
     "No puede modificar metadata ni ejecutar comandos remotos",
   ],
   operaciones: [
@@ -34,6 +34,13 @@ const roleDescriptions: Record<Role, string[]> = {
     "Puede ver inventario",
     "Sin acceso a comandos remotos ni billing",
   ],
+};
+
+const roleAccessSummary: Record<Role, string> = {
+  admin: "Acceso completo",
+  plataformas: "Acceso operativo",
+  operaciones: "Acceso de monitoreo",
+  audit: "Acceso de consulta",
 };
 
 const roleColors: Record<Role, string> = {
@@ -99,9 +106,6 @@ export default function ProfilePage() {
   const userInitial = session.user.name?.charAt(0).toUpperCase() || "U";
   const userEmail = session.user.email || "usuario@ejemplo.com";
   const userName = session.user.name || "Usuario";
-  const userGroups = session.user.groups?.length
-    ? session.user.groups.join(", ")
-    : "Sin grupos detectados en la sesion";
 
   return (
     <main className="min-h-screen bg-[var(--bg-dark)]">
@@ -118,7 +122,7 @@ export default function ProfilePage() {
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="px-4 py-2 rounded-lg bg-[var(--error)]/10 text-[var(--error)] hover:bg-[var(--error)]/20 transition-colors border border-[var(--error)]/20"
           >
-            Cerrar sesion
+            Cerrar sesión
           </button>
         </div>
       </div>
@@ -146,12 +150,12 @@ export default function ProfilePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <InfoCard label="Correo electronico" value={userEmail} />
+              <InfoCard label="Correo electrónico" value={userEmail} />
               <InfoCard
-                label="Ultimo acceso"
+                label="Último acceso"
                 value={lastLogin ? new Date(lastLogin).toLocaleString() : "Primera vez"}
               />
-              <InfoCard label="Grupos detectados" value={userGroups} />
+              <InfoCard label="Nivel de acceso" value={roleAccessSummary[userRole]} />
             </div>
 
             <div className="border-t border-[var(--border)] my-6" />

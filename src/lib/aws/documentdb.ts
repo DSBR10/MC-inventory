@@ -66,7 +66,7 @@ export async function getAWSDocumentDBInventory(account: AWSAccount) {
           accountId: account.id,
           service: "DocumentDB",
           name: cluster.DBClusterIdentifier || "N/A",
-          id: cluster.DBClusterResourceId || "N/A",
+          id: cluster.DbClusterResourceId || "N/A",
           host: cluster.Endpoint || "N/A",
           status: cluster.Status || "UNKNOWN",
           operatingSystem: cluster.Engine || "docdb",
@@ -89,7 +89,7 @@ export async function getAWSDocumentDBInventory(account: AWSAccount) {
             dbClusterParameterGroup: cluster.DBClusterParameterGroup,
             vpcSecurityGroups: cluster.VpcSecurityGroups,
             associatedRoles: cluster.AssociatedRoles,
-            clonedFromClusterIdentifier: cluster.ClonedFromAccount,
+            clonedFromClusterIdentifier: (cluster as any).ClonedFromAccount,
             tagsSource: cluster.TagList,
           },
         });

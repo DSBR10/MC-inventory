@@ -4,10 +4,16 @@ import { MetricData, MetricStatistic } from '@/types/monitoring-aws';
 export class CloudWatchMetricsService {
   private client: CloudWatchClient;
 
-  constructor(region: string = process.env.AWS_REGION || 'us-east-1') {
+  constructor(
+    region: string = process.env.AWS_REGION || 'us-east-1',
+    credentials?: {
+      accessKeyId: string;
+      secretAccessKey: string;
+    },
+  ) {
     this.client = new CloudWatchClient({
       region,
-      credentials: {
+      credentials: credentials || {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
       },

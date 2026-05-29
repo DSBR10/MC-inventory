@@ -65,6 +65,7 @@ export async function getAWSDynamoDBInventory(account: AWSAccount) {
 
         const table = tableData.Table;
         if (!table) continue;
+        const tableDetails = table as any;
 
         // Get TTL status with retry
         let ttlEnabled = false;
@@ -134,9 +135,11 @@ export async function getAWSDynamoDBInventory(account: AWSAccount) {
           host: table.TableArn || "N/A",
           status: table.TableStatus || "UNKNOWN",
           operatingSystem: table.TableStatus || "N/A",
-          platform: table.BillingMode || "PROVISIONED",
+          platform: tableDetails.BillingMode || "PROVISIONED",
           architecture: table.KeySchema?.[0]?.KeyType || "N/A",
-          instanceType: table.PartitionKey || "N/A",
+          instanceType:
+            table.KeySchema?.find((k) => k.KeyType === "HASH")?.AttributeName ||
+            "N/A",
           availabilityZone: region,
           tags,
           raw: {
@@ -167,7 +170,7 @@ export async function getAWSDynamoDBInventory(account: AWSAccount) {
             })),
             provisionedThroughput: table.ProvisionedThroughput,
             streamSpecification: table.StreamSpecification,
-            sseDescription: table.SSDSDescription,
+            sseDescription: table.SSEDescription,
             ttlEnabled,
             pointInTimeRecovery,
             itemCount: table.ItemCount,

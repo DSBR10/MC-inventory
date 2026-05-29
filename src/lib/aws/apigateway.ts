@@ -58,7 +58,7 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
           name: api.name || "N/A",
           id: api.id || "N/A",
           host: api.endpointConfiguration?.types?.[0] || "N/A",
-          status: api.status || "AVAILABLE",
+          status: "AVAILABLE",
           operatingSystem: api.apiKeySource || "N/A",
           platform: api.endpointConfiguration?.types?.join(", ") || "N/A",
           architecture: api.version || "N/A",
@@ -66,7 +66,7 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
           availabilityZone: region,
           tags: formatAwsTags(api.tags),
           raw: {
-            arn: api.apiEndpoint,
+            arn: api.id,
             description: api.description,
             createdDate: api.createdDate,
             version: api.version,
@@ -100,6 +100,7 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
       const apiKeysData = await client.send(new GetApiKeysCommand({}));
 
       for (const key of apiKeysData.items || []) {
+        const keyDetails = key as any;
         inventory.push({
           uniqueKey: `AWS-${account.id}-APIGATEWAY-KEY-${key.id}`,
           provider: "AWS",
@@ -108,20 +109,20 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
           service: "API Gateway",
           name: key.name || "N/A",
           id: key.id || "N/A",
-          host: key.apiId || "N/A",
+          host: keyDetails.apiId || "N/A",
           status: key.enabled ? "Enabled" : "Disabled",
-          operatingSystem: key.stageKey?.[0] || "N/A",
+          operatingSystem: keyDetails.stageKey?.[0] || keyDetails.stageKeys?.[0] || "N/A",
           platform: "API Key",
           architecture: "N/A",
-          instanceType: key.usagePlanKeys?.length?.toString() || "N/A",
+          instanceType: keyDetails.usagePlanKeys?.length?.toString() || "N/A",
           availabilityZone: region,
           tags: {},
           raw: {
             description: key.description,
             createdDate: key.createdDate,
             lastUpdated: key.lastUpdatedDate,
-            stageKeys: key.stageKey,
-            usagePlanKeys: key.usagePlanKeys,
+            stageKeys: keyDetails.stageKey || keyDetails.stageKeys,
+            usagePlanKeys: keyDetails.usagePlanKeys,
           },
         });
       }

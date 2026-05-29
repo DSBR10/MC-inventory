@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import { getRDSMetrics } from "@/lib/aws/cloudwatch-metrics";
 import {
   getAWSAccountByNameOrId,
@@ -7,6 +8,9 @@ import {
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const { searchParams } = new URL(request.url);
     const dbInstanceIds = searchParams.get("dbInstanceIds")?.split(",") || [];
     const accountNameOrId = searchParams.get("account");

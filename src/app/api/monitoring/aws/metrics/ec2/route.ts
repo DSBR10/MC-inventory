@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import { getEC2Metrics } from "@/lib/aws/cloudwatch-metrics";
 import {
   getAWSAccountByNameOrId,
@@ -7,6 +8,9 @@ import {
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const { searchParams } = new URL(request.url);
     const instanceIds = searchParams.get("instanceIds")?.split(",") || [];
     const accountNameOrId = searchParams.get("account");

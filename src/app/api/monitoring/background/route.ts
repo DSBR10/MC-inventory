@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import {
   startMonitoringBackgroundJob,
   stopMonitoringBackgroundJob,
@@ -11,6 +12,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const cache = readMonitoringCache();
     const status = getBackgroundJobStatus();
 
@@ -42,6 +46,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const guard = await requireApiSession("settings:modify");
+    if (guard.response) return guard.response;
+
     const body = await request.json();
     const { action } = body;
 

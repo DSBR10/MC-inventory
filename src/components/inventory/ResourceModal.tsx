@@ -39,18 +39,10 @@ export default function ResourceModal({
 }: Props) {
   const [tab, setTab] = useState<Tab>("overview");
 
-  if (!item) return null;
-
-  const findResource = (id?: string) => {
-    if (!id) return null;
-
-    return allItems.find((r) => r.id === id || r.name === id || r.host === id);
-  };
-
   const securityAnalysis = useMemo(() => {
     const findings: string[] = [];
 
-    (item.securityGroups || []).forEach((sg) => {
+    (item?.securityGroups || []).forEach((sg) => {
       (sg.inboundRules || []).forEach((rule) => {
         const openToWorld = rule.cidr === "0.0.0.0/0";
 
@@ -71,7 +63,9 @@ export default function ResourceModal({
     });
 
     return findings;
-  }, [item]);
+  }, [item?.securityGroups]);
+
+  if (!item) return null;
 
   const riskLevel =
     securityAnalysis.length >= 3

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import {
   readMonitoringCache,
   getCacheAge,
@@ -36,6 +37,9 @@ async function refreshMonitoring() {
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get("accountId");
     const forceRefresh = searchParams.get("refresh") === "true";

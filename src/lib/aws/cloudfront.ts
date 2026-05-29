@@ -49,6 +49,8 @@ export async function getAWSCloudFrontInventory(account: AWSAccount) {
 
       const dist = detail.Distribution;
       if (!dist) continue;
+      const distributionConfig = dist.DistributionConfig as any;
+      const defaultCacheBehavior = dist.DistributionConfig?.DefaultCacheBehavior as any;
 
       inventory.push({
         uniqueKey: `AWS-${account.id}-CLOUDFRONT-${distSummary.Id}`,
@@ -73,27 +75,26 @@ export async function getAWSCloudFrontInventory(account: AWSAccount) {
           origins: dist.DistributionConfig?.Origins?.Items || [],
           defaultCacheBehavior: {
             targetOriginId:
-              dist.DistributionConfig?.DefaultCacheBehavior?.TargetOriginId,
+              defaultCacheBehavior?.TargetOriginId,
             viewerProtocolPolicy:
-              dist.DistributionConfig?.DefaultCacheBehavior
-                ?.ViewerProtocolPolicy,
-            minTTL: dist.DistributionConfig?.DefaultCacheBehavior?.MinTTL,
+              defaultCacheBehavior?.ViewerProtocolPolicy,
+            minTTL: defaultCacheBehavior?.MinTTL,
             allowedMethods:
-              dist.DistributionConfig?.DefaultCacheBehavior?.AllowedMethods
-                ?.Items || [],
+              defaultCacheBehavior?.AllowedMethods?.Items || [],
             cachedMethods:
-              dist.DistributionConfig?.DefaultCacheBehavior?.CachedMethods
-                ?.Items || [],
+              defaultCacheBehavior?.CachedMethods?.Items ||
+              defaultCacheBehavior?.AllowedMethods?.CachedMethods?.Items ||
+              [],
           },
           viewerCertificate: dist.DistributionConfig?.ViewerCertificate,
           logging: dist.DistributionConfig?.Logging?.Enabled,
           geoRestriction:
-            dist.DistributionConfig?.GeoRestriction?.RestrictionType,
+            distributionConfig?.Restrictions?.GeoRestriction?.RestrictionType,
           priceClass: dist.DistributionConfig?.PriceClass,
           webACLId: dist.DistributionConfig?.WebACLId,
           comment: dist.DistributionConfig?.Comment,
-          createdTime: dist.ShortDescription?.LCD,
-          lastModifiedTime: dist.ShortDescription?.LD,
+          createdTime: dist.LastModifiedTime,
+          lastModifiedTime: dist.LastModifiedTime,
         },
       });
     }

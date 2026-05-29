@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Loader2, Menu } from "lucide-react";
 
 import Sidebar from "@/components/layout/Sidebar";
 import UserMenu from "@/components/layout/UserMenu";
@@ -31,6 +31,11 @@ export default function ClientLayout({
     time,
     setTime
   ] = useState("");
+
+  const [
+    routeLoading,
+    setRouteLoading
+  ] = useState(false);
 
   useEffect(() => {
 
@@ -62,6 +67,20 @@ export default function ClientLayout({
 
   }, []);
 
+  useEffect(() => {
+
+    if (!routeLoading) return;
+
+    const timeout =
+      setTimeout(() => {
+        setRouteLoading(false);
+      }, 850);
+
+    return () =>
+      clearTimeout(timeout);
+
+  }, [pathname, routeLoading]);
+
   if (isAuthPage) {
 
     return <>{children}</>;
@@ -84,6 +103,9 @@ export default function ClientLayout({
         open={sidebarOpen}
         onClose={() =>
           setSidebarOpen(false)
+        }
+        onNavigate={() =>
+          setRouteLoading(true)
         }
       />
 
@@ -233,6 +255,61 @@ export default function ClientLayout({
 
         </main>
 
+      </div>
+
+      <RouteLoadingOverlay visible={routeLoading} />
+
+    </div>
+
+  );
+
+}
+
+function RouteLoadingOverlay({
+  visible
+}: {
+  visible: boolean;
+}) {
+
+  return (
+
+    <div
+      className={`
+        fixed
+        inset-0
+        z-[80]
+        flex
+        items-center
+        justify-center
+        bg-[var(--bg-dark)]/80
+        backdrop-blur-xl
+        transition-all
+        duration-300
+        ${
+          visible
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }
+      `}
+    >
+
+      <div className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 shadow-2xl">
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-cyan-400/30 bg-cyan-500/10">
+            <Loader2 className="h-6 w-6 animate-spin text-cyan-300" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">
+              Cargando módulo
+            </p>
+            <p className="mt-1 text-xs text-[var(--text-secondary)]">
+              Preparando datos y visualizaciones...
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/5">
+          <div className="h-full w-2/3 animate-pulse rounded-full bg-cyan-400" />
+        </div>
       </div>
 
     </div>

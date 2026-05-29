@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import { CloudTrailService } from "@/services/aws/cloudtrail.service";
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const searchParams = request.nextUrl.searchParams;
     const accountId = searchParams.get("accountId");
     const region = searchParams.get("region") || "us-east-1";
@@ -13,15 +17,8 @@ export async function GET(request: NextRequest) {
     const eventName = searchParams.get("eventName") || undefined;
     const maxResults = parseInt(searchParams.get("maxResults") || "50");
 
-    if (!accountId) {
-      return NextResponse.json(
-        { error: "accountId parameter is required" },
-        { status: 400 },
-      );
-    }
-
-    const { getAWSAccountById } = await import("@/lib/aws/aws-accounts");
-    const account = getAWSAccountById(accountId);
+    const { getAWSAccountById, getDefaultAWSAccount } = await import("@/lib/aws/aws-accounts");
+    const account = accountId ? getAWSAccountById(accountId) : getDefaultAWSAccount();
 
     if (!account) {
       return NextResponse.json(

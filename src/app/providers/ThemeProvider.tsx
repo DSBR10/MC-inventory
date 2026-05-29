@@ -54,94 +54,69 @@ export const themeLabels = {
 
 };
 
+const applyAppearance = (
+  mode: Appearance
+) => {
+
+  const html =
+    document.documentElement;
+
+  if (mode === "system") {
+
+    const isDark =
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+    html.setAttribute(
+      "data-mode",
+      isDark
+        ? "dark"
+        : "light"
+    );
+
+    return;
+
+  }
+
+  html.setAttribute(
+    "data-mode",
+    mode
+  );
+
+};
+
 export function ThemeProvider({
   children
 }: {
   children: React.ReactNode;
 }) {
 
-  const [mounted, setMounted] =
-    useState(false);
-
   const [theme, setThemeState] =
-    useState<ThemeName>("purple");
+    useState<ThemeName>(() => {
+      if (typeof window === "undefined") return "purple";
+      const savedTheme = localStorage.getItem("app-theme") as ThemeName | null;
+      return savedTheme && themeLabels[savedTheme] ? savedTheme : "purple";
+    });
 
   const [appearance, setAppearanceState] =
-    useState<Appearance>("dark");
+    useState<Appearance>(() => {
+      if (typeof window === "undefined") return "dark";
+      const savedAppearance = localStorage.getItem("app-appearance") as Appearance | null;
+      return savedAppearance || "dark";
+    });
 
   useEffect(() => {
-
-    setMounted(true);
-
-    const savedTheme =
-      localStorage.getItem(
-        "app-theme"
-      ) as ThemeName;
-
-    const savedAppearance =
-      localStorage.getItem(
-        "app-appearance"
-      ) as Appearance;
-
-    if (
-      savedTheme &&
-      themeLabels[savedTheme]
-    ) {
-
-      setThemeState(savedTheme);
-
-      document.documentElement.setAttribute(
-        "data-theme",
-        savedTheme
-      );
-
-    }
-
-    if (savedAppearance) {
-
-      setAppearanceState(
-        savedAppearance
-      );
-
-      applyAppearance(
-        savedAppearance
-      );
-
-    }
-
-  }, []);
-
-  const applyAppearance = (
-    mode: Appearance
-  ) => {
-
-    const html =
-      document.documentElement;
-
-    if (mode === "system") {
-
-      const isDark =
-        window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-
-      html.setAttribute(
-        "data-mode",
-        isDark
-          ? "dark"
-          : "light"
-      );
-
-      return;
-
-    }
-
-    html.setAttribute(
-      "data-mode",
-      mode
+    document.documentElement.setAttribute(
+      "data-theme",
+      theme
     );
 
-  };
+    applyAppearance(
+      appearance
+    );
+
+  }, [appearance, theme]);
 
   const setTheme = (
     newTheme: ThemeName
@@ -175,33 +150,6 @@ export function ThemeProvider({
     applyAppearance(mode);
 
   };
-
-  if (!mounted) {
-
-    return (
-
-      <ThemeContext.Provider
-        value={{
-
-          theme,
-          setTheme,
-
-          appearance,
-          setAppearance,
-
-          themeName:
-            themeLabels[theme],
-
-        }}
-      >
-
-        {children}
-
-      </ThemeContext.Provider>
-
-    );
-
-  }
 
   return (
 

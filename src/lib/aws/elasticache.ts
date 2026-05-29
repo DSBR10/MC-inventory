@@ -85,7 +85,9 @@ export async function getAWSElastiCacheInventory(account: AWSAccount) {
           cacheNodes: cluster.CacheNodes?.map((node) => ({
             id: node.CacheNodeId,
             status: node.CacheNodeStatus,
-            availabilityZone: node.PreferredAvailabilityZone,
+            availabilityZone:
+              (node as any).PreferredAvailabilityZone ||
+              (node as any).CustomerAvailabilityZone,
             createTime: node.CacheNodeCreateTime,
           })),
           atRestEncryptionEnabled: cluster.AtRestEncryptionEnabled,
@@ -101,6 +103,7 @@ export async function getAWSElastiCacheInventory(account: AWSAccount) {
     );
 
     for (const replication of replicationData.ReplicationGroups || []) {
+      const replicationDetails = replication as any;
       let tags: Record<string, string> = {};
 
       try {
@@ -127,22 +130,25 @@ export async function getAWSElastiCacheInventory(account: AWSAccount) {
         service: "ElastiCache",
         name: replication.ReplicationGroupId || "N/A",
         id: replication.ARN || "N/A",
-        host: replication.PrimaryEndpoint?.Address || "N/A",
+        host:
+          replicationDetails.PrimaryEndpoint?.Address ||
+          replicationDetails.ConfigurationEndpoint?.Address ||
+          "N/A",
         status: replication.Status || "UNKNOWN",
         operatingSystem: replication.Engine || "N/A",
-        platform: replication.EngineVersion || "N/A",
-        architecture: replication.CacheNodeType || "N/A",
-        instanceType: replication.CacheNodeType || "N/A",
-        availabilityZone: replication.Region || region,
+        platform: replicationDetails.EngineVersion || "N/A",
+        architecture: replicationDetails.CacheNodeType || "N/A",
+        instanceType: replicationDetails.CacheNodeType || "N/A",
+        availabilityZone: replicationDetails.Region || region,
         tags,
         raw: {
           arn: replication.ARN,
           description: replication.Description,
           engine: replication.Engine,
-          engineVersion: replication.EngineVersion,
+          engineVersion: replicationDetails.EngineVersion,
           multiAz: replication.MultiAZ,
           automaticFailover: replication.AutomaticFailover,
-          pendingReboot: replication.PendingRebootValues,
+          pendingReboot: replicationDetails.PendingRebootValues,
           transitEncryption: replication.TransitEncryptionEnabled,
           authToken: replication.AuthTokenEnabled,
           kmsKeyId: replication.KmsKeyId,

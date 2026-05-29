@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import { getAWSBilling } from "@/lib/billing/aws";
 import { applyBillingFilters } from "@/lib/billing/filters";
 import { groupBillingData } from "@/lib/billing/grouping";
@@ -29,6 +30,9 @@ async function refreshBilling() {
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("billing:view");
+    if (guard.response) return guard.response;
+
     const { searchParams } = new URL(request.url);
 
     const filters = {

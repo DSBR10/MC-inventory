@@ -11,12 +11,13 @@ declare module "next-auth" {
       role: Role;
       permissions: Permission[];
       groups: string[];
+      lastLogin?: string;
     };
   }
   interface User {
-    role: Role;
-    permissions: Permission[];
-    groups: string[];
+    role?: Role;
+    permissions?: Permission[];
+    groups?: string[];
   }
 }
 
@@ -25,5 +26,6 @@ declare module "next-auth/jwt" {
     role: Role;
     permissions: Permission[];
     groups: string[];
+    lastLogin?: string;
   }
 }

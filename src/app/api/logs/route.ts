@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { requireApiSession } from "@/lib/auth/server";
 import { getCloudWatchLogs } from "@/lib/aws/cloudwatch-logs";
 import { getHuaweiLogs } from "@/lib/huawei/lts";
 import { getAWSAccounts } from "@/lib/aws/accounts";
@@ -11,13 +11,13 @@ import type {
   MonitoringMetrics,
 } from "@/types/monitoring";
 
+const HUAWEI_LTS_ENABLED =
+  process.env.HUAWEI_LTS_ENABLED !== "false";
+
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
 
     const searchParams = request.nextUrl.searchParams;
 
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch Huawei logs
-    if (!filters.provider || filters.provider === "huawei") {
+    if (HUAWEI_LTS_ENABLED && (!filters.provider || filters.provider === "huawei")) {
       const huaweiAccounts = getHuaweiAccounts();
       const accountsToQuery = filters.account
         ? huaweiAccounts.filter((acc) => acc.name === filters.account)
@@ -121,11 +121,8 @@ export async function GET(request: NextRequest) {
 // Get monitoring metrics
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
 
     // Fetch recent logs for metrics
     const filters: LogFilters = {
@@ -137,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     // Fetch from all accounts
     const awsAccounts = getAWSAccounts();
-    const huaweiAccounts = getHuaweiAccounts();
+    const huaweiAccounts = HUAWEI_LTS_ENABLED ? getHuaweiAccounts() : [];
 
     await Promise.all([
       ...awsAccounts.map(async (account) => {

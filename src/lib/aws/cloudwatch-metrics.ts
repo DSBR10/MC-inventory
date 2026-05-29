@@ -2,6 +2,7 @@ import {
   CloudWatchClient,
   GetMetricStatisticsCommand,
   ListMetricsCommand,
+  Statistic,
 } from "@aws-sdk/client-cloudwatch";
 import type {
   CloudWatchMetric,
@@ -33,7 +34,7 @@ async function getMetricStatistics(
   startTime: Date,
   endTime: Date,
   period: number = 300, // 5 minutes
-  statistics: string[] = ["Average"],
+  statistics: Statistic[] = [Statistic.Average],
 ): Promise<CloudWatchMetricDatapoint[]> {
   try {
     const command = new GetMetricStatisticsCommand({

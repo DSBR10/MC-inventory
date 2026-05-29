@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import {
   SSMClient,
   SendCommandCommand,
@@ -145,8 +146,12 @@ function getAllAccounts(): { id: string; accessKey: string; secretKey: string }[
     if (match) {
       const index = match[1];
       const id = env[`AWS_ACCOUNT_${index}_ID`];
-      const accessKey = env[`AWS_ACCOUNT_${index}_ACCESS_KEY`];
-      const secretKey = env[`AWS_ACCOUNT_${index}_SECRET_KEY`];
+      const accessKey =
+        env[`AWS_ACCOUNT_${index}_ACCESS_KEY`] ||
+        env[`AWS_ACCOUNT_${index}_ACCESS_KEY_ID`];
+      const secretKey =
+        env[`AWS_ACCOUNT_${index}_SECRET_KEY`] ||
+        env[`AWS_ACCOUNT_${index}_SECRET_ACCESS_KEY`];
       if (id && accessKey && secretKey) {
         accounts.push({ id, accessKey, secretKey });
       }
@@ -233,6 +238,9 @@ function auditLog(entry: {
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireApiSession("inventory:modify");
+    if (guard.response) return guard.response;
+
     const { instances, command } = await req.json();
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
     const timestamp = new Date().toISOString();

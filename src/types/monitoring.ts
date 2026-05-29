@@ -6,8 +6,9 @@ export type LogSeverity =
   | "WARNING"
   | "WARN"
   | "ERROR"
-  | "CRITICAL";
-export type CloudProvider = "aws" | "huawei";
+  | "CRITICAL"
+  | "TRACE";
+export type CloudProvider = "aws" | "huawei" | "AWS" | "Huawei" | "all";
 
 export interface LogEntry {
   id: string;
@@ -29,8 +30,11 @@ export interface LogFilters {
   searchText?: string;
   provider?: CloudProvider;
   account?: string;
+  accountId?: string;
   region?: string;
   logGroup?: string;
+  level?: LogSeverity | "TRACE";
+  searchTerm?: string;
   limit?: number;
 }
 

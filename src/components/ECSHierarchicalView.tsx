@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronRight, ChevronDown, Server, Box, Activity } from "lucide-react";
-import type { InventoryItem } from "@/types";
+import type { InventoryItem } from "@/types/inventory";
 
 interface ECSHierarchicalViewProps {
   data: InventoryItem[];

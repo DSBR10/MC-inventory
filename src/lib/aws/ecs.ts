@@ -158,7 +158,7 @@ export async function getAWSECSInventory(account: AWSAccount) {
             desiredCount: service.desiredCount,
             runningCount: service.runningCount,
             pendingCount: service.pendingCount,
-            serviceType: service.serviceType,
+            serviceType: (service as any).serviceType,
        },
           children: tasks,
         };

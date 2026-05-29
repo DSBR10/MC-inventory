@@ -2,6 +2,7 @@ import { getAWSAccounts } from "@/lib/aws/aws-accounts";
 import {
   CloudWatchClient,
   GetMetricStatisticsCommand,
+  Statistic,
 } from "@aws-sdk/client-cloudwatch";
 import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { RDSClient, DescribeDBInstancesCommand } from "@aws-sdk/client-rds";
@@ -18,7 +19,7 @@ import type {
 } from "./cache";
 
 const METRIC_PERIOD = 300; // 5 minutos
-const METRIC_STATISTICS = ["Average"];
+const METRIC_STATISTICS = [Statistic.Average];
 
 export async function collectAllAccountsMetrics(): Promise<
   Record<string, AccountMetrics>

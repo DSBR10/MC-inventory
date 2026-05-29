@@ -35,10 +35,13 @@ const menuItems = [
 export default function Sidebar({
   open,
   onClose,
+  onNavigate,
 }: {
   open: boolean;
 
   onClose: () => void;
+
+  onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
@@ -219,7 +222,10 @@ export default function Sidebar({
             <Link
               key={item.href}
               href={item.href}
-              onClick={onClose}
+              onClick={() => {
+                if (!active) onNavigate?.();
+                onClose();
+              }}
               className={`
 
                 group

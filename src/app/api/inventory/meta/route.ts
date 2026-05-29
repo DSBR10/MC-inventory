@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
+import { requireApiSession } from "@/lib/auth/server";
+
 const filePath = path.join(process.cwd(), "data/inventory-meta.json");
 
 function readDB() {
@@ -15,6 +17,9 @@ function writeDB(data: any) {
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireApiSession("inventory:modify");
+    if (guard.response) return guard.response;
+
     const { id, description, internalSoftwares } = await req.json();
 
     const db = readDB();

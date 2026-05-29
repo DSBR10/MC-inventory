@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import { CloudWatchMetricsService } from "@/services/aws/cloudwatch-metrics.service";
+import { getAWSAccountById, getDefaultAWSAccount } from "@/lib/aws/aws-accounts";
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const searchParams = request.nextUrl.searchParams;
     const serviceType = searchParams.get("serviceType"); // ec2, rds, ecs
     const resourceId = searchParams.get("resourceId");
+    const accountId = searchParams.get("accountId");
     const region = searchParams.get("region") || "us-east-1";
     const period = parseInt(searchParams.get("period") || "300");
 
@@ -16,7 +22,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const metricsService = new CloudWatchMetricsService(region);
+    const account = accountId ? getAWSAccountById(accountId) : getDefaultAWSAccount();
+
+    if (!account) {
+      return NextResponse.json(
+        { error: "AWS account not found" },
+        { status: 404 },
+      );
+    }
+
+    const metricsService = new CloudWatchMetricsService(region, {
+      accessKeyId: account.accessKey,
+      secretAccessKey: account.secretKey,
+    });
     let metrics;
 
     switch (serviceType) {
@@ -62,8 +80,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const body = await request.json();
-    const { namespace, region } = body;
+    const { namespace, region, accountId } = body;
 
     if (!namespace) {
       return NextResponse.json(
@@ -72,7 +93,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const metricsService = new CloudWatchMetricsService(region);
+    const account = accountId ? getAWSAccountById(accountId) : getDefaultAWSAccount();
+
+    if (!account) {
+      return NextResponse.json(
+        { error: "AWS account not found" },
+        { status: 404 },
+      );
+    }
+
+    const metricsService = new CloudWatchMetricsService(region, {
+      accessKeyId: account.accessKey,
+      secretAccessKey: account.secretKey,
+    });
     const availableMetrics = await metricsService.listMetrics(namespace);
 
     return NextResponse.json({ metrics: availableMetrics });

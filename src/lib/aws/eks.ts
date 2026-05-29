@@ -76,7 +76,7 @@ export async function getAWSEKSInventory(account: AWSAccount) {
               status: nodegroup.status || "UNKNOWN",
               operatingSystem: nodegroup.version || "N/A",
               platform: nodegroup.releaseVersion || "N/A",
-              architecture: nodegroup.architecture || "x86_64",
+              architecture: (nodegroup as any).architecture || "x86_64",
               instanceType:
                 nodegroup.instanceTypes?.[0] || nodegroup.nodeRole || "N/A",
               availabilityZone: nodegroup.subnets?.[0] || "N/A",
@@ -121,7 +121,7 @@ export async function getAWSEKSInventory(account: AWSAccount) {
           status: cluster.status || "UNKNOWN",
           operatingSystem: cluster.version || "N/A",
           platform: cluster.platformVersion || "N/A",
-          architecture: cluster.architecture || "linux",
+          architecture: (cluster as any).architecture || "linux",
           instanceType:
             cluster.resourcesVpcConfig?.clusterSecurityGroupId || "N/A",
           availabilityZone: cluster.arn?.split(":")[3] || region,

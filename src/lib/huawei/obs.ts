@@ -54,7 +54,7 @@ export async function getHuaweiOBSInventory() {
 
                 "unknown-bucket";
 
-              let tags:
+              const tags:
                 Record<string, string> = {};
 
               try {

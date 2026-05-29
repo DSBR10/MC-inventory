@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { requireApiSession } from "@/lib/auth/server";
+
 import { getAWSInventory } from "@/lib/aws";
 
 import {
@@ -77,7 +79,7 @@ async function buildInventory() {
 
   // 1. Primero obtener CCE para extraer los server IDs de los nodos
   let cceInventory: any[] = [];
-  let cceNodeServerIds: string[] = [];
+  const cceNodeServerIds: string[] = [];
 
   try {
     cceInventory = await getHuaweiCCEInventory();
@@ -204,6 +206,8 @@ async function refreshInventory() {
 export async function GET() {
 
   try {
+    const guard = await requireApiSession("inventory:view");
+    if (guard.response) return guard.response;
 
     const cached =
       readInventoryCache();

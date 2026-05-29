@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireApiSession } from "@/lib/auth/server";
 import { CloudWatchLogsService } from "@/services/aws/cloudwatch-logs.service";
 
 export async function GET(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const searchParams = request.nextUrl.searchParams;
     const accountId = searchParams.get("accountId");
     const logGroupName = searchParams.get("logGroupName");
@@ -12,15 +16,8 @@ export async function GET(request: NextRequest) {
     const filterPattern = searchParams.get("filterPattern") || undefined;
     const limit = parseInt(searchParams.get("limit") || "100");
 
-    if (!accountId) {
-      return NextResponse.json(
-        { error: "accountId parameter is required" },
-        { status: 400 },
-      );
-    }
-
-    const { getAWSAccountById } = await import("@/lib/aws/aws-accounts");
-    const account = getAWSAccountById(accountId);
+    const { getAWSAccountById, getDefaultAWSAccount } = await import("@/lib/aws/aws-accounts");
+    const account = accountId ? getAWSAccountById(accountId) : getDefaultAWSAccount();
 
     if (!account) {
       return NextResponse.json(
@@ -64,6 +61,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const guard = await requireApiSession("monitoring:view");
+    if (guard.response) return guard.response;
+
     const body = await request.json();
     const { logGroupName, region } = body;
 

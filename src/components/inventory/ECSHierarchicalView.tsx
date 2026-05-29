@@ -62,15 +62,16 @@ export default function ECSHierarchicalView({ data, onSelect }: Props) {
     <div className="bg-[var(--bg-card)]/60 rounded-2xl border border-[var(--border)] overflow-hidden backdrop-blur-xl">
       <div className="divide-y divide-[var(--border)]">
         {ecsClusters.map((cluster) => {
-          const isClusterExpanded = expandedClusters.has(cluster.uniqueKey);
+          const clusterKey = cluster.uniqueKey || cluster.id;
+          const isClusterExpanded = expandedClusters.has(clusterKey);
           const services = cluster.children || [];
 
           return (
-            <div key={cluster.uniqueKey}>
+            <div key={clusterKey}>
               {/* Cluster Row */}
               <div className="flex items-center gap-3 px-4 py-3 hover:bg-[var(--bg-hover)]/50 transition-all group">
                 <button
-                  onClick={() => toggleCluster(cluster.uniqueKey)}
+                  onClick={() => toggleCluster(clusterKey)}
                   className="flex-shrink-0 w-6 h-6 rounded-lg bg-[var(--bg-hover)] border border-[var(--border)] flex items-center justify-center hover:bg-purple-500/10 hover:border-purple-500/30 transition-all"
                 >
                   {isClusterExpanded ? (
@@ -125,18 +126,19 @@ export default function ECSHierarchicalView({ data, onSelect }: Props) {
               {/* Services */}
               {isClusterExpanded && services.length > 0 && (
                 <div className="bg-[var(--bg-hover)]/30 border-t border-[var(--border)]">
-                  {services.map((service: any) => {
+                  {services.map((service) => {
+                    const serviceKey = service.uniqueKey || service.id;
                     const isServiceExpanded = expandedServices.has(
-                      service.uniqueKey,
+                      serviceKey,
                     );
                     const tasks = service.children || [];
 
                     return (
-                      <div key={service.uniqueKey}>
+                      <div key={serviceKey}>
                         {/* Service Row */}
                         <div className="flex items-center gap-3 px-4 py-3 pl-16 hover:bg-[var(--bg-hover)]/50 transition-all">
                           <button
-                            onClick={() => toggleService(service.uniqueKey)}
+                            onClick={() => toggleService(serviceKey)}
                             className="flex-shrink-0 w-6 h-6 rounded-lg bg-[var(--bg-hover)] border border-[var(--border)] flex items-center justify-center hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all"
                           >
                             {isServiceExpanded ? (
@@ -204,9 +206,9 @@ export default function ECSHierarchicalView({ data, onSelect }: Props) {
                         {/* Tasks */}
                         {isServiceExpanded && tasks.length > 0 && (
                           <div className="bg-[var(--bg-hover)]/50 border-t border-[var(--border)]">
-                            {tasks.map((task: any) => (
+                            {tasks.map((task) => (
                               <div
-                                key={task.uniqueKey}
+                                key={task.uniqueKey || task.id}
                                 onClick={() => onSelect(task)}
                                 className="flex items-center gap-3 px-4 py-2.5 pl-28 hover:bg-[var(--bg-hover)]/70 transition-all cursor-pointer"
                               >

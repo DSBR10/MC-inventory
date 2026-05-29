@@ -134,7 +134,6 @@ function Alert({
 type Mode = "office365" | "local";
 
 export default function LoginPage() {
-  const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<Mode>("office365");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -146,11 +145,8 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-  useEffect(() => {
-    if (status === "authenticated" && mounted) router.push("/");
-  }, [status, router, mounted]);
+    if (status === "authenticated") router.push("/");
+  }, [status, router]);
   useEffect(() => {
     if (!alert) return;
     const t = setTimeout(() => setAlert(null), 6000);
@@ -182,7 +178,7 @@ export default function LoginPage() {
     if (e.key === "Enter") handleLocalSignIn();
   };
 
-  if (!mounted)
+  if (status === "loading")
     return (
       <div className="fixed inset-0 bg-[#080c14] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />

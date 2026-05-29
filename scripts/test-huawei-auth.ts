@@ -25,8 +25,8 @@ async function testHuaweiAuth() {
       "\n📝 Asegúrate de tener las siguientes variables en .env.local:",
     );
     console.log("   HUAWEI_ACCOUNT_1_NAME=mc_inventory");
-    console.log("   HUAWEI_ACCOUNT_1_ACCESS_KEY=tu_access_key");
-    console.log("   HUAWEI_ACCOUNT_1_SECRET_KEY=tu_secret_key");
+    console.log("   HUAWEI_ACCOUNT_1_AK=tu_access_key");
+    console.log("   HUAWEI_ACCOUNT_1_SK=tu_secret_key");
     console.log("   HUAWEI_ACCOUNT_1_PROJECT_ID=tu_project_id");
     console.log("   HUAWEI_ACCOUNT_1_REGION=la-north-2");
     process.exit(1);
@@ -38,20 +38,23 @@ async function testHuaweiAuth() {
     console.log(`📋 Probando cuenta: ${account.name}`);
     console.log(`   Región: ${account.region}`);
     console.log(`   Project ID: ${account.projectId}`);
-    console.log(`   Access Key: ${account.accessKey.substring(0, 8)}...`);
+    console.log(`   Access Key: ${account.ak.substring(0, 8)}...`);
 
     try {
       // Test 1: Listar grupos de logs de LTS
       console.log("\n   🔄 Test 1: Listando grupos de logs (LTS)...");
-      const ltsUrl = `https://lts.${account.region}.myhuaweicloud.com/v2/${account.projectId}/groups`;
-
-      const response = await huaweiRequest(
-        account,
-        "GET",
-        ltsUrl,
-        "lts",
-        account.region,
+      const ltsUrl = new URL(
+        `https://lts.${account.region}.myhuaweicloud.com/v2/${account.projectId}/groups`,
       );
+
+      const response = await huaweiRequest({
+        method: "GET",
+        host: ltsUrl.host,
+        uri: ltsUrl.pathname,
+        ak: account.ak,
+        sk: account.sk,
+        projectId: account.projectId,
+      });
 
       if (response.status === 200) {
         console.log("   ✅ Autenticación exitosa con LTS");
@@ -64,15 +67,16 @@ async function testHuaweiAuth() {
 
       // Test 2: Listar buckets de OBS
       console.log("\n   🔄 Test 2: Listando buckets (OBS)...");
-      const obsUrl = `https://obs.${account.region}.myhuaweicloud.com`;
+      const obsUrl = new URL(`https://obs.${account.region}.myhuaweicloud.com/`);
 
-      const obsResponse = await huaweiRequest(
-        account,
-        "GET",
-        obsUrl,
-        "obs",
-        account.region,
-      );
+      const obsResponse = await huaweiRequest({
+        method: "GET",
+        host: obsUrl.host,
+        uri: obsUrl.pathname,
+        ak: account.ak,
+        sk: account.sk,
+        projectId: account.projectId,
+      });
 
       if (obsResponse.status === 200) {
         console.log("   ✅ Autenticación exitosa con OBS");

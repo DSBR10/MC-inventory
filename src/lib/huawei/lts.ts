@@ -7,6 +7,39 @@ import type {
   HuaweiLogStream,
 } from "@/types/monitoring";
 
+const HUAWEI_LTS_ENABLED =
+  process.env.HUAWEI_LTS_ENABLED !== "false";
+
+function getTimeRange(filters: LogFilters) {
+  const fallbackEnd = Date.now();
+  const fallbackStart = fallbackEnd - 3600000;
+
+  const parsedStart = filters.startTime
+    ? new Date(filters.startTime).getTime()
+    : fallbackStart;
+
+  const parsedEnd = filters.endTime
+    ? new Date(filters.endTime).getTime()
+    : fallbackEnd;
+
+  const startTime = Number.isFinite(parsedStart)
+    ? parsedStart
+    : fallbackStart;
+
+  const endTime = Number.isFinite(parsedEnd)
+    ? parsedEnd
+    : fallbackEnd;
+
+  if (endTime > startTime) {
+    return { startTime, endTime };
+  }
+
+  return {
+    startTime: Math.min(startTime, endTime),
+    endTime: Math.max(startTime, endTime) || Date.now(),
+  };
+}
+
 // Helper to detect log level from message
 function detectLogLevel(message: string): LogEntry["severity"] {
   const upperMessage = message.toUpperCase();
@@ -32,6 +65,10 @@ function detectLogLevel(message: string): LogEntry["severity"] {
 export async function getHuaweiLogGroups(
   account: HuaweiAccount,
 ): Promise<HuaweiLogGroup[]> {
+  if (!HUAWEI_LTS_ENABLED) {
+    return [];
+  }
+
   try {
     const response = await huaweiRequest({
       method: "GET",
@@ -64,6 +101,10 @@ export async function getHuaweiLogStreams(
   account: HuaweiAccount,
   logGroupId: string,
 ): Promise<HuaweiLogStream[]> {
+  if (!HUAWEI_LTS_ENABLED) {
+    return [];
+  }
+
   try {
     const response = await huaweiRequest({
       method: "GET",
@@ -96,6 +137,10 @@ export async function getHuaweiLogs(
   account: HuaweiAccount,
   filters: LogFilters,
 ): Promise<LogEntry[]> {
+  if (!HUAWEI_LTS_ENABLED) {
+    return [];
+  }
+
   try {
 
     // Get log groups first
@@ -123,13 +168,7 @@ export async function getHuaweiLogs(
         // Query logs from first stream (most recent)
         const stream = streams[0];
 
-        const startTime = filters.startTime
-          ? new Date(filters.startTime).getTime()
-          : Date.now() - 3600000; // Last hour
-
-        const endTime = filters.endTime
-          ? new Date(filters.endTime).getTime()
-          : Date.now();
+        const { startTime, endTime } = getTimeRange(filters);
 
         const requestBody: any = {
           start_time: startTime.toString(),
@@ -137,7 +176,6 @@ export async function getHuaweiLogs(
           labels: {},
           is_desc: true,
           is_iterative: false,
-          line_num: Math.min(filters.limit || 100, 100).toString(),
         };
 
         if (filters.searchText) {

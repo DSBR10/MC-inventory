@@ -83,17 +83,20 @@ export class CloudWatchLogsService {
 
     const response = await this.client.send(command);
 
-    return (response.logStreams || []).map((ls) => ({
+    return (response.logStreams || []).map((ls) => {
+      const stream = ls as any;
+      return {
       logStreamName: ls.logStreamName || "",
       creationTime: ls.creationTime
         ? new Date(ls.creationTime).toISOString()
         : undefined,
-      lastEventTime: ls.lastEventTime
-        ? new Date(ls.lastEventTime).toISOString()
+      lastEventTime: stream.lastEventTime
+        ? new Date(stream.lastEventTime).toISOString()
         : undefined,
-      lastIngestionTime: ls.lastIngestionTime
-        ? new Date(ls.lastIngestionTime).toISOString()
+      lastIngestionTime: stream.lastIngestionTime
+        ? new Date(stream.lastIngestionTime).toISOString()
         : undefined,
-    }));
+      };
+    });
   }
 }

@@ -374,6 +374,9 @@ export async function getAWSELBInventory(
         operatingSystem:
           lb.Type || "N/A",
 
+        launchTime:
+          lb.CreatedTime?.toISOString?.() || "N/A",
+
         vpcId:
           lb.VpcId || "N/A",
 

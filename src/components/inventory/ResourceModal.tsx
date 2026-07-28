@@ -31,6 +31,8 @@ type Props = {
 
 type Tab = "overview" | "network" | "security" | "loadbalancer" | "cluster";
 
+const simpleServices = ["S3", "DynamoDB", "API Gateway", "OBS"];
+
 export default function ResourceModal({
   item,
   allItems,
@@ -66,6 +68,9 @@ export default function ResourceModal({
   }, [item?.securityGroups]);
 
   if (!item) return null;
+
+  const isSimpleService = simpleServices.includes(item.service);
+  const isELB = item.service === "ELB";
 
   const riskLevel =
     securityAnalysis.length >= 3
@@ -179,26 +184,32 @@ export default function ResourceModal({
               label="Overview"
             />
 
-            <TabButton
-              active={tab === "network"}
-              onClick={() => setTab("network")}
-              icon={<Network size={14} />}
-              label="Network"
-            />
+            {!isSimpleService && (
+              <TabButton
+                active={tab === "network"}
+                onClick={() => setTab("network")}
+                icon={<Network size={14} />}
+                label="Network"
+              />
+            )}
 
-            <TabButton
-              active={tab === "security"}
-              onClick={() => setTab("security")}
-              icon={<ShieldAlert size={14} />}
-              label="Security"
-            />
+            {!isSimpleService && (
+              <TabButton
+                active={tab === "security"}
+                onClick={() => setTab("security")}
+                icon={<ShieldAlert size={14} />}
+                label="Security"
+              />
+            )}
 
-            <TabButton
-              active={tab === "loadbalancer"}
-              onClick={() => setTab("loadbalancer")}
-              icon={<Activity size={14} />}
-              label="Load Balancing"
-            />
+            {!isSimpleService && !isELB && (
+              <TabButton
+                active={tab === "loadbalancer"}
+                onClick={() => setTab("loadbalancer")}
+                icon={<Activity size={14} />}
+                label="Load Balancing"
+              />
+            )}
 
             {(item.children?.length || 0) > 0 && (
               <TabButton
@@ -223,83 +234,85 @@ export default function ResourceModal({
         >
           {/* EXPOSURE */}
 
-          {item.publiclyExposed ? (
-            <div
-              className="
-                mb-5
-                rounded-2xl
-                border
-                border-red-500/20
-                bg-red-500/10
-                p-4
-                flex
-                items-start
-                gap-4
-              "
-            >
-              <ShieldAlert size={20} className="text-red-400 mt-1" />
+          {!isSimpleService && (
+            item.publiclyExposed ? (
+              <div
+                className="
+                  mb-5
+                  rounded-2xl
+                  border
+                  border-red-500/20
+                  bg-red-500/10
+                  p-4
+                  flex
+                  items-start
+                  gap-4
+                "
+              >
+                <ShieldAlert size={20} className="text-red-400 mt-1" />
 
-              <div>
-                <p
-                  className="
-                    font-semibold
-                    text-red-400
-                    mb-1
-                    text-sm
-                  "
-                >
-                  Public Exposure Detected
-                </p>
+                <div>
+                  <p
+                    className="
+                      font-semibold
+                      text-red-400
+                      mb-1
+                      text-sm
+                    "
+                  >
+                    Public Exposure Detected
+                  </p>
 
-                <p
-                  className="
-                    text-xs
-                    text-red-200/80
-                  "
-                >
-                  Este recurso posee exposición pública o reglas abiertas hacia
-                  Internet.
-                </p>
+                  <p
+                    className="
+                      text-xs
+                      text-red-200/80
+                    "
+                  >
+                    Este recurso posee exposición pública o reglas abiertas hacia
+                    Internet.
+                  </p>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div
-              className="
-                mb-5
-                rounded-2xl
-                border
-                border-green-500/20
-                bg-green-500/10
-                p-4
-                flex
-                items-start
-                gap-4
-              "
-            >
-              <ShieldCheck size={20} className="text-green-400 mt-1" />
+            ) : (
+              <div
+                className="
+                  mb-5
+                  rounded-2xl
+                  border
+                  border-green-500/20
+                  bg-green-500/10
+                  p-4
+                  flex
+                  items-start
+                  gap-4
+                "
+              >
+                <ShieldCheck size={20} className="text-green-400 mt-1" />
 
-              <div>
-                <p
-                  className="
-                    font-semibold
-                    text-green-400
-                    mb-1
-                    text-sm
-                  "
-                >
-                  No Public Exposure
-                </p>
+                <div>
+                  <p
+                    className="
+                      font-semibold
+                      text-green-400
+                      mb-1
+                      text-sm
+                    "
+                  >
+                    No Public Exposure
+                  </p>
 
-                <p
-                  className="
-                    text-xs
-                    text-green-200/80
-                  "
-                >
-                  No se detectó exposición pública.
-                </p>
+                  <p
+                    className="
+                      text-xs
+                      text-green-200/80
+                    "
+                  >
+                    No se detectó exposición pública.
+                  </p>
+                </div>
               </div>
-            </div>
+            )
           )}
 
           {/* OVERVIEW */}
@@ -307,30 +320,32 @@ export default function ResourceModal({
           {tab === "overview" && (
             <div className="space-y-6">
               <SectionCard title="Información General">
-                <div className="mb-4">
-                  <div
-                    className={`
-                      inline-flex
-                      items-center
-                      gap-3
-                      px-4
-                      py-2
-                      rounded-2xl
-                      border
-                      ${getRiskStyles(item.riskLevel)}
-                    `}
-                  >
-                    <ShieldAlert size={16} />
+                {!isSimpleService && (
+                  <div className="mb-4">
+                    <div
+                      className={`
+                        inline-flex
+                        items-center
+                        gap-3
+                        px-4
+                        py-2
+                        rounded-2xl
+                        border
+                        ${getRiskStyles(item.riskLevel)}
+                      `}
+                    >
+                      <ShieldAlert size={16} />
 
-                    <div>
-                      <p className="text-[10px] opacity-70">Risk Level</p>
+                      <div>
+                        <p className="text-[10px] opacity-70">Risk Level</p>
 
-                      <p className="font-semibold text-sm">
-                        {item.riskLevel || "SAFE"}
-                      </p>
+                        <p className="font-semibold text-sm">
+                          {item.riskLevel || "SAFE"}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div
                   className="
@@ -341,18 +356,9 @@ export default function ResourceModal({
                     gap-3
                   "
                 >
-                  <InfoCard label="Provider" value={item.provider} />
-                  <InfoCard label="Cuenta" value={item.accountName} />
-                  <InfoCard label="Servicio" value={item.service} />
-                  <InfoCard label="Estado" value={item.status} />
-                  <InfoCard label="Host" value={item.host} />
-                  <InfoCard
-                    label="Sistema Operativo"
-                    value={item.operatingSystem}
-                  />
-                  <InfoCard label="Instance Type" value={item.instanceType} />
-                  <InfoCard label="AZ" value={item.availabilityZone} />
-                  <InfoCard label="Launch Time" value={item.launchTime} />
+                  {getOverviewFields(item).map((f) => (
+                    <InfoCard key={f.label} label={f.label} value={f.value} />
+                  ))}
                 </div>
               </SectionCard>
 
@@ -366,33 +372,45 @@ export default function ResourceModal({
 
           {tab === "network" && (
             <div className="space-y-6">
-              <SectionCard title="Topology">
-                <div className="space-y-4">
-                  {item.publiclyExposed && (
-                    <TopologyNode
-                      icon={<Globe size={16} />}
-                      label="Internet"
-                      type="external"
-                    />
-                  )}
+              {!isELB && (
+                <SectionCard title="Topology">
+                  <div className="space-y-4">
+                    {item.publiclyExposed && (
+                      <TopologyNode
+                        icon={<Globe size={16} />}
+                        label="Internet"
+                        type="external"
+                      />
+                    )}
 
-                  <TopologyNode
-                    icon={<Boxes size={16} />}
-                    label={`${item.service} · ${item.name}`}
-                    type={item.topologyType}
-                  />
-                </div>
-              </SectionCard>
+                    <TopologyNode
+                      icon={<Boxes size={16} />}
+                      label={`${item.service} · ${item.name}`}
+                      type={item.topologyType}
+                    />
+                  </div>
+                </SectionCard>
+              )}
 
               <SectionCard title="Networking">
                 <div className="grid md:grid-cols-2 gap-3">
-                  <InfoCard label="Private IP" value={item.privateIp} />
+                  {isELB ? (
+                    <>
+                      <InfoCard label="VPC ID" value={item.vpcId} />
+                      <InfoCard label="Public IP" value={item.publicIp} />
+                      <InfoCard label="Availability Zones" value={item.availabilityZone} />
+                    </>
+                  ) : (
+                    <>
+                      <InfoCard label="Private IP" value={item.privateIp} />
 
-                  <InfoCard label="Public IP" value={item.publicIp} />
+                      <InfoCard label="Public IP" value={item.publicIp} />
 
-                  <InfoCard label="VPC" value={item.vpcId} />
+                      <InfoCard label="VPC" value={item.vpcId} />
 
-                  <InfoCard label="Subnet" value={item.subnetId} />
+                      <InfoCard label="Subnet" value={item.subnetId} />
+                    </>
+                  )}
                 </div>
               </SectionCard>
             </div>
@@ -618,6 +636,138 @@ function SectionCard({ title, children }: any) {
       {children}
     </div>
   );
+}
+
+type FieldDef = { label: string; value: string | undefined | null };
+
+function getOverviewFields(item: InventoryItem): FieldDef[] {
+  const base: FieldDef[] = [
+    { label: "Provider", value: item.provider },
+    { label: "Cuenta", value: item.accountName },
+    { label: "Servicio", value: item.service },
+    { label: "Estado", value: item.status },
+  ];
+
+  const s = item.service;
+
+  if (simpleServices.includes(s)) {
+    return [
+      ...base,
+      { label: "Región", value: item.availabilityZone },
+    ];
+  }
+
+  if (s === "ELB") {
+    return [
+      ...base,
+      { label: "Host", value: item.host },
+      { label: "Tipo", value: item.operatingSystem },
+      { label: "AZ", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "Lambda") {
+    return [
+      ...base,
+      { label: "Función", value: item.host },
+      { label: "Runtime", value: item.operatingSystem },
+      { label: "Memoria", value: item.instanceType },
+      { label: "Región", value: item.availabilityZone },
+      { label: "Última modificación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "EKS") {
+    return [
+      ...base,
+      { label: "Endpoint", value: item.host },
+      { label: "Versión K8s", value: item.operatingSystem },
+      { label: "Región", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "ECS") {
+    return [
+      ...base,
+      { label: "Endpoint", value: item.host },
+      { label: "Plataforma", value: item.operatingSystem },
+      { label: "Lanzamiento", value: item.instanceType },
+      { label: "Región", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "RDS" || s === "Aurora" || s === "DocumentDB" || s === "DDS") {
+    return [
+      ...base,
+      { label: "Host", value: item.host },
+      { label: "Motor", value: item.operatingSystem },
+      { label: "Instancia", value: item.instanceType },
+      { label: "AZ", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "ElastiCache") {
+    return [
+      ...base,
+      { label: "Host", value: item.host },
+      { label: "Motor", value: item.operatingSystem },
+      { label: "Tipo nodo", value: item.instanceType },
+      { label: "AZ", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "CloudFront") {
+    return [
+      ...base,
+      { label: "Dominio", value: item.host },
+      { label: "Distribución", value: item.operatingSystem },
+      { label: "Región", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "CCE") {
+    return [
+      ...base,
+      { label: "Endpoint", value: item.host },
+      { label: "Red", value: item.operatingSystem },
+      { label: "Flavor", value: item.instanceType },
+      { label: "Región", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "CDN") {
+    return [
+      ...base,
+      { label: "Dominio", value: item.host },
+      { label: "Área", value: item.operatingSystem },
+      { label: "Región", value: item.availabilityZone },
+      { label: "Fecha creación", value: item.launchTime },
+    ];
+  }
+
+  if (s === "VPC" || s === "Subnet") {
+    return [
+      ...base,
+      { label: "CIDR", value: item.host },
+      { label: "Región", value: item.availabilityZone },
+    ];
+  }
+
+  return [
+    ...base,
+    { label: "Host", value: item.host },
+    { label: "Sistema Operativo", value: item.operatingSystem },
+    { label: "Instance Type", value: item.instanceType },
+    { label: "AZ", value: item.availabilityZone },
+    { label: "Launch Time", value: item.launchTime },
+  ];
 }
 
 function InfoCard({ label, value }: any) {

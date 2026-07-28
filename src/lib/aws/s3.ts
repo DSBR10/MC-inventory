@@ -2,7 +2,8 @@ import {
 
   S3Client,
   ListBucketsCommand,
-  GetBucketTaggingCommand
+  GetBucketTaggingCommand,
+  GetBucketLocationCommand
 
 } from "@aws-sdk/client-s3";
 
@@ -61,6 +62,31 @@ export async function getAWSS3Inventory(
         const id =
           bucket.Name || "";
 
+        let bucketRegion = region;
+
+        try {
+
+          const locData =
+            await client.send(
+
+              new GetBucketLocationCommand({
+
+                Bucket: id
+
+              })
+
+            );
+
+          bucketRegion =
+            locData.LocationConstraint ||
+            "us-east-1";
+
+        } catch {
+
+          bucketRegion = region;
+
+        }
+
         let tags = {};
 
         try {
@@ -113,10 +139,13 @@ export async function getAWSS3Inventory(
           id,
 
           host:
-            "N/A",
+            `s3.${bucketRegion}.amazonaws.com`,
 
           status:
             "available",
+
+          availabilityZone:
+            bucketRegion,
 
           tags
 

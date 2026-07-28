@@ -400,7 +400,7 @@ export default function Sidebar({
 
             "
           >
-            v7.4
+            v8.0
           </div>
         </div>
       </div>

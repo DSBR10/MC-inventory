@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Cloud,
@@ -16,6 +16,8 @@ import {
   RefreshCw,
   LayoutGrid,
   List,
+  BarChart3,
+  Activity,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -350,55 +352,85 @@ export default function Home() {
         }
       `}</style>
 
-      <div className="min-h-screen space-y-5">
+      <div className="min-h-screen space-y-6">
         {/* ── Page header ── */}
-        <div className="page-section flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-[var(--text-primary)] flex-shrink-0"
-                style={{
-                  background: "linear-gradient(135deg, #7c3aed, #06b6d4)",
-                }}
-              >
-                MC
-              </div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-                Dashboard
-              </h1>
-              {refreshing && (
-                <span className="flex items-center gap-1.5 text-xs text-cyan-400 bg-cyan-400/10 px-2.5 py-1 rounded-full border border-cyan-400/20">
-                  <RefreshCw className="w-3 h-3 animate-spin" />
-                  Actualizando
-                </span>
-              )}
-            </div>
-            <p className="text-[var(--text-primary)]/40 text-sm ml-12">
-              Inventario Cloud Centralizado
-              {lastUpdate && (
-                <span className="ml-2 text-[var(--text-primary)]/25">
-                  · actualizado {lastUpdate}
-                </span>
-              )}
-            </p>
-          </div>
+        <div className="page-section">
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] p-5"
+            style={{ background: "var(--glass-bg)", backdropFilter: "blur(16px)" }}
+          >
+            {/* Decorative gradient glow */}
+            <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full opacity-20 blur-3xl pointer-events-none"
+              style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }}
+            />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full opacity-10 blur-3xl pointer-events-none"
+              style={{ background: "linear-gradient(135deg, var(--gradient-secondary-start), var(--gradient-secondary-end))" }}
+            />
 
-          {/* View toggle */}
-          <div className="flex items-center gap-2 bg-[var(--bg-card)]/60 border border-[var(--border)] rounded-xl p-1">
-            <button
-              onClick={() => setViewMode("table")}
-              className={`p-2 rounded-lg transition-all ${viewMode === "table" ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60"}`}
-              title="Vista tabla"
-            >
-              <List className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode("cards")}
-              className={`p-2 rounded-lg transition-all ${viewMode === "cards" ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60"}`}
-              title="Vista tarjetas"
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
+            <div className="relative z-10 flex items-start justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-xl animate-ping opacity-15"
+                    style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }}
+                  />
+                  <div
+                    className="relative w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold text-white shadow-lg"
+                    style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }}
+                  >
+                    <BarChart3 size={18} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-3">
+                    <h1 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
+                      Dashboard
+                    </h1>
+                    {refreshing && (
+                      <span className="flex items-center gap-1.5 text-[11px] text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full border border-cyan-400/20">
+                        <RefreshCw className="w-3 h-3 animate-spin" />
+                        Actualizando
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-[var(--text-primary)]/40 mt-0.5">
+                    <Activity size={12} className="inline mr-1.5 -mt-0.5 text-[var(--primary)]/50" />
+                    Inventario Cloud Centralizado
+                    {lastUpdate && (
+                      <span className="ml-2 text-[var(--text-primary)]/20">
+                        · actualizado <span className="text-[var(--text-primary)]/40 font-medium">{lastUpdate}</span>
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {/* View toggle */}
+                <div className="flex items-center gap-1 bg-[var(--bg-card)]/80 border border-[var(--border)] rounded-xl p-1">
+                  <button
+                    onClick={() => setViewMode("table")}
+                    className={`p-2 rounded-lg transition-all duration-200 ${
+                      viewMode === "table"
+                        ? "bg-[var(--bg-hover)] text-[var(--text-primary)] shadow-sm"
+                        : "text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60"
+                    }`}
+                    title="Vista tabla"
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("cards")}
+                    className={`p-2 rounded-lg transition-all duration-200 ${
+                      viewMode === "cards"
+                        ? "bg-[var(--bg-hover)] text-[var(--text-primary)] shadow-sm"
+                        : "text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/60"
+                    }`}
+                    title="Vista tarjetas"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -410,7 +442,7 @@ export default function Home() {
         {/* ── Filter panel ── */}
         <div className="page-section" style={{ animationDelay: "0.1s" }}>
           <div
-            className="rounded-2xl border border-[var(--border)] overflow-hidden"
+            className="rounded-2xl border border-[var(--border)] overflow-hidden transition-all duration-300"
             style={{
               background: "var(--glass-bg)",
               backdropFilter: "blur(16px)",
@@ -419,24 +451,18 @@ export default function Home() {
             {/* Toolbar */}
             <div className="p-4 flex flex-col xl:flex-row gap-3">
               {/* Search */}
-              <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/25 pointer-events-none" />
+              <div className="relative flex-1 group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/20 pointer-events-none transition-colors group-focus-within:text-cyan-400/60" />
                 <input
                   type="text"
                   placeholder="Buscar recursos, IDs, IPs, tags..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-primary)]/25 outline-none transition-all"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-primary)]/25 outline-none transition-all duration-200 border focus:border-cyan-500/40"
                   style={{
                     background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.1)",
+                    border: "1px solid rgba(255,255,255,0.08)",
                   }}
-                  onFocus={(e) =>
-                    (e.target.style.borderColor = "rgba(6,182,212,0.4)")
-                  }
-                  onBlur={(e) =>
-                    (e.target.style.borderColor = "rgba(255,255,255,0.1)")
-                  }
                 />
                 {search && (
                   <button
@@ -452,10 +478,10 @@ export default function Home() {
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setFiltersOpen(!filtersOpen)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
                     filtersOpen || activeFiltersCount > 0
-                      ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-400"
-                      : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:border-white/20"
+                      ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-400 shadow-sm shadow-cyan-500/10"
+                      : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]"
                   }`}
                 >
                   <Filter className="w-4 h-4" />
@@ -465,16 +491,16 @@ export default function Home() {
                       {activeFiltersCount}
                     </span>
                   )}
-                  {filtersOpen ? (
-                    <ChevronUp className="w-3.5 h-3.5" />
-                  ) : (
-                    <ChevronDown className="w-3.5 h-3.5" />
-                  )}
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      filtersOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
 
                 <button
                   onClick={() => exportCSV(filteredData, "inventory.csv")}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-card)]/60 text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:border-white/20 transition-all"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-card)]/60 text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)] transition-all duration-200"
                 >
                   <Download className="w-4 h-4" />
                   CSV
@@ -483,7 +509,7 @@ export default function Home() {
                 {activeFiltersCount > 0 && (
                   <button
                     onClick={clearFilters}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:border-red-500/30 transition-all duration-200"
                   >
                     <RotateCcw className="w-4 h-4" />
                     Limpiar
@@ -493,30 +519,47 @@ export default function Home() {
             </div>
 
             {/* Results summary */}
-            <div className="px-4 pb-3 flex items-center gap-2 text-xs text-[var(--text-primary)]/30 border-t border-white/5 pt-3">
-              <span
-                className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${filteredData.length < data.length ? "bg-amber-400" : "bg-emerald-400"}`}
-              />
-              Mostrando
-              <span className="text-[var(--text-primary)] font-semibold">
-                {filteredData.length}
-              </span>
-              de
-              <span className="text-[var(--text-primary)] font-semibold">
-                {data.length}
-              </span>
-              recursos
-              {activeFiltersCount > 0 && (
-                <span className="text-cyan-400/70 ml-1">
-                  · {activeFiltersCount} filtro
-                  {activeFiltersCount > 1 ? "s" : ""} activo
-                  {activeFiltersCount > 1 ? "s" : ""}
+            <div className="px-5 py-2.5 flex items-center gap-3 text-xs border-t border-white/5 bg-[var(--bg-hover)]/30">
+              <div className="flex items-center gap-2 flex-1">
+                <div
+                  className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                    filteredData.length < data.length ? "bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.4)]" : "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.4)]"
+                  }`}
+                />
+                <span className="text-[var(--text-primary)]/30">
+                  Mostrando
                 </span>
-              )}
+                <span className="text-[var(--text-primary)] font-semibold tabular-nums">
+                  {filteredData.length}
+                </span>
+                <span className="text-[var(--text-primary)]/20">
+                  de
+                </span>
+                <span className="text-[var(--text-primary)] font-semibold tabular-nums">
+                  {data.length}
+                </span>
+                <span className="text-[var(--text-primary)]/30">
+                  recursos
+                </span>
+                {activeFiltersCount > 0 && (
+                  <>
+                    <span className="text-[var(--text-primary)]/10">·</span>
+                    <span className="text-cyan-400/80 font-medium">
+                      {activeFiltersCount} filtro{activeFiltersCount > 1 ? "s" : ""} activo{activeFiltersCount > 1 ? "s" : ""}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Filter sections */}
-            {filtersOpen && (
+            <div
+              className="overflow-hidden transition-all duration-300 ease-in-out"
+              style={{
+                maxHeight: filtersOpen ? "2000px" : "0",
+                opacity: filtersOpen ? 1 : 0,
+              }}
+            >
               <div className="filter-panel border-t border-[var(--border)] p-4 space-y-4">
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   <FilterBlock
@@ -577,29 +620,47 @@ export default function Home() {
                       setSelected={setSelectedProjects}
                     />
                     <div>
-                      <p className="text-xs text-[var(--text-primary)]/30 uppercase tracking-wider mb-3">
+                      <p className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/25 mb-2.5">
                         Sin tags
                       </p>
                       <button
                         onClick={() => setOnlyWithoutTags(!onlyWithoutTags)}
-                        className={`px-4 py-2.5 rounded-xl text-sm border transition-all ${
+                        className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 ${
                           onlyWithoutTags
-                            ? "bg-amber-500/15 border-amber-500/30 text-amber-400"
-                            : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20"
+                            ? "bg-amber-500/15 border-amber-500/30 text-amber-400 shadow-sm shadow-amber-500/10"
+                            : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]"
                         }`}
                       >
-                        {onlyWithoutTags ? "✓ " : ""}Recursos sin tags
+                        {onlyWithoutTags && (
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                        Recursos sin tags
                       </button>
                     </div>
                   </div>
                 </FilterBlock>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* ── Inventory ── */}
         <div className="page-section" style={{ animationDelay: "0.15s" }}>
+          {/* Section header */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center">
+                <Database size={12} className="text-[var(--primary)]" />
+              </div>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                {filteredData.length === 1 ? "1 recurso" : `${filteredData.length} recursos`}
+              </h2>
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-[var(--border)] to-transparent" />
+          </div>
+
           {/* Inventory view */}
           {(() => {
             // Only show ECS hierarchical view when explicitly filtered to ECS only
@@ -656,19 +717,19 @@ export default function Home() {
 
 /* ── Filter Block ── */
 function FilterBlock({ title, icon, accentColor, children }: any) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return (
     <div
-      className="rounded-xl border border-[var(--border)] overflow-hidden"
+      className="rounded-xl border border-[var(--border)] overflow-hidden transition-all duration-300"
       style={{ background: "rgba(255,255,255,0.02)" }}
     >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
+        className="w-full p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors group"
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
             style={{ background: `${accentColor}15`, color: accentColor }}
           >
             {icon}
@@ -677,17 +738,24 @@ function FilterBlock({ title, icon, accentColor, children }: any) {
             {title}
           </span>
         </div>
-        {open ? (
-          <ChevronUp className="w-4 h-4 text-[var(--text-primary)]/30" />
-        ) : (
+        <div
+          className="transition-transform duration-200"
+          style={{ transform: open ? "rotate(0deg)" : "rotate(-90deg)" }}
+        >
           <ChevronDown className="w-4 h-4 text-[var(--text-primary)]/30" />
-        )}
+        </div>
       </button>
-      {open && (
-        <div className="px-4 pb-4 space-y-4 border-t border-white/5">
+      <div
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+        style={{
+          maxHeight: open ? "2000px" : "0",
+          opacity: open ? 1 : 0,
+        }}
+      >
+        <div className="px-4 pb-4 space-y-4 border-t border-white/5 pt-4">
           {children}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -696,16 +764,16 @@ function FilterBlock({ title, icon, accentColor, children }: any) {
 function ProviderFilterSection({ values, selected, setSelected }: any) {
   const getProviderLogo = (provider: string) => {
     if (provider === "AWS") return "/logos/aws.svg";
-    if (provider === "HUAWEI CLOUD") return "/logos/huawei.svg";
+    if (provider === "HUAWEI CLOUD") return "/logos/huawei-buena.svg";
     return null;
   };
 
   return (
-    <div className="pt-3">
+    <div>
       <p className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/25 mb-2.5">
         Provider
       </p>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2">
         {values.map((value: string) => {
           const active = selected.includes(value);
           const logo = getProviderLogo(value);
@@ -718,20 +786,36 @@ function ProviderFilterSection({ values, selected, setSelected }: any) {
                 )
               }
               title={value}
-              className={`p-3 rounded-lg border transition-all flex items-center justify-center ${
+              className={`relative flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border transition-all duration-200 group ${
                 active
-                  ? "bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20 scale-105"
-                  : "bg-[var(--bg-card)]/60 border-[var(--border)] hover:border-cyan-500/30 hover:bg-[var(--bg-hover)]"
+                  ? "bg-cyan-500/15 border-cyan-500/40 shadow-lg shadow-cyan-500/15"
+                  : "bg-[var(--bg-card)]/60 border-[var(--border)] hover:border-cyan-500/30 hover:bg-[var(--bg-hover)] hover:shadow-sm"
               }`}
             >
               {logo && (
-                <Image
-                  src={logo}
-                  alt={value}
-                  width={32}
-                  height={32}
-                  className="transition-transform"
-                />
+                <div className="relative w-7 h-7 flex items-center justify-center">
+                  <Image
+                    src={logo}
+                    alt={value}
+                    width={28}
+                    height={28}
+                    className={`transition-transform duration-200 ${active ? "scale-110" : "group-hover:scale-105"}`}
+                  />
+                </div>
+              )}
+              <span
+                className={`text-xs font-medium transition-colors ${
+                  active ? "text-cyan-400" : "text-[var(--text-primary)]/50 group-hover:text-[var(--text-primary)]/80"
+                }`}
+              >
+                {value === "HUAWEI CLOUD" ? "Huawei" : value}
+              </span>
+              {active && (
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-cyan-500 rounded-full flex items-center justify-center">
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
               )}
             </button>
           );
@@ -750,11 +834,11 @@ function FilterSection({
   coloredStatus,
 }: any) {
   return (
-    <div className="pt-3">
+    <div>
       <p className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/25 mb-2.5">
         {title}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {values.map((value: string) => {
           const active = selected.includes(value);
           return (
@@ -765,15 +849,22 @@ function FilterSection({
                   active ? p.filter((v) => v !== value) : [...p, value],
                 )
               }
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
                 active
-                  ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-400"
+                  ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-400 shadow-sm shadow-cyan-500/10"
                   : coloredStatus
                     ? getStatusChipStyle(value)
-                    : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20"
+                    : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]"
               }`}
             >
-              {value}
+              <span className="flex items-center gap-1.5">
+                {active && (
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+                {value}
+              </span>
             </button>
           );
         })}
@@ -782,79 +873,153 @@ function FilterSection({
   );
 }
 
-/* ── Dropdown Section ── */
+/* ── Dropdown Section (with search, click-outside, select all/none) ── */
 function DropdownSection({ title, values, selected, setSelected }: any) {
   const [open, setOpen] = useState(false);
+  const [dropdownSearch, setDropdownSearch] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  const filtered = useMemo(
+    () => values.filter((v: string) => v.toLowerCase().includes(dropdownSearch.toLowerCase())),
+    [values, dropdownSearch],
+  );
+
+  const selectAll = useCallback(() => {
+    setSelected((p: string[]) => {
+      const existing = new Set(p);
+      values.forEach((v: string) => existing.add(v));
+      return [...existing];
+    });
+  }, [values, setSelected]);
+
+  const deselectAll = useCallback(() => {
+    setSelected((p: string[]) => p.filter((v: string) => !values.includes(v)));
+  }, [values, setSelected]);
+
+  const allSelected = values.length > 0 && values.every((v: string) => selected.includes(v));
+
   return (
-    <div className="pt-3">
+    <div className="pt-3 relative" ref={containerRef}>
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => { setOpen(!open); setDropdownSearch(""); }}
         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm border transition-all ${
           selected.length > 0
             ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
             : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20"
         }`}
       >
-        <div className="text-left">
+        <div className="text-left min-w-0 flex-1">
           <span className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/30 block">
             {title}
           </span>
-          <span className="text-xs mt-0.5 block">
+          <span className="text-xs mt-0.5 block truncate">
             {selected.length === 0
               ? "Todos"
               : `${selected.length} seleccionado${selected.length > 1 ? "s" : ""}`}
           </span>
         </div>
         {open ? (
-          <ChevronUp className="w-3.5 h-3.5" />
+          <ChevronUp className="w-3.5 h-3.5 flex-shrink-0" />
         ) : (
-          <ChevronDown className="w-3.5 h-3.5" />
+          <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" />
         )}
       </button>
       {open && (
         <div
-          className="mt-1.5 max-h-48 overflow-y-auto rounded-xl border border-[var(--border)] divide-y divide-white/5"
+          className="mt-1.5 rounded-xl border border-[var(--border)] overflow-hidden animate-fadeSlide"
           style={{
             background: "var(--bg-card)",
-            backdropFilter: "blur(12px)",
             boxShadow: "0 10px 30px var(--shadow-color)",
           }}
         >
-          {values.map((value: string) => {
-            const active = selected.includes(value);
-            return (
-              <button
-                key={value}
-                onClick={() =>
-                  setSelected((p: string[]) =>
-                    active ? p.filter((v) => v !== value) : [...p, value],
-                  )
-                }
-                className={`w-full text-left px-4 py-2.5 text-xs transition-colors flex items-center justify-between ${
-                  active
-                    ? "text-cyan-400 bg-cyan-500/10"
-                    : "text-[var(--text-primary)]/60 hover:bg-[var(--bg-card)]/60 hover:text-[var(--text-primary)]"
-                }`}
-              >
-                <span>{value}</span>
-                {active && (
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+          {/* Search inside dropdown */}
+          <div className="relative border-b border-white/5">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-primary)]/25 pointer-events-none" />
+            <input
+              type="text"
+              placeholder={`Buscar ${title.toLowerCase()}...`}
+              value={dropdownSearch}
+              onChange={(e) => setDropdownSearch(e.target.value)}
+              className="w-full pl-9 pr-3 py-2.5 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-primary)]/25 bg-transparent outline-none"
+            />
+          </div>
+          {/* Select all / None */}
+          <div className="flex gap-2 px-3 py-2 border-b border-white/5">
+            <button
+              onClick={selectAll}
+              className={`text-[10px] uppercase tracking-wider font-medium transition-colors ${
+                allSelected
+                  ? "text-cyan-400"
+                  : "text-[var(--text-primary)]/30 hover:text-cyan-400"
+              }`}
+            >
+              Todo
+            </button>
+            <span className="text-[var(--text-primary)]/10">|</span>
+            <button
+              onClick={deselectAll}
+              className="text-[10px] uppercase tracking-wider font-medium text-[var(--text-primary)]/30 hover:text-red-400 transition-colors"
+            >
+              Ninguno
+            </button>
+            <span className="flex-1" />
+            <span className="text-[10px] text-[var(--text-primary)]/20">
+              {selected.length}/{values.length}
+            </span>
+          </div>
+          {/* Items */}
+          <div className="max-h-48 overflow-y-auto divide-y divide-white/5">
+            {filtered.length === 0 ? (
+              <div className="px-4 py-6 text-center text-xs text-[var(--text-primary)]/20">
+                Sin resultados
+              </div>
+            ) : (
+              filtered.map((value: string) => {
+                const active = selected.includes(value);
+                return (
+                  <button
+                    key={value}
+                    onClick={() =>
+                      setSelected((p: string[]) =>
+                        active ? p.filter((v) => v !== value) : [...p, value],
+                      )
+                    }
+                    className={`w-full text-left px-4 py-2.5 text-xs transition-colors flex items-center justify-between ${
+                      active
+                        ? "text-cyan-400 bg-cyan-500/10"
+                        : "text-[var(--text-primary)]/60 hover:bg-white/[0.03] hover:text-[var(--text-primary)]"
+                    }`}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                )}
-              </button>
-            );
-          })}
+                    <span className="truncate pr-2">{value}</span>
+                    <div
+                      className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
+                        active
+                          ? "bg-cyan-500 border-cyan-500"
+                          : "border-white/20 bg-transparent"
+                      }`}
+                    >
+                      {active && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -863,9 +1028,13 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
 
 function getStatusChipStyle(status: string) {
   const s = status.toLowerCase();
-  if (["running", "available", "active", "ok"].includes(s))
-    return "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20";
-  if (["stopped", "terminated"].includes(s))
-    return "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20";
-  return "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20";
+  if (["running", "available", "active", "ok", "in-use", "associated"].includes(s))
+    return "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/30";
+  if (["stopped", "terminated", "stopping", "shutting-down", "deleted", "failed"].includes(s))
+    return "bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/30";
+  if (["pending", "provisioning", "creating", "updating", "rebooting"].includes(s))
+    return "bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/30";
+  if (["paused", "suspended", "standby"].includes(s))
+    return "bg-sky-500/10 border-sky-500/20 text-sky-400 hover:bg-sky-500/20 hover:border-sky-500/30";
+  return "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]";
 }

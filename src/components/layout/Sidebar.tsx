@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import { usePathname } from "next/navigation";
 
-import { Boxes, BarChart3, Terminal, DollarSign, Cloud, X } from "lucide-react";
+import { Boxes, BarChart3, Terminal, DollarSign, X } from "lucide-react";
+import BrandLogo from "@/components/layout/BrandLogo";
 
 const menuItems = [
   {
@@ -96,49 +97,7 @@ export default function Sidebar({
         "
       >
         <div className="flex items-center gap-3">
-          <div
-            className="
-
-              relative
-
-              w-11
-              h-11
-
-              rounded-2xl
-
-              flex
-              items-center
-              justify-center
-
-              overflow-hidden
-
-              shadow-lg
-
-            "
-            style={{
-              background: `linear-gradient(
-                  135deg,
-                  var(--gradient-start),
-                  var(--gradient-end)
-                )`,
-            }}
-          >
-            <div
-              className="
-
-                absolute
-                inset-0
-
-                bg-[var(--bg-hover)]
-
-              "
-            />
-
-            <Cloud
-              size={20}
-              className="relative z-10 text-[var(--text-primary)]"
-            />
-          </div>
+          <BrandLogo />
 
           <div>
             <p
@@ -163,7 +122,7 @@ export default function Sidebar({
 
               "
             >
-              Multi Cloud Inventory
+              UX Technology | Multi Cloud Inventory
             </p>
           </div>
         </div>

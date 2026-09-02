@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
+  ChevronDown,
   Clock,
   Copy,
+  Filter,
   Play,
   Search,
   Server,
@@ -105,6 +107,9 @@ export default function CommandCenter() {
   const [selectedAccounts, setSelectedAccounts] = useState<Set<string>>(new Set());
   const [accountQuery, setAccountQuery] = useState("");
   const [accountPickerOpen, setAccountPickerOpen] = useState(false);
+  const accountPickerRef = useRef<HTMLDivElement | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersRef = useRef<HTMLDivElement | null>(null);
   const [onlyRunning, setOnlyRunning] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [command, setCommand] = useState("hostname");
@@ -159,6 +164,50 @@ export default function CommandCenter() {
     if (!needle) return accounts;
     return accounts.filter((item) => item.toLowerCase().includes(needle));
   }, [accountQuery, accounts]);
+
+  const selectMatchingAccountsDisabled = !accountQuery.trim() || filteredAccounts.length === 0;
+
+  useEffect(() => {
+    if (!accountPickerOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!accountPickerRef.current?.contains(event.target as Node)) setAccountPickerOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setAccountPickerOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [accountPickerOpen]);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!filtersRef.current?.contains(event.target as Node)) {
+        setFiltersOpen(false);
+        setAccountPickerOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setFiltersOpen(false);
+        setAccountPickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [filtersOpen]);
 
   const filteredServers = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -306,6 +355,12 @@ export default function CommandCenter() {
     setSelected(new Set());
   }
 
+  function selectMatchingAccounts() {
+    if (selectMatchingAccountsDisabled) return;
+    setSelectedAccounts(new Set(filteredAccounts));
+    setSelected(new Set());
+  }
+
   function clearConsole() {
     setCommand("");
     setResults([]);
@@ -338,30 +393,50 @@ export default function CommandCenter() {
 
       <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(300px,360px)_minmax(0,1fr)]">
         <div className="min-w-0 rounded-lg border border-[var(--border)] bg-[var(--bg-card)]/70">
-          <div className="border-b border-[var(--border)] p-3">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="font-semibold text-[var(--text-primary)]">Targets</h2>
-                <p className="text-xs text-[var(--text-secondary)]">
-                  {selectedTargets.length} seleccionados de {filteredServers.length} visibles
-                </p>
+          <div ref={filtersRef}>
+            <div className="border-b border-[var(--border)] p-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-semibold text-[var(--text-primary)]">Targets</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    {selectedTargets.length} seleccionados de {filteredServers.length} visibles
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (filtersOpen) setAccountPickerOpen(false);
+                      setFiltersOpen((current) => !current);
+                    }}
+                    aria-expanded={filtersOpen}
+                    aria-controls="command-filter-options"
+                    className="inline-flex items-center gap-2 rounded-md border border-cyan-400/30 bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-100 transition hover:bg-cyan-500/20"
+                  >
+                    <Filter className="h-3.5 w-3.5" />
+                    Filtros
+                    <ChevronDown className={`h-3.5 w-3.5 transition-transform ${filtersOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleAllFiltered}
+                    disabled={filteredServers.length === 0}
+                    className="rounded-md border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] disabled:opacity-50"
+                  >
+                    {filteredServers.length > 0 && filteredServers.every((server) => selected.has(targetKey(server)))
+                      ? "Limpiar"
+                      : "Seleccionar"}
+                  </button>
+                </div>
               </div>
-
-              <button
-                onClick={toggleAllFiltered}
-                disabled={filteredServers.length === 0}
-                className="rounded-md border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] disabled:opacity-50"
-              >
-                {filteredServers.length > 0 && filteredServers.every((server) => selected.has(targetKey(server)))
-                  ? "Limpiar"
-                  : "Seleccionar"}
-              </button>
             </div>
-          </div>
 
-          <div className="space-y-2.5 p-3">
+            <div id="command-filter-options" hidden={!filtersOpen}>
+            <div className="space-y-2.5 border-b border-[var(--border)] p-3">
             <div className="grid grid-cols-2 gap-2">
               <button
+                type="button"
                 onClick={() => {
                   setOsType("linux");
                   setCommand("hostname");
@@ -376,6 +451,7 @@ export default function CommandCenter() {
                 Linux Shell
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setOsType("windows");
                   setCommand("hostname");
@@ -402,17 +478,18 @@ export default function CommandCenter() {
             </label>
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
-              <div className="relative">
+              <div ref={accountPickerRef} className="relative">
                 <label className="relative block">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-300" />
                   <input
                     value={accountQuery}
-                    onChange={(event) => {
-                      setAccountQuery(event.target.value);
-                      setAccountPickerOpen(true);
-                    }}
-                    onFocus={() => setAccountPickerOpen(true)}
-                    onBlur={() => window.setTimeout(() => setAccountPickerOpen(false), 160)}
+                    onChange={(event) => setAccountQuery(event.target.value)}
+                    onClick={() => setAccountPickerOpen(true)}
+                    role="combobox"
+                    aria-haspopup="listbox"
+                    aria-expanded={accountPickerOpen}
+                    aria-controls="command-account-options"
+                    aria-label="Buscar y seleccionar cuentas"
                     placeholder={selectedAccounts.size === 0 ? "Todas las cuentas" : `${selectedAccounts.size} cuentas seleccionadas`}
                     className="h-10 w-full rounded-md border border-cyan-400/20 bg-[#07111d] pl-9 pr-9 text-sm text-cyan-50 outline-none placeholder:text-cyan-100/80 focus:border-cyan-300 focus:bg-[#081827]"
                   />
@@ -431,21 +508,38 @@ export default function CommandCenter() {
 
                 {accountPickerOpen && (
                   <div className="absolute left-0 right-0 top-11 z-20 overflow-hidden rounded-md border border-cyan-400/20 bg-[#07111d] shadow-2xl shadow-black/40">
-                    <button
-                      type="button"
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => {
-                        clearAccountFilter();
-                        setAccountPickerOpen(false);
-                      }}
-                      className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm transition hover:bg-cyan-500/10 ${
-                        selectedAccounts.size === 0 ? "text-cyan-200" : "text-cyan-50"
-                      }`}
-                    >
-                      <span>Todas las cuentas</span>
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2 border-b border-cyan-400/10 px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedAccounts(new Set(accounts));
+                          setSelected(new Set());
+                        }}
+                        className="text-[10px] uppercase tracking-wider text-cyan-100/80 transition hover:text-cyan-50"
+                      >
+                        Todo
+                      </button>
+                      <span className="text-cyan-100/30">|</span>
+                      <button
+                        type="button"
+                        onClick={clearAccountFilter}
+                        className="text-[10px] uppercase tracking-wider text-cyan-100/80 transition hover:text-red-200"
+                      >
+                        Ninguno
+                      </button>
+                      <span className="text-cyan-100/30">|</span>
+                      <button
+                        type="button"
+                        onClick={selectMatchingAccounts}
+                        disabled={selectMatchingAccountsDisabled}
+                        title={selectMatchingAccountsDisabled ? "Escribe una búsqueda con coincidencias" : undefined}
+                        className="text-[10px] uppercase tracking-wider text-cyan-200/80 transition hover:text-cyan-50 disabled:cursor-not-allowed disabled:text-cyan-100/30"
+                      >
+                        Seleccionar coincidencias
+                      </button>
+                    </div>
 
-                    <div className="max-h-56 overflow-y-auto border-t border-cyan-400/10">
+                    <div id="command-account-options" className="max-h-56 overflow-y-auto border-t border-cyan-400/10" role="listbox" aria-label="Cuentas disponibles">
                       {filteredAccounts.length === 0 ? (
                         <div className="px-3 py-3 text-sm text-cyan-100/60">
                           Sin cuentas coincidentes
@@ -504,6 +598,8 @@ export default function CommandCenter() {
                 Solo running
               </label>
             </div>
+            </div>
+            </div>
           </div>
 
           <div className="max-h-[360px] overflow-y-auto border-t border-[var(--border)]">
@@ -519,6 +615,7 @@ export default function CommandCenter() {
               return (
                 <button
                   key={targetKey(server)}
+                  type="button"
                   onClick={() => toggleTarget(server)}
                   className={`flex w-full items-start gap-2.5 border-b border-[var(--border)] px-3 py-2.5 text-left transition hover:bg-[var(--bg-hover)] ${
                     checked ? "bg-cyan-500/10" : ""
@@ -564,6 +661,7 @@ export default function CommandCenter() {
 
               <div className="flex flex-wrap gap-2">
                 <button
+                  type="button"
                   onClick={clearConsole}
                   disabled={running}
                   className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-4 text-sm font-semibold text-zinc-100 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
@@ -572,6 +670,7 @@ export default function CommandCenter() {
                   Limpiar
                 </button>
                 <button
+                  type="button"
                   onClick={runCommand}
                   disabled={running || selectedTargets.length === 0 || !command.trim()}
                   className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-emerald-500 px-4 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
@@ -587,6 +686,7 @@ export default function CommandCenter() {
                 {templates[osType].map((template) => (
                   <button
                     key={template.label}
+                    type="button"
                     onClick={() => setCommand(template.command)}
                     className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-200 transition hover:bg-white/10"
                   >
@@ -726,6 +826,7 @@ function HistoryPanel({ history, onUse }: { history: HistoryItem[]; onUse: (item
           {history.map((item) => (
             <button
               key={item.id}
+              type="button"
               onClick={() => onUse(item)}
               className="flex w-full items-center justify-between gap-4 p-4 text-left transition hover:bg-[var(--bg-hover)]"
             >

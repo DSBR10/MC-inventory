@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import {
   Activity,
@@ -8,6 +8,7 @@ import {
   BarChart3,
   CheckCircle2,
   Clock3,
+  ChevronDown,
   Database,
   Download,
   FileSearch,
@@ -222,6 +223,34 @@ export default function MonitoringPage() {
   const [modalMetrics, setModalMetrics] = useState<MetricData[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersRef = useRef<HTMLDivElement | null>(null);
+  const [accountPickerOpen, setAccountPickerOpen] = useState(false);
+  const [accountQuery, setAccountQuery] = useState("");
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!filtersRef.current?.contains(event.target as Node)) {
+        setFiltersOpen(false);
+        setAccountPickerOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setFiltersOpen(false);
+        setAccountPickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [filtersOpen]);
 
   const [logsState, setLogsState] = useState<LogsState>({
     groups: [],
@@ -512,47 +541,73 @@ export default function MonitoringPage() {
 
   return (
     <div className="space-y-6">
-      <section className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10">
-              <Activity className="h-5 w-5 text-cyan-300" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Monitoreo AWS</h1>
-              <p className="text-sm text-[var(--text-secondary)]">{accountSubtitle}</p>
+      <section ref={filtersRef} className="space-y-3">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10">
+                <Activity className="h-5 w-5 text-cyan-300" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Monitoreo AWS</h1>
+                <p className="text-sm text-[var(--text-secondary)]">{accountSubtitle}</p>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(280px,420px)_180px_auto]">
-          <Field label="Cuenta">
-            <AccountPicker
-              accounts={accounts}
-              selectedIds={selectedAccountIds}
-              onChange={setSelectedAccountIds}
-            />
-          </Field>
-
-          <Field label="Region">
-            <select value={selectedRegion} onChange={(event) => setSelectedRegion(event.target.value)} className="control">
-              {REGIONS.map((region) => (
-                <option key={region} value={region}>{region}</option>
-              ))}
-            </select>
-          </Field>
 
           <button
+            type="button"
             onClick={() => {
-              fetchOverview(true);
-              fetchInventory();
+              if (filtersOpen) setAccountPickerOpen(false);
+              setFiltersOpen((current) => !current);
             }}
-            disabled={overviewLoading}
-            className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-cyan-400/30 bg-cyan-500/15 px-4 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+            aria-expanded={filtersOpen}
+            aria-controls="monitoring-filter-options"
+            className="secondary-button self-start xl:self-auto"
           >
-            {overviewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-            Actualizar
+            <Filter className="h-4 w-4" />
+            Filtros
+            <ChevronDown className={`h-4 w-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`} />
           </button>
+        </div>
+
+        <div id="monitoring-filter-options" hidden={!filtersOpen}>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]/70 p-4">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(280px,420px)_180px_auto]">
+                <Field label="Cuenta">
+                  <AccountPicker
+                    accounts={accounts}
+                    selectedIds={selectedAccountIds}
+                    onChange={setSelectedAccountIds}
+                    open={accountPickerOpen}
+                    query={accountQuery}
+                    onOpenChange={setAccountPickerOpen}
+                    onQueryChange={setAccountQuery}
+                  />
+                </Field>
+
+                <Field label="Region">
+                  <select value={selectedRegion} onChange={(event) => setSelectedRegion(event.target.value)} className="control">
+                    {REGIONS.map((region) => (
+                      <option key={region} value={region}>{region}</option>
+                    ))}
+                  </select>
+                </Field>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    fetchOverview(true);
+                    fetchInventory();
+                  }}
+                  disabled={overviewLoading}
+                  className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-cyan-400/30 bg-cyan-500/15 px-4 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {overviewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  Actualizar
+                </button>
+              </div>
+            </div>
         </div>
       </section>
 
@@ -626,14 +681,28 @@ function AccountPicker({
   accounts,
   selectedIds,
   onChange,
+  open,
+  query,
+  onOpenChange,
+  onQueryChange,
 }: {
   accounts: AwsAccount[];
   selectedIds: string[];
   onChange: (ids: string[]) => void;
+  open: boolean;
+  query: string;
+  onOpenChange: (open: boolean) => void;
+  onQueryChange: (query: string) => void;
 }) {
-  const [open, setOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement | null>(null);
-  const allSelected = accounts.length > 0 && selectedIds.length === accounts.length;
+  const listboxId = useId();
+  const allSelected = accounts.length > 0 && accounts.every((account) => selectedIds.includes(account.id));
+  const filteredAccounts = accounts.filter((account) => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return true;
+    return `${account.name} ${account.id} ${account.region}`.toLowerCase().includes(needle);
+  });
+  const selectMatchesDisabled = !query.trim() || filteredAccounts.length === 0;
   const label = selectedIds.length === 0
     ? "Ninguna cuenta seleccionada"
     : allSelected
@@ -645,37 +714,91 @@ function AccountPicker({
     onChange(next);
   };
 
+  const selectMatching = () => {
+    if (selectMatchesDisabled) return;
+    onChange(filteredAccounts.map((account) => account.id));
+  };
+
   useEffect(() => {
     if (!open) return;
 
     const handlePointerDown = (event: MouseEvent) => {
       if (!pickerRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+        onOpenChange(false);
       }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onOpenChange(false);
     };
 
     document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
-  }, [open]);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onOpenChange, open]);
 
   return (
     <div ref={pickerRef} className="relative">
-      <button type="button" onClick={() => setOpen((current) => !current)} className="control flex items-center justify-between text-left">
+      <button
+        type="button"
+        onClick={() => onOpenChange(!open)}
+        className="control flex items-center justify-between text-left"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        aria-label="Seleccionar cuentas AWS"
+      >
         <span className="truncate">{label}</span>
         <ListFilter className="h-4 w-4 text-[var(--text-secondary)]" />
       </button>
       {open && (
-        <div className="absolute z-30 mt-2 max-h-80 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
-          <button
-            type="button"
-            onClick={() => onChange(allSelected ? [] : accounts.map((account) => account.id))}
-            className="flex w-full items-center gap-2 border-b border-[var(--border)] px-3 py-2 text-left text-sm text-[var(--text-primary)] hover:bg-white/5"
-          >
-            <input readOnly type="checkbox" checked={allSelected} className="h-4 w-4 accent-cyan-400" />
-            Todas las cuentas
-          </button>
-          <div className="max-h-64 overflow-y-auto">
-            {accounts.map((account) => {
+        <div id={listboxId} className="absolute z-30 mt-2 max-h-80 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
+          <div className="border-b border-[var(--border)] p-2">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(event) => onQueryChange(event.target.value)}
+                className="control h-9 pl-9"
+                placeholder="Buscar cuenta"
+                aria-label="Buscar cuenta"
+              />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] px-3 py-2">
+            <button
+              type="button"
+              onClick={() => onChange(accounts.map((account) => account.id))}
+              className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] transition hover:text-cyan-200"
+            >
+              Todo
+            </button>
+            <span className="text-[var(--text-secondary)]/40">|</span>
+            <button
+              type="button"
+              onClick={() => onChange([])}
+              className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] transition hover:text-red-300"
+            >
+              Ninguno
+            </button>
+            <span className="text-[var(--text-secondary)]/40">|</span>
+            <button
+              type="button"
+              onClick={selectMatching}
+              disabled={selectMatchesDisabled}
+              title={selectMatchesDisabled ? "Escribe una búsqueda con coincidencias" : undefined}
+              className="text-[10px] uppercase tracking-wider text-cyan-300/80 transition hover:text-cyan-200 disabled:cursor-not-allowed disabled:text-[var(--text-secondary)]/40"
+            >
+              Seleccionar coincidencias
+            </button>
+          </div>
+          <div className="max-h-64 overflow-y-auto" role="listbox" aria-label="Cuentas AWS">
+            {filteredAccounts.length === 0 ? (
+              <p className="px-3 py-5 text-center text-xs text-[var(--text-secondary)]">Sin cuentas coincidentes</p>
+            ) : filteredAccounts.map((account) => {
               const checked = selectedIds.includes(account.id);
               return (
                 <button
@@ -808,6 +931,7 @@ function MetricExplorer({
           </select>
         </Field>
         <button
+          type="button"
           onClick={onSearch}
           disabled={state.loading}
           className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
@@ -854,6 +978,7 @@ function SearchableResourceSelect({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const selectRef = useRef<HTMLDivElement | null>(null);
+  const listboxId = useId();
   const selected = options.find((option) => option.key === value);
   const filteredOptions = options.filter((option) => option.label.toLowerCase().includes(query.toLowerCase()));
 
@@ -865,9 +990,16 @@ function SearchableResourceSelect({
         setOpen(false);
       }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
 
     document.addEventListener("mousedown", handlePointerDown);
-    return () => document.removeEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [open]);
 
   return (
@@ -877,12 +1009,16 @@ function SearchableResourceSelect({
           type="button"
           onClick={() => setOpen((current) => !current)}
           className="control flex items-center justify-between text-left"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listboxId}
+          aria-label={`Seleccionar ${label}`}
         >
           <span className="truncate">{selected?.label || `Todos / ${options.length} opciones`}</span>
           <Search className="h-4 w-4 text-[var(--text-secondary)]" />
         </button>
         {open && (
-          <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
+          <div id={listboxId} className="absolute z-30 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
             <div className="border-b border-[var(--border)] p-2">
               <input
                 autoFocus
@@ -890,6 +1026,7 @@ function SearchableResourceSelect({
                 onChange={(event) => setQuery(event.target.value)}
                 className="control h-9"
                 placeholder={placeholder}
+                aria-label={placeholder}
               />
             </div>
             <button
@@ -1035,7 +1172,7 @@ function LogsPanel({
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButtons logs={state.logs} />
-          <button onClick={onLoadGroups} disabled={state.loadingGroups} className="secondary-button">
+        <button type="button" onClick={onLoadGroups} disabled={state.loadingGroups} className="secondary-button">
             {state.loadingGroups ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             Grupos
           </button>
@@ -1068,7 +1205,7 @@ function LogsPanel({
             <option value={500}>500</option>
           </select>
         </Field>
-        <button onClick={onSearch} disabled={state.loadingLogs || !state.groupKey} className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
+        <button type="button" onClick={onSearch} disabled={state.loadingLogs || !state.groupKey} className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
           {state.loadingLogs ? <Loader2 className="h-4 w-4 animate-spin" /> : <Filter className="h-4 w-4" />}
           Filtrar
         </button>
@@ -1104,9 +1241,9 @@ function ExportButtons({ logs }: { logs: CloudWatchLog[] }) {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <button onClick={() => exportLogs(logs, "txt")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />TXT</button>
-      <button onClick={() => exportLogs(logs, "json")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />JSON</button>
-      <button onClick={() => exportLogs(logs, "xlsx")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />XLSX</button>
+      <button type="button" onClick={() => exportLogs(logs, "txt")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />TXT</button>
+      <button type="button" onClick={() => exportLogs(logs, "json")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />JSON</button>
+      <button type="button" onClick={() => exportLogs(logs, "xlsx")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />XLSX</button>
     </div>
   );
 }
@@ -1163,7 +1300,7 @@ function CloudTrailPanel({
             <option value={100}>100</option>
           </select>
         </Field>
-        <button onClick={onSearch} disabled={state.loading} className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
+        <button type="button" onClick={onSearch} disabled={state.loading} className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60">
           {state.loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ListFilter className="h-4 w-4" />}
           Buscar
         </button>
@@ -1227,7 +1364,7 @@ function ResourceTable({
       ) : (
         <div className="max-h-[560px] space-y-2 overflow-y-auto pr-1">
           {rows.map((row) => (
-            <button key={row.key} onClick={() => onOpen(row)} className="w-full rounded-lg border border-[var(--border)] bg-black/10 p-3 text-left transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
+            <button type="button" key={row.key} onClick={() => onOpen(row)} className="w-full rounded-lg border border-[var(--border)] bg-black/10 p-3 text-left transition hover:border-cyan-400/40 hover:bg-cyan-500/5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-[var(--text-primary)]">{row.name}</p>
@@ -1274,7 +1411,7 @@ function ResourceMetricsModal({
           </div>
           <div className="flex items-center gap-2">
             <StatusPill value={resource.status} />
-            <button onClick={onClose} className="secondary-button" aria-label="Cerrar"><X className="h-4 w-4" /></button>
+            <button type="button" onClick={onClose} className="secondary-button" aria-label="Cerrar"><X className="h-4 w-4" /></button>
           </div>
         </div>
         <div className="max-h-[76vh] overflow-y-auto p-4">
@@ -1376,7 +1513,7 @@ function LogRow({ log, onOpen }: { log: CloudWatchLog; onOpen: () => void }) {
       <div className="text-xs text-[var(--text-secondary)]">{formatDate(log.timestamp)}</div>
       <div className="truncate text-xs text-cyan-200">{log.logStreamName || "stream"}</div>
       <pre className="max-h-28 overflow-hidden whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-[var(--text-primary)]/90">{log.message}</pre>
-      <button onClick={onOpen} className="secondary-button justify-center px-2">Abrir</button>
+      <button type="button" onClick={onOpen} className="secondary-button justify-center px-2">Abrir</button>
     </div>
   );
 }
@@ -1390,7 +1527,7 @@ function LogDetailModal({ log, onClose }: { log: CloudWatchLog; onClose: () => v
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">Detalle del log</h2>
             <p className="text-xs text-[var(--text-secondary)]">{formatDate(log.timestamp)} - {log.logStreamName || "stream"}</p>
           </div>
-          <button onClick={onClose} className="secondary-button" aria-label="Cerrar"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={onClose} className="secondary-button" aria-label="Cerrar"><X className="h-4 w-4" /></button>
         </div>
         <pre className="max-h-[72vh] overflow-auto whitespace-pre-wrap break-words p-4 font-mono text-xs leading-relaxed text-[var(--text-primary)]">{log.message}</pre>
       </section>
@@ -1400,7 +1537,7 @@ function LogDetailModal({ log, onClose }: { log: CloudWatchLog; onClose: () => v
 
 function TrailRow({ event, onOpen }: { event: TrailEvent; onOpen: () => void }) {
   return (
-    <button onClick={onOpen} className="grid w-full grid-cols-[170px_1fr_200px_180px_92px] gap-2 p-3 text-left transition hover:bg-cyan-500/5">
+    <button type="button" onClick={onOpen} className="grid w-full grid-cols-[170px_1fr_200px_180px_92px] gap-2 p-3 text-left transition hover:bg-cyan-500/5">
       <div className="text-xs text-[var(--text-secondary)]">{formatDate(event.eventTime)}</div>
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold text-[var(--text-primary)]">{event.eventName || "Evento"}</p>
@@ -1443,7 +1580,7 @@ function CloudTrailDetailModal({ event, onClose }: { event: TrailEvent; onClose:
             <h2 className="truncate text-lg font-semibold text-[var(--text-primary)]">{event.eventName || "Detalle CloudTrail"}</h2>
             <p className="text-sm text-[var(--text-secondary)]">{event.eventSource || "AWS"} - {event.accountName || event.accountId || "Cuenta AWS"}</p>
           </div>
-          <button onClick={onClose} className="secondary-button" aria-label="Cerrar"><X className="h-4 w-4" /></button>
+          <button type="button" onClick={onClose} className="secondary-button" aria-label="Cerrar"><X className="h-4 w-4" /></button>
         </div>
         <div className="grid max-h-[76vh] grid-cols-1 gap-4 overflow-y-auto p-4 xl:grid-cols-[360px_1fr]">
           <div className="rounded-lg border border-[var(--border)] bg-black/10 p-4">

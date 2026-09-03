@@ -21,6 +21,8 @@ import {
   ArrowUpRight,
   BarChart3,
   CalendarDays,
+  Check,
+  ChevronDown,
   Cloud,
   Database,
   Download,
@@ -30,6 +32,7 @@ import {
   RefreshCw,
   Search,
   Server,
+  SlidersHorizontal,
   Tags,
   WalletCards,
   X,
@@ -106,6 +109,26 @@ export default function BillingPage() {
     tagFilters: [],
     search: "",
   }));
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersPanelRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!filtersPanelRef.current?.contains(event.target as Node)) setFiltersOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFiltersOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [filtersOpen]);
 
   const fetchBilling = useCallback(async () => {
     setLoading(true);
@@ -200,7 +223,12 @@ export default function BillingPage() {
     }));
   };
 
-  const activeFilterCount = filters.accounts.length + [filters.service, filters.search].filter(Boolean).length + filters.tagFilters.length;
+  const activeFilterCount = [
+    filters.accounts.length > 0,
+    Boolean(filters.service),
+    filters.tagFilters.length > 0,
+    Boolean(filters.search.trim()),
+  ].filter(Boolean).length;
 
   return (
     <div className="space-y-6">
@@ -221,15 +249,15 @@ export default function BillingPage() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button onClick={() => exportBilling(tableRows, "xlsx")} disabled={tableRows.length === 0} className="secondary-button">
+          <button type="button" onClick={() => exportBilling(tableRows, "xlsx")} disabled={tableRows.length === 0} className="secondary-button">
             <Download className="h-4 w-4" />
             EXCEL
           </button>
-          <button onClick={() => exportBilling(tableRows, "pdf")} disabled={tableRows.length === 0} className="secondary-button">
+          <button type="button" onClick={() => exportBilling(tableRows, "pdf")} disabled={tableRows.length === 0} className="secondary-button">
             <Download className="h-4 w-4" />
             PDF
           </button>
-          <button onClick={fetchBilling} disabled={loading} className="secondary-button">
+          <button type="button" onClick={fetchBilling} disabled={loading} className="secondary-button">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             Actualizar
           </button>
@@ -238,72 +266,132 @@ export default function BillingPage() {
 
       {error && <StatusMessage tone="error" message={error} />}
 
-      <section className="panel">
-        <div className="panel-header">
-          <div>
-            <h2 className="panel-title">Filtros de costo</h2>
-            <p className="panel-subtitle">Rango mensual, cuenta, servicio, tags y búsqueda libre.</p>
+      <section ref={filtersPanelRef} className="overflow-visible rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]/75 shadow-[0_18px_55px_rgba(0,0,0,0.12)]">
+        <div className="flex flex-col gap-4 border-b border-[var(--border)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((current) => !current)}
+            aria-expanded={filtersOpen}
+            aria-controls="billing-filter-options"
+            className="flex min-w-0 items-center gap-3 text-left"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10">
+              <SlidersHorizontal className="h-4.5 w-4.5 text-cyan-300" />
+            </span>
+            <span className="min-w-0">
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="text-base font-semibold tracking-tight text-[var(--text-primary)]">Filtros</span>
+                {activeFilterCount > 0 && (
+                  <span className="rounded-full border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 text-[11px] font-medium text-cyan-200">
+                    {activeFilterCount} activo{activeFilterCount === 1 ? "" : "s"}
+                  </span>
+                )}
+              </span>
+              <span className="mt-0.5 block text-xs text-[var(--text-secondary)]">Delimita el análisis por periodo, cuenta, servicio o tags.</span>
+            </span>
+            <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${filtersOpen ? "rotate-180 text-cyan-300" : ""}`} />
+          </button>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-[var(--text-secondary)]">
+              <span className="font-semibold text-[var(--text-primary)]">{filteredBilling.length.toLocaleString("es-CO")}</span> de {billing.length.toLocaleString("es-CO")} registros
+            </span>
+            {activeFilterCount > 0 && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 text-xs font-medium text-[var(--text-secondary)] transition hover:border-cyan-400/40 hover:text-cyan-200"
+              >
+                <X className="h-3.5 w-3.5" />
+                Limpiar
+              </button>
+            )}
           </div>
-          {activeFilterCount > 0 && (
-            <button onClick={resetFilters} className="secondary-button">
-              <X className="h-4 w-4" />
-              Limpiar filtros
-            </button>
-          )}
         </div>
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">
-          <Field label="Inicio">
-            <input type="month" value={filters.start} onChange={(event) => setFilters((prev) => ({ ...prev, start: event.target.value }))} className="control" />
-          </Field>
-          <Field label="Fin">
-            <input type="month" value={filters.end} onChange={(event) => setFilters((prev) => ({ ...prev, end: event.target.value }))} className="control" />
-          </Field>
-          <Field label="Cuenta AWS">
-            <MultiSelect
-              options={accountFacets.accounts}
-              selected={filters.accounts}
-              allLabel="Todas las cuentas"
-              emptyLabel="Todas las cuentas"
-              onChange={(accounts) => setFilters((prev) => ({ ...prev, accounts, service: "", tagFilters: [] }))}
-            />
-          </Field>
-          <Field label="Servicio">
-            <SearchableSelect
-              options={scopedFacets.services}
-              value={filters.service}
-              allLabel="Todos los servicios"
-              placeholder="Buscar servicio"
-              onChange={(service) => setFilters((prev) => ({ ...prev, service }))}
-            />
-          </Field>
-        </div>
+        <div id="billing-filter-options">
+          {filtersOpen && (
+            <div className="p-5">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(260px,1.5fr)_minmax(170px,0.75fr)_minmax(170px,0.75fr)]">
+            <Field label="Búsqueda" hint="Cuenta, recurso, tag o usage type">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-300/70" />
+                <input
+                  value={filters.search}
+                  onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
+                  className="control pl-10 pr-10"
+                  placeholder="Buscar en los costos..."
+                  aria-label="Buscar en los costos"
+                />
+                {filters.search && (
+                  <button
+                    type="button"
+                    onClick={() => setFilters((prev) => ({ ...prev, search: "" }))}
+                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-[var(--text-secondary)] hover:bg-white/5 hover:text-[var(--text-primary)]"
+                    aria-label="Limpiar búsqueda"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            </Field>
+            <Field label="Desde">
+              <div className="relative">
+                <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input type="month" value={filters.start} onChange={(event) => setFilters((prev) => ({ ...prev, start: event.target.value }))} className="control pl-10" aria-label="Mes inicial" />
+              </div>
+            </Field>
+            <Field label="Hasta">
+              <div className="relative">
+                <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input type="month" value={filters.end} onChange={(event) => setFilters((prev) => ({ ...prev, end: event.target.value }))} className="control pl-10" aria-label="Mes final" />
+              </div>
+            </Field>
+          </div>
 
-        <TagFilterBuilder
-          tagKeys={scopedFacets.tagKeys}
-          tags={scopedFacets.tags}
-          selected={filters.tagFilters}
-          onChange={(tagFilters) => setFilters((prev) => ({ ...prev, tagFilters }))}
-        />
+          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <Field label="Cuenta AWS" hint={`${accountFacets.accounts.length} disponibles`}>
+              <MultiSelect
+                options={accountFacets.accounts}
+                selected={filters.accounts}
+                allLabel="Todas las cuentas"
+                emptyLabel="Todas las cuentas"
+                onChange={(accounts) => setFilters((prev) => ({ ...prev, accounts, service: "", tagFilters: [] }))}
+              />
+            </Field>
+            <Field label="Servicio" hint={`${scopedFacets.services.length} disponibles`}>
+              <SearchableSelect
+                options={scopedFacets.services}
+                value={filters.service}
+                allLabel="Todos los servicios"
+                placeholder="Buscar servicio"
+                onChange={(service) => setFilters((prev) => ({ ...prev, service }))}
+              />
+            </Field>
+          </div>
 
-        <div className="mt-4 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex min-w-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-input)] xl:w-[520px]">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[var(--border)] text-[var(--text-secondary)]">
-              <Search className="h-4 w-4" />
+          <TagFilterBuilder
+            tagKeys={scopedFacets.tagKeys}
+            tags={scopedFacets.tags}
+            selected={filters.tagFilters}
+            onChange={(tagFilters) => setFilters((prev) => ({ ...prev, tagFilters }))}
+          />
+
+          <div className="mt-5 flex flex-col gap-3 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-secondary)]">
+              {filters.accounts.length > 0 && <ActiveFilter label={getAccountFilterLabel(filters.accounts)} onRemove={() => setFilters((prev) => ({ ...prev, accounts: [], service: "", tagFilters: [] }))} />}
+              {filters.service && <ActiveFilter label={`Servicio: ${filters.service}`} onRemove={() => setFilters((prev) => ({ ...prev, service: "" }))} />}
+              {filters.search && <ActiveFilter label={`Búsqueda: ${filters.search}`} onRemove={() => setFilters((prev) => ({ ...prev, search: "" }))} />}
+              {filters.tagFilters.length > 0 && <span className="text-[var(--text-secondary)]">{filters.tagFilters.length} tag{filters.tagFilters.length === 1 ? "" : "s"} aplicado{filters.tagFilters.length === 1 ? "" : "s"}</span>}
+              {activeFilterCount === 0 && <span>Sin filtros adicionales. Mostrando todo el periodo.</span>}
             </div>
-            <input
-              value={filters.search}
-              onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
-              className="h-10 min-w-0 flex-1 bg-transparent px-3 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]"
-              placeholder="Buscar cuenta, servicio, recurso, tag o usage type"
-            />
+            <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-secondary)]">
+              {meta && <span>{meta.source} · {formatDate(meta.timestamp)}</span>}
+              {meta?.refreshing && <span className="inline-flex items-center gap-1.5 text-cyan-200"><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300" />Actualizando cache</span>}
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-secondary)]">
-            <span className="rounded-md border border-[var(--border)] px-2 py-1">{filteredBilling.length}/{billing.length} registros</span>
-            <span className="rounded-md border border-[var(--border)] px-2 py-1">{getAccountFilterLabel(filters.accounts)}</span>
-            {meta && <span className="rounded-md border border-[var(--border)] px-2 py-1">{meta.source} - {formatDate(meta.timestamp)}</span>}
-            {meta?.refreshing && <span className="rounded-md border border-cyan-400/30 bg-cyan-500/10 px-2 py-1 text-cyan-200">Actualizando cache</span>}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -413,6 +501,14 @@ function KpiCard({
   );
 }
 
+function SelectionMark({ checked }: { checked: boolean }) {
+  return (
+    <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${checked ? "border-cyan-300 bg-cyan-300 text-slate-950" : "border-[var(--border)] bg-transparent"}`} aria-hidden="true">
+      {checked && <Check className="h-3 w-3" strokeWidth={3} />}
+    </span>
+  );
+}
+
 function MultiSelect({
   options,
   selected,
@@ -430,7 +526,7 @@ function MultiSelect({
   const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement | null>(null);
   const noneSelected = selected.includes(NO_ACCOUNTS_SELECTED);
-  const allSelected = !noneSelected && (selected.length === 0 || selected.length === options.length);
+  const allSelected = options.length > 0 && !noneSelected && (selected.length === 0 || selected.length === options.length);
   const filteredOptions = options.filter((option) => option.toLowerCase().includes(query.toLowerCase()));
   const label = selected.length === 0
     ? emptyLabel
@@ -445,8 +541,15 @@ function MultiSelect({
     const close = (event: MouseEvent) => {
       if (!ref.current?.contains(event.target as Node)) setOpen(false);
     };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
   }, [open]);
 
   const toggleOption = (option: string) => {
@@ -455,30 +558,82 @@ function MultiSelect({
     onChange(next.length === 0 ? [NO_ACCOUNTS_SELECTED] : next);
   };
 
+  const selectMatching = () => {
+    if (!query.trim() || filteredOptions.length === 0) return;
+    onChange(filteredOptions);
+  };
+
+  const clearSelection = () => {
+    if (!query.trim()) {
+      onChange([NO_ACCOUNTS_SELECTED]);
+      return;
+    }
+    if (filteredOptions.length === 0 || noneSelected) return;
+
+    const base = allSelected ? options : selected;
+    const visible = new Set(filteredOptions);
+    const remaining = base.filter((option) => !visible.has(option));
+    onChange(remaining.length > 0 ? remaining : [NO_ACCOUNTS_SELECTED]);
+  };
+
+  const selectMatchingDisabled = !query.trim() || filteredOptions.length === 0;
+
   return (
     <div ref={ref} className="relative">
-      <button type="button" onClick={() => setOpen((current) => !current)} className="control flex items-center justify-between text-left">
-        <span className="truncate">{label}</span>
-        <Filter className="h-4 w-4 text-[var(--text-secondary)]" />
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="control group flex items-center justify-between gap-3 text-left"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls="billing-account-options"
+      >
+        <span className={`truncate ${selected.length > 0 ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>{label}</span>
+        <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${open ? "rotate-180 text-cyan-300" : ""}`} />
       </button>
       {open && (
-        <div className="absolute z-40 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
-          <div className="border-b border-[var(--border)] p-2">
-            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} className="control h-9" placeholder="Buscar cuenta" />
+        <div className="absolute z-40 mt-2 w-full min-w-[260px] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
+          <div className="border-b border-[var(--border)] p-2.5">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-secondary)]" />
+              <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} className="control h-9 pl-9" placeholder="Buscar cuenta" aria-label="Buscar cuenta" />
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={() => onChange(allSelected ? [NO_ACCOUNTS_SELECTED] : options)}
-            className="flex w-full items-center gap-2 border-b border-[var(--border)] px-3 py-2 text-left text-sm hover:bg-white/5"
-          >
-            <input readOnly type="checkbox" checked={allSelected} className="h-4 w-4 accent-cyan-400" />
-            {allLabel}
-          </button>
-          <div className="max-h-72 overflow-y-auto">
-            {filteredOptions.map((option) => (
-              <button key={option} type="button" onClick={() => toggleOption(option)} className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-white/5">
-                <input readOnly type="checkbox" checked={allSelected || selected.includes(option)} className="h-4 w-4 accent-cyan-400" />
-                <span className="min-w-0 truncate text-[var(--text-primary)]">{option}</span>
+          <div className="flex items-center gap-2 border-b border-[var(--border)] px-3 py-2">
+            <button
+              type="button"
+              onClick={() => onChange(options)}
+              className="text-[10px] uppercase tracking-wider font-medium text-[var(--text-primary)]/60 transition-colors hover:text-cyan-300"
+            >
+              Todo
+            </button>
+            <span className="text-[var(--text-primary)]/10">|</span>
+            <button
+              type="button"
+              onClick={clearSelection}
+              className="text-[10px] uppercase tracking-wider font-medium text-[var(--text-primary)]/60 transition-colors hover:text-red-300"
+            >
+              Ninguno
+            </button>
+            <span className="text-[var(--text-primary)]/10">|</span>
+            <button
+              type="button"
+              onClick={selectMatching}
+              disabled={selectMatchingDisabled}
+              title={selectMatchingDisabled ? "Escribe una búsqueda con coincidencias" : undefined}
+              className="text-[10px] uppercase tracking-wider font-medium text-cyan-400/80 transition-colors hover:text-cyan-300 disabled:cursor-not-allowed disabled:text-[var(--text-primary)]/20"
+            >
+              Seleccionar coincidencias
+            </button>
+            <span className="ml-auto text-[11px] text-[var(--text-secondary)]">{selected.length}/{options.length}</span>
+          </div>
+          <div id="billing-account-options" className="max-h-72 overflow-y-auto py-1" role="listbox" aria-label="Cuentas AWS">
+            {filteredOptions.length === 0 ? (
+              <p className="px-3 py-6 text-center text-xs text-[var(--text-secondary)]">Sin cuentas encontradas</p>
+            ) : filteredOptions.map((option) => (
+              <button key={option} type="button" onClick={() => toggleOption(option)} className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-[var(--text-primary)] transition hover:bg-white/5">
+                <SelectionMark checked={allSelected || selected.includes(option)} />
+                <span className="min-w-0 truncate">{option}</span>
               </button>
             ))}
           </div>
@@ -511,20 +666,37 @@ function SearchableSelect({
     const close = (event: MouseEvent) => {
       if (!ref.current?.contains(event.target as Node)) setOpen(false);
     };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
   }, [open]);
 
   return (
     <div ref={ref} className="relative">
-      <button type="button" onClick={() => setOpen((current) => !current)} className="control flex items-center justify-between text-left">
-        <span className="truncate">{value || allLabel}</span>
-        <Search className="h-4 w-4 text-[var(--text-secondary)]" />
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="control flex items-center justify-between gap-3 text-left"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls="billing-service-options"
+      >
+        <span className={`truncate ${value ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>{value || allLabel}</span>
+        <ChevronDown className={`h-4 w-4 shrink-0 text-[var(--text-secondary)] transition-transform ${open ? "rotate-180 text-cyan-300" : ""}`} />
       </button>
       {open && (
-        <div className="absolute z-40 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
-          <div className="border-b border-[var(--border)] p-2">
-            <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} className="control h-9" placeholder={placeholder} />
+        <div className="absolute z-40 mt-2 w-full min-w-[240px] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
+          <div className="border-b border-[var(--border)] p-2.5">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--text-secondary)]" />
+              <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} className="control h-9 pl-9" placeholder={placeholder} aria-label={placeholder} />
+            </div>
           </div>
           <button
             type="button"
@@ -533,14 +705,14 @@ function SearchableSelect({
               setQuery("");
               setOpen(false);
             }}
-            className="flex w-full items-center justify-between border-b border-[var(--border)] px-3 py-2 text-left text-sm hover:bg-white/5"
+            className="flex w-full items-center justify-between gap-3 border-b border-[var(--border)] px-3 py-2.5 text-left text-sm text-[var(--text-primary)] transition hover:bg-white/5"
           >
-            <span className="text-[var(--text-primary)]">{allLabel}</span>
+            <span className="flex items-center gap-2.5"><SelectionMark checked={!value} /><span>{allLabel}</span></span>
             <span className="text-xs text-[var(--text-secondary)]">{options.length}</span>
           </button>
-          <div className="max-h-72 overflow-y-auto">
+          <div id="billing-service-options" className="max-h-72 overflow-y-auto py-1" role="listbox" aria-label="Servicios AWS">
             {filteredOptions.length === 0 ? (
-              <div className="px-3 py-6 text-center text-sm text-[var(--text-secondary)]">Sin resultados</div>
+              <div className="px-3 py-6 text-center text-xs text-[var(--text-secondary)]">Sin resultados</div>
             ) : filteredOptions.map((option) => (
               <button
                 key={option}
@@ -550,9 +722,10 @@ function SearchableSelect({
                   setQuery("");
                   setOpen(false);
                 }}
-                className="block w-full truncate px-3 py-2 text-left text-sm text-[var(--text-primary)] hover:bg-white/5"
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-[var(--text-primary)] transition hover:bg-white/5"
               >
-                {option}
+                <SelectionMark checked={value === option} />
+                <span className="truncate">{option}</span>
               </button>
             ))}
           </div>
@@ -581,13 +754,18 @@ function TagFilterBuilder({
   const canAdd = effectiveDraftKey && effectiveDraftValue && !selected.some((filter) => filter.key === effectiveDraftKey && filter.value === effectiveDraftValue);
 
   return (
-    <div className="mt-4 rounded-lg border border-[var(--border)] bg-black/10 p-3">
-      <div className="mb-3 flex items-center gap-2">
-        <Tags className="h-4 w-4 text-cyan-300" />
-        <div>
-          <p className="text-sm font-medium text-[var(--text-primary)]">Filtros por tags</p>
-          <p className="text-xs text-[var(--text-secondary)]">Puedes combinar varios tags; se aplican como condiciones AND.</p>
+    <div className="mt-5 border-t border-[var(--border)] pt-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-400/10 text-violet-300">
+            <Tags className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-[var(--text-primary)]">Filtrar por tags</p>
+            <p className="text-xs text-[var(--text-secondary)]">Combina condiciones AND para afinar el costo.</p>
+          </div>
         </div>
+        <span className="text-[11px] text-[var(--text-secondary)]">{selected.length} aplicado{selected.length === 1 ? "" : "s"}</span>
       </div>
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(180px,1fr)_minmax(220px,1fr)_auto]">
         <Field label="Tag">
@@ -611,7 +789,7 @@ function TagFilterBuilder({
             setDraftKey("");
             setDraftValue("");
           }}
-          className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex h-10 items-center justify-center gap-2 self-end rounded-lg bg-cyan-300 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-40 lg:mb-0"
         >
           <Tags className="h-4 w-4" />
           Añadir
@@ -624,10 +802,10 @@ function TagFilterBuilder({
               key={`${filter.key}:${filter.value}`}
               type="button"
               onClick={() => onChange(selected.filter((item) => item.key !== filter.key || item.value !== filter.value))}
-              className="inline-flex items-center gap-2 rounded-md border border-cyan-400/30 bg-cyan-500/10 px-2.5 py-1.5 text-xs text-cyan-100 hover:bg-cyan-500/20"
+              className="inline-flex max-w-full items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/8 px-2.5 py-1.5 text-xs text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/15"
             >
-              {filter.key}: {filter.value}
-              <X className="h-3.5 w-3.5" />
+              <span className="max-w-[260px] truncate"><span className="text-cyan-300">{filter.key}</span>: {filter.value}</span>
+              <X className="h-3.5 w-3.5 shrink-0 text-cyan-200/70" />
             </button>
           ))}
         </div>
@@ -759,10 +937,29 @@ function BillingTable({ rows }: { rows: BillingItem[] }) {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function ActiveFilter({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-cyan-400/20 bg-cyan-400/8 px-2.5 py-1.5 text-cyan-100">
+      <span className="max-w-[240px] truncate">{label}</span>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="flex h-4 w-4 shrink-0 items-center justify-center rounded text-cyan-200/70 hover:bg-cyan-300/15 hover:text-cyan-100"
+        aria-label={`Quitar filtro ${label}`}
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
+  );
+}
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">{label}</span>
+      <span className="mb-1.5 flex items-center justify-between gap-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-secondary)]">
+        <span>{label}</span>
+        {hint && <span className="truncate text-[10px] font-normal normal-case tracking-normal text-[var(--text-secondary)]/70">{hint}</span>}
+      </span>
       {children}
     </label>
   );

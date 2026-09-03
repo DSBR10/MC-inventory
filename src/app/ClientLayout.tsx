@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Loader2, Menu } from "lucide-react";
 
 import Sidebar from "@/components/layout/Sidebar";
+import SiteFooter from "@/components/layout/SiteFooter";
 import UserMenu from "@/components/layout/UserMenu";
 
 const AUTH_ROUTES = ["/login", "/auth"];
@@ -83,7 +84,12 @@ export default function ClientLayout({
 
   if (isAuthPage) {
 
-    return <>{children}</>;
+    return (
+      <div className="flex min-h-screen flex-col bg-[var(--bg-dark)] text-[var(--text-primary)]">
+        <div className="min-h-0 flex-1">{children}</div>
+        <SiteFooter />
+      </div>
+    );
 
   }
 
@@ -132,6 +138,8 @@ export default function ClientLayout({
           transition-all
           duration-300
           min-h-screen
+          flex
+          flex-col
 
           ${
 
@@ -215,7 +223,7 @@ export default function ClientLayout({
                   text-[var(--text-secondary)]
                 "
               >
-                Multi Cloud Inventory
+                 UX Technology | Multi Cloud Inventory
               </p>
 
             </div>
@@ -249,11 +257,13 @@ export default function ClientLayout({
 
         </header>
 
-        <main className="p-6">
+        <main className="flex-1 p-6">
 
           {children}
 
         </main>
+
+        <SiteFooter />
 
       </div>
 

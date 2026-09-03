@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import {
   Cloud,
@@ -11,6 +12,8 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
+  FileSpreadsheet,
+  FileText,
   Search,
   X,
   RefreshCw,
@@ -28,7 +31,10 @@ import MetricsCards from "@/components/inventory/MetricsCards";
 import ResourceModal from "@/components/inventory/ResourceModal";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 import ECSHierarchicalView from "@/components/ECSHierarchicalView";
-import { exportCSV } from "@/lib/inventory/exportCsv";
+import {
+  exportInventoryToExcel,
+  exportInventoryToPDF,
+} from "@/lib/inventory/exportCsv";
 
 type SortField =
   | "name"
@@ -116,6 +122,25 @@ export default function Home() {
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [lastUpdate, setLastUpdate] = useState<string>("");
+  const filtersRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!filtersOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!filtersRef.current?.contains(event.target as Node)) setFiltersOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFiltersOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [filtersOpen]);
 
   /* ── Fetch ── */
   useEffect(() => {
@@ -407,6 +432,7 @@ export default function Home() {
                 {/* View toggle */}
                 <div className="flex items-center gap-1 bg-[var(--bg-card)]/80 border border-[var(--border)] rounded-xl p-1">
                   <button
+                    type="button"
                     onClick={() => setViewMode("table")}
                     className={`p-2 rounded-lg transition-all duration-200 ${
                       viewMode === "table"
@@ -418,6 +444,7 @@ export default function Home() {
                     <List className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => setViewMode("cards")}
                     className={`p-2 rounded-lg transition-all duration-200 ${
                       viewMode === "cards"
@@ -442,7 +469,8 @@ export default function Home() {
         {/* ── Filter panel ── */}
         <div className="page-section" style={{ animationDelay: "0.1s" }}>
           <div
-            className="rounded-2xl border border-[var(--border)] overflow-hidden transition-all duration-300"
+            ref={filtersRef}
+            className="relative z-30 rounded-2xl border border-[var(--border)] overflow-visible transition-all duration-300"
             style={{
               background: "var(--glass-bg)",
               backdropFilter: "blur(16px)",
@@ -466,8 +494,10 @@ export default function Home() {
                 />
                 {search && (
                   <button
+                    type="button"
                     onClick={() => setSearch("")}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/70 transition-colors"
+                    aria-label="Limpiar búsqueda"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -477,7 +507,10 @@ export default function Home() {
               {/* Action buttons */}
               <div className="flex items-center gap-2 flex-wrap">
                 <button
-                  onClick={() => setFiltersOpen(!filtersOpen)}
+                  type="button"
+                  onClick={() => setFiltersOpen((current) => !current)}
+                  aria-expanded={filtersOpen}
+                  aria-controls="inventory-filter-sections"
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 ${
                     filtersOpen || activeFiltersCount > 0
                       ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-400 shadow-sm shadow-cyan-500/10"
@@ -498,16 +531,11 @@ export default function Home() {
                   />
                 </button>
 
-                <button
-                  onClick={() => exportCSV(filteredData, "inventory.csv")}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border)] bg-[var(--bg-card)]/60 text-[var(--text-primary)]/60 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)] transition-all duration-200"
-                >
-                  <Download className="w-4 h-4" />
-                  CSV
-                </button>
+                <ExportMenu rows={filteredData} />
 
                 {activeFiltersCount > 0 && (
                   <button
+                    type="button"
                     onClick={clearFilters}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:border-red-500/30 transition-all duration-200"
                   >
@@ -554,14 +582,16 @@ export default function Home() {
 
             {/* Filter sections */}
             <div
+              id="inventory-filter-sections"
               className="overflow-hidden transition-all duration-300 ease-in-out"
               style={{
                 maxHeight: filtersOpen ? "2000px" : "0",
                 opacity: filtersOpen ? 1 : 0,
               }}
             >
-              <div className="filter-panel border-t border-[var(--border)] p-4 space-y-4">
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              {filtersOpen && (
+                <div className="filter-panel border-t border-[var(--border)] p-4 space-y-4">
+                  <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-3">
                   <FilterBlock
                     title="Infraestructura"
                     icon={<Cloud className="w-4 h-4" />}
@@ -599,49 +629,50 @@ export default function Home() {
                       coloredStatus
                     />
                   </FilterBlock>
-                </div>
-
-                <FilterBlock
-                  title="Etiquetas"
-                  icon={<Shield className="w-4 h-4" />}
-                  accentColor="#f59e0b"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <DropdownSection
-                      title="Cliente"
-                      values={clients}
-                      selected={selectedClients}
-                      setSelected={setSelectedClients}
-                    />
-                    <DropdownSection
-                      title="Proyecto"
-                      values={projects}
-                      selected={selectedProjects}
-                      setSelected={setSelectedProjects}
-                    />
-                    <div>
-                      <p className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/25 mb-2.5">
-                        Sin tags
-                      </p>
-                      <button
-                        onClick={() => setOnlyWithoutTags(!onlyWithoutTags)}
-                        className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 ${
-                          onlyWithoutTags
-                            ? "bg-amber-500/15 border-amber-500/30 text-amber-400 shadow-sm shadow-amber-500/10"
-                            : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]"
-                        }`}
-                      >
-                        {onlyWithoutTags && (
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                        Recursos sin tags
-                      </button>
+                  <FilterBlock
+                    title="Etiquetas"
+                    icon={<Shield className="w-4 h-4" />}
+                    accentColor="#f59e0b"
+                  >
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      <DropdownSection
+                        title="Cliente"
+                        values={clients}
+                        selected={selectedClients}
+                        setSelected={setSelectedClients}
+                      />
+                      <DropdownSection
+                        title="Proyecto"
+                        values={projects}
+                        selected={selectedProjects}
+                        setSelected={setSelectedProjects}
+                      />
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest text-[var(--text-primary)]/25 mb-2.5">
+                          Sin tags
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setOnlyWithoutTags(!onlyWithoutTags)}
+                          className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm border transition-all duration-200 ${
+                            onlyWithoutTags
+                              ? "bg-amber-500/15 border-amber-500/30 text-amber-400 shadow-sm shadow-amber-500/10"
+                              : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]"
+                          }`}
+                        >
+                          {onlyWithoutTags && (
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                          Recursos sin tags
+                        </button>
+                      </div>
                     </div>
+                  </FilterBlock>
                   </div>
-                </FilterBlock>
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -716,45 +747,171 @@ export default function Home() {
 }
 
 /* ── Filter Block ── */
+function ExportMenu({ rows }: { rows: InventoryItem[] }) {
+  const [open, setOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const disabled = rows.length === 0;
+
+  useEffect(() => {
+    if (!open) return;
+
+    const updatePosition = () => {
+      const button = buttonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      const menuHeight = 174;
+      const gap = 8;
+      const top = rect.bottom + gap + menuHeight <= window.innerHeight
+        ? rect.bottom + gap
+        : Math.max(gap, rect.top - gap - menuHeight);
+
+      setMenuPosition({
+        top,
+        right: Math.max(gap, window.innerWidth - rect.right),
+      });
+    };
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (!containerRef.current?.contains(target) && !menuRef.current?.contains(target)) setOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    updatePosition();
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open]);
+
+  const exportButton = (
+    <button
+      type="button"
+      ref={buttonRef}
+      onClick={() => setOpen((current) => !current)}
+      disabled={disabled}
+      aria-haspopup="menu"
+      aria-expanded={open}
+      className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]/60 px-4 py-2.5 text-sm font-medium text-[var(--text-primary)]/70 transition-all duration-200 hover:border-cyan-400/30 hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      <Download className="h-4 w-4" />
+      Exportar
+      <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+    </button>
+  );
+
+  return (
+    <>
+      <div className="relative" ref={containerRef}>{exportButton}</div>
+      {open && menuPosition && createPortal(
+        <div
+          ref={menuRef}
+          role="menu"
+          className="fixed z-[9999] w-60 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_18px_50px_rgba(0,0,0,0.42)]"
+          style={{ top: menuPosition.top, right: menuPosition.right }}
+        >
+          <div className="border-b border-[var(--border)] px-4 py-3">
+            <p className="text-sm font-medium text-[var(--text-primary)]">Exportar inventario</p>
+            <p className="mt-0.5 text-xs text-[var(--text-secondary)]">{rows.length.toLocaleString("es-CO")} recursos seleccionados</p>
+          </div>
+          <div className="p-1.5">
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                void exportInventoryToExcel(rows, "inventory-report.xlsx");
+                setOpen(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-emerald-400/10"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-300">
+                <FileSpreadsheet className="h-4 w-4" />
+              </span>
+              <span>
+                <span className="block text-sm font-medium text-[var(--text-primary)]">Excel</span>
+                <span className="block text-[11px] text-[var(--text-secondary)]">Formato .xlsx</span>
+              </span>
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                void exportInventoryToPDF(rows, "inventory-report.pdf");
+                setOpen(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-rose-400/10"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-400/10 text-rose-300">
+                <FileText className="h-4 w-4" />
+              </span>
+              <span>
+                <span className="block text-sm font-medium text-[var(--text-primary)]">PDF</span>
+                <span className="block text-[11px] text-[var(--text-secondary)]">Formato .pdf</span>
+              </span>
+            </button>
+          </div>
+        </div>,
+        document.body,
+      )}
+    </>
+  );
+}
+
 function FilterBlock({ title, icon, accentColor, children }: any) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const contentId = `inventory-filter-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return (
     <div
-      className="rounded-xl border border-[var(--border)] overflow-hidden transition-all duration-300"
+      className="overflow-hidden rounded-2xl border border-[var(--border)] transition-all duration-300 hover:border-white/15"
       style={{ background: "rgba(255,255,255,0.02)" }}
     >
       <button
-        onClick={() => setOpen(!open)}
-        className="w-full p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors group"
+        type="button"
+        onClick={() => setOpen((current: boolean) => !current)}
+        aria-expanded={open}
+        aria-controls={contentId}
+        className="group flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition-colors hover:bg-white/[0.025]"
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
+            className="flex h-8 w-8 items-center justify-center rounded-xl transition-transform group-hover:scale-105"
             style={{ background: `${accentColor}15`, color: accentColor }}
           >
             {icon}
           </div>
-          <span className="text-sm font-semibold text-[var(--text-primary)]">
-            {title}
-          </span>
+          <span className="text-sm font-semibold tracking-tight text-[var(--text-primary)]">{title}</span>
         </div>
         <div
           className="transition-transform duration-200"
           style={{ transform: open ? "rotate(0deg)" : "rotate(-90deg)" }}
         >
-          <ChevronDown className="w-4 h-4 text-[var(--text-primary)]/30" />
+          <ChevronDown className="h-4 w-4 text-[var(--text-primary)]/30" />
         </div>
       </button>
       <div
+        id={contentId}
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{
           maxHeight: open ? "2000px" : "0",
           opacity: open ? 1 : 0,
         }}
       >
-        <div className="px-4 pb-4 space-y-4 border-t border-white/5 pt-4">
-          {children}
-        </div>
+        {open && (
+          <div className="space-y-4 border-t border-white/5 px-4 pb-4 pt-4">
+            {children}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -780,6 +937,7 @@ function ProviderFilterSection({ values, selected, setSelected }: any) {
           return (
             <button
               key={value}
+              type="button"
               onClick={() =>
                 setSelected((p: string[]) =>
                   active ? p.filter((v) => v !== value) : [...p, value],
@@ -844,6 +1002,7 @@ function FilterSection({
           return (
             <button
               key={value}
+              type="button"
               onClick={() =>
                 setSelected((p: string[]) =>
                   active ? p.filter((v) => v !== value) : [...p, value],
@@ -878,6 +1037,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
   const [open, setOpen] = useState(false);
   const [dropdownSearch, setDropdownSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownId = `inventory-dropdown-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
   useEffect(() => {
     if (!open) return;
@@ -886,8 +1046,15 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
         setOpen(false);
       }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [open]);
 
   const filtered = useMemo(
@@ -907,12 +1074,22 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
     setSelected((p: string[]) => p.filter((v: string) => !values.includes(v)));
   }, [values, setSelected]);
 
+  const selectMatches = useCallback(() => {
+    if (!dropdownSearch.trim() || filtered.length === 0) return;
+    setSelected(filtered);
+  }, [dropdownSearch, filtered, setSelected]);
+
   const allSelected = values.length > 0 && values.every((v: string) => selected.includes(v));
+  const selectMatchesDisabled = !dropdownSearch.trim() || filtered.length === 0;
 
   return (
     <div className="pt-3 relative" ref={containerRef}>
       <button
-        onClick={() => { setOpen(!open); setDropdownSearch(""); }}
+        type="button"
+        onClick={() => { setOpen((current) => !current); setDropdownSearch(""); }}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={dropdownId}
         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm border transition-all ${
           selected.length > 0
             ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
@@ -937,6 +1114,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
       </button>
       {open && (
         <div
+          id={dropdownId}
           className="mt-1.5 rounded-xl border border-[var(--border)] overflow-hidden animate-fadeSlide"
           style={{
             background: "var(--bg-card)",
@@ -952,11 +1130,13 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
               value={dropdownSearch}
               onChange={(e) => setDropdownSearch(e.target.value)}
               className="w-full pl-9 pr-3 py-2.5 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-primary)]/25 bg-transparent outline-none"
+              aria-label={`Buscar ${title.toLowerCase()}`}
             />
           </div>
           {/* Select all / None */}
           <div className="flex gap-2 px-3 py-2 border-b border-white/5">
             <button
+              type="button"
               onClick={selectAll}
               className={`text-[10px] uppercase tracking-wider font-medium transition-colors ${
                 allSelected
@@ -968,10 +1148,21 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
             </button>
             <span className="text-[var(--text-primary)]/10">|</span>
             <button
+              type="button"
               onClick={deselectAll}
               className="text-[10px] uppercase tracking-wider font-medium text-[var(--text-primary)]/30 hover:text-red-400 transition-colors"
             >
               Ninguno
+            </button>
+            <span className="text-[var(--text-primary)]/10">|</span>
+            <button
+              type="button"
+              onClick={selectMatches}
+              disabled={selectMatchesDisabled}
+              title={selectMatchesDisabled ? "Escribe una búsqueda con coincidencias" : undefined}
+              className="text-[10px] uppercase tracking-wider font-medium text-cyan-400/70 transition-colors hover:text-cyan-300 disabled:cursor-not-allowed disabled:text-[var(--text-primary)]/20"
+            >
+              Seleccionar coincidencias
             </button>
             <span className="flex-1" />
             <span className="text-[10px] text-[var(--text-primary)]/20">
@@ -990,6 +1181,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
                 return (
                   <button
                     key={value}
+                    type="button"
                     onClick={() =>
                       setSelected((p: string[]) =>
                         active ? p.filter((v) => v !== value) : [...p, value],
@@ -1015,8 +1207,8 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
                         </svg>
                       )}
                     </div>
-                  </button>
-                );
+            </button>
+          );
               })
             )}
           </div>

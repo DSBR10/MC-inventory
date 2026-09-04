@@ -2,9 +2,10 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/lib/auth/options";
+import { recordApiAudit } from "@/lib/audit/server";
 import { hasPermission, type Permission } from "@/lib/auth/roles";
 
-export async function requireApiSession(permission?: Permission) {
+export async function requireApiSession(permission?: Permission, request?: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
@@ -15,6 +16,14 @@ export async function requireApiSession(permission?: Permission) {
   }
 
   if (permission && !hasPermission(session.user.role, permission)) {
+    if (request) {
+      await recordApiAudit(request, session, {
+        action: "api.access.denied",
+        result: "denied",
+        statusCode: 403,
+        metadata: { requiredPermission: permission },
+      });
+    }
     return {
       session,
       response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),

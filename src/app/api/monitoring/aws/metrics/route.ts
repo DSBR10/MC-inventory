@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 import { CloudWatchMetricsService } from "@/services/aws/cloudwatch-metrics.service";
 import { getAWSAccountById, getDefaultAWSAccount } from "@/lib/aws/aws-accounts";
 
+export const runtime = "nodejs";
+
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const searchParams = request.nextUrl.searchParams;
@@ -65,13 +69,27 @@ export async function GET(request: NextRequest) {
         );
     }
 
+    await recordApiAudit(request, guard.session, {
+      action: "monitoring.aws.metrics.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { serviceType, resourceId: resourceId.slice(0, 128) },
+    });
     return NextResponse.json({ metrics });
-  } catch (error) {
-    console.error("Error fetching AWS metrics:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.metrics.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
       {
         error: "Failed to fetch metrics",
-        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );
@@ -79,8 +97,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const body = await request.json();
@@ -108,13 +127,27 @@ export async function POST(request: NextRequest) {
     });
     const availableMetrics = await metricsService.listMetrics(namespace);
 
+    await recordApiAudit(request, guard.session, {
+      action: "monitoring.aws.metrics.list",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { namespace: namespace.slice(0, 128) },
+    });
     return NextResponse.json({ metrics: availableMetrics });
-  } catch (error) {
-    console.error("Error listing metrics:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.metrics.list",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
       {
         error: "Failed to list metrics",
-        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

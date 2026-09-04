@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 import { CloudTrailService } from "@/services/aws/cloudtrail.service";
 
+export const runtime = "nodejs";
+
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const searchParams = request.nextUrl.searchParams;
@@ -41,13 +45,27 @@ export async function GET(request: NextRequest) {
       maxResults,
     );
 
+    await recordApiAudit(request, guard.session, {
+      action: "monitoring.aws.cloudtrail.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { eventCount: events.length },
+    });
     return NextResponse.json({ events });
-  } catch (error) {
-    console.error("Error fetching CloudTrail events:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.cloudtrail.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
       {
         error: "Failed to fetch CloudTrail events",
-        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

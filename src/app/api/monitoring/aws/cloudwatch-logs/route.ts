@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 import { CloudWatchLogsService } from "@/services/aws/cloudwatch-logs.service";
 
+export const runtime = "nodejs";
+
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const searchParams = request.nextUrl.searchParams;
@@ -34,6 +38,13 @@ export async function GET(request: NextRequest) {
     if (!logGroupName) {
       // Si no se proporciona logGroupName, listar todos los log groups
       const logGroups = await logsService.listLogGroups();
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.cloudwatch_logs.view",
+        result: "success",
+        statusCode: 200,
+        startedAt,
+        metadata: { logGroupCount: logGroups.length },
+      });
       return NextResponse.json({ logGroups });
     }
 
@@ -46,13 +57,27 @@ export async function GET(request: NextRequest) {
       limit,
     );
 
+    await recordApiAudit(request, guard.session, {
+      action: "monitoring.aws.cloudwatch_logs.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { logCount: logs.length },
+    });
     return NextResponse.json({ logs });
-  } catch (error) {
-    console.error("Error fetching CloudWatch logs:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.cloudwatch_logs.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
       {
         error: "Failed to fetch logs",
-        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );
@@ -60,8 +85,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const body = await request.json();
@@ -77,13 +103,27 @@ export async function POST(request: NextRequest) {
     const logsService = new CloudWatchLogsService(region || "us-east-1");
     const logStreams = await logsService.listLogStreams(logGroupName);
 
+    await recordApiAudit(request, guard.session, {
+      action: "monitoring.aws.cloudwatch_logs.streams",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { streamCount: logStreams.length },
+    });
     return NextResponse.json({ logStreams });
-  } catch (error) {
-    console.error("Error listing log streams:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.cloudwatch_logs.streams",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
       {
         error: "Failed to list log streams",
-        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

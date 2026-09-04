@@ -44,7 +44,7 @@ type CommandResult = {
 
 type HistoryItem = {
   id: string;
-  command: string;
+  commandPreview: string;
   osType: OsType;
   total: number;
   success: number;
@@ -88,7 +88,29 @@ function loadHistory(): HistoryItem[] {
   if (typeof window === "undefined") return [];
 
   try {
-    return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]") as HistoryItem[];
+    const parsed = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]") as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((item): HistoryItem | null => {
+        if (!item || typeof item !== "object") return null;
+        const record = item as Record<string, unknown>;
+        const command = typeof record.commandPreview === "string"
+          ? record.commandPreview
+          : typeof record.command === "string"
+            ? redactCommandPreview(record.command)
+            : "";
+        if (!command || (record.osType !== "linux" && record.osType !== "windows")) return null;
+        return {
+          id: typeof record.id === "string" ? record.id : crypto.randomUUID(),
+          commandPreview: redactCommandPreview(command),
+          osType: record.osType,
+          total: typeof record.total === "number" ? record.total : 0,
+          success: typeof record.success === "number" ? record.success : 0,
+          failed: typeof record.failed === "number" ? record.failed : 0,
+          timestamp: typeof record.timestamp === "string" ? record.timestamp : new Date().toISOString(),
+        };
+      })
+      .filter((item): item is HistoryItem => item !== null);
   } catch {
     return [];
   }
@@ -96,6 +118,14 @@ function loadHistory(): HistoryItem[] {
 
 function saveHistory(history: HistoryItem[]) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 12)));
+}
+
+function redactCommandPreview(command: string) {
+  const preview = command
+    .replace(/\bBearer\s+[^\s]+/gi, "Bearer [REDACTED]")
+    .replace(/((?:--?|\/)?(?:password|passwd|pwd|token|secret|api[_-]?key|access[_-]?key|authorization|cookie)\s*[=:]?\s+)[^\s;|]+/gi, "$1[REDACTED]")
+    .replace(/((?:PASSWORD|TOKEN|SECRET|API_KEY|ACCESS_KEY)\s*=\s*)[^\s;|]+/gi, "$1[REDACTED]");
+  return preview.length > 320 ? `${preview.slice(0, 319)}…` : preview;
 }
 
 export default function CommandCenter() {
@@ -118,7 +148,9 @@ export default function CommandCenter() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    setHistory(loadHistory());
+    const loadedHistory = loadHistory();
+    setHistory(loadedHistory);
+    saveHistory(loadedHistory);
   }, []);
 
   useEffect(() => {
@@ -311,7 +343,7 @@ export default function CommandCenter() {
       const nextHistory = [
         {
           id: crypto.randomUUID(),
-          command: command.trim(),
+          commandPreview: redactCommandPreview(command.trim()),
           osType,
           total: nextResults.length,
           success,
@@ -718,7 +750,7 @@ export default function CommandCenter() {
 
       <HistoryPanel history={history} onUse={(item) => {
         setOsType(item.osType);
-        setCommand(item.command);
+         setCommand(item.commandPreview);
       }} />
     </div>
   );
@@ -831,7 +863,7 @@ function HistoryPanel({ history, onUse }: { history: HistoryItem[]; onUse: (item
               className="flex w-full items-center justify-between gap-4 p-4 text-left transition hover:bg-[var(--bg-hover)]"
             >
               <span className="min-w-0">
-                <span className="block truncate font-mono text-sm text-[var(--text-primary)]">{item.command}</span>
+                 <span className="block truncate font-mono text-sm text-[var(--text-primary)]">{item.commandPreview}</span>
                 <span className="mt-1 block text-xs text-[var(--text-secondary)]">
                   {new Date(item.timestamp).toLocaleString()} - {item.osType} - {item.success}/{item.total} OK
                 </span>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 import { getRDSMetrics } from "@/lib/aws/cloudwatch-metrics";
 import {
@@ -6,9 +7,12 @@ import {
   getDefaultAWSAccount,
 } from "@/lib/aws/aws-accounts";
 
+export const runtime = "nodejs";
+
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const { searchParams } = new URL(request.url);
@@ -44,9 +48,24 @@ export async function GET(request: NextRequest) {
 
     const metrics = await getRDSMetrics(account, dbInstanceIds);
 
+    await recordApiAudit(request, guard.session, {
+      action: "monitoring.aws.rds_metrics.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { databaseCount: dbInstanceIds.length },
+    });
     return NextResponse.json({ metrics });
-  } catch (error) {
-    console.error("Error fetching RDS metrics:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "monitoring.aws.rds_metrics.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
       { error: "Failed to fetch RDS metrics" },
       { status: 500 },

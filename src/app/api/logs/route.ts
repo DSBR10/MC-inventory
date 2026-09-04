@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 import { getCloudWatchLogs } from "@/lib/aws/cloudwatch-logs";
 import { getHuaweiLogs } from "@/lib/huawei/lts";
@@ -13,10 +14,12 @@ import type {
 
 const HUAWEI_LTS_ENABLED =
   process.env.HUAWEI_LTS_ENABLED !== "false";
+export const runtime = "nodejs";
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     const searchParams = request.nextUrl.searchParams;
@@ -108,11 +111,26 @@ export async function GET(request: NextRequest) {
       metrics,
     };
 
+    await recordApiAudit(request, guard.session, {
+      action: "logs.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { returned: limitedLogs.length, provider: filters.provider || "all" },
+    });
     return NextResponse.json(response);
-  } catch (error: any) {
-    console.error("Logs API error:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "logs.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
-      { error: "Failed to fetch logs", details: error?.message },
+      { error: "Failed to fetch logs" },
       { status: 500 },
     );
   }
@@ -120,8 +138,9 @@ export async function GET(request: NextRequest) {
 
 // Get monitoring metrics
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("monitoring:view");
+    const guard = await requireApiSession("monitoring:view", request);
     if (guard.response) return guard.response;
 
     // Fetch recent logs for metrics
@@ -174,11 +193,26 @@ export async function POST(request: NextRequest) {
       infoCount,
     };
 
+    await recordApiAudit(request, guard.session, {
+      action: "logs.metrics",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { totalLogs },
+    });
     return NextResponse.json(metrics);
-  } catch (error: any) {
-    console.error("Metrics API error:", error);
+  } catch {
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "logs.metrics",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json(
-      { error: "Failed to fetch metrics", details: error?.message },
+      { error: "Failed to fetch metrics" },
       { status: 500 },
     );
   }

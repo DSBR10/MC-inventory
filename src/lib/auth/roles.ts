@@ -12,7 +12,10 @@ export type Permission =
   | "settings:view"
   | "settings:modify"
   | "users:view"
-  | "export:csv";
+  | "export:csv"
+  | "audit:view"
+  | "audit:export"
+  | "command:execute";
 
 export const GROUP_ROLE_MAP: Record<string, Role> = {
   UX_INVENTORY: "admin",
@@ -35,6 +38,9 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "settings:modify",
     "users:view",
     "export:csv",
+    "audit:view",
+    "audit:export",
+    "command:execute",
   ],
   plataformas: [
     "inventory:view",
@@ -48,6 +54,8 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   ],
   audit: [
     "inventory:view",
+    "audit:view",
+    "audit:export",
   ],
 };
 

@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+coverage
+.git
+.gitignore
+.env*
+data/*.json
+*.log
+tsconfig.tsbuildinfo

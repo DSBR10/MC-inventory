@@ -3,9 +3,11 @@
 import Link from "next/link";
 
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-import { Boxes, BarChart3, Terminal, DollarSign, X } from "lucide-react";
+import { Boxes, BarChart3, Terminal, DollarSign, ShieldCheck, X } from "lucide-react";
 import BrandLogo from "@/components/layout/BrandLogo";
+import { hasPermission, type Permission } from "@/lib/auth/roles";
 
 const menuItems = [
   {
@@ -24,12 +26,19 @@ const menuItems = [
     label: "Comandos",
     href: "/comandos",
     icon: Terminal,
+    permission: "command:execute" as Permission,
   },
 
   {
     label: "Billing",
     href: "/billing",
     icon: DollarSign,
+  },
+  {
+    label: "Auditoría",
+    href: "/auditoria",
+    icon: ShieldCheck,
+    permission: "audit:view" as Permission,
   },
 ];
 
@@ -45,6 +54,10 @@ export default function Sidebar({
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const visibleItems = menuItems.filter(
+    (item) => !item.permission || (session?.user?.role && hasPermission(session.user.role, item.permission)),
+  );
 
   return (
     <aside
@@ -172,7 +185,7 @@ export default function Sidebar({
 
         "
       >
-        {menuItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon;
 
           const active = pathname === item.href;
@@ -359,7 +372,7 @@ export default function Sidebar({
 
             "
           >
-            v8.0
+            v8.5
           </div>
         </div>
       </div>

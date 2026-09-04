@@ -6,6 +6,14 @@ import {
 } from "@aws-sdk/client-ssm";
 
 import { requireApiSession } from "@/lib/auth/server";
+import {
+  getRequestContext,
+  hasAuditHashSecret,
+  hashAuditValue,
+  recordAuditEvent,
+  redactCommandPreview,
+  redactSensitiveText,
+} from "@/lib/audit/server";
 
 type OsType = "linux" | "windows";
 type ExecutionStatus = "success" | "failed" | "timedOut" | "cancelled" | "error";
@@ -36,8 +44,8 @@ type ValidationResult = {
 };
 
 const region = process.env.AWS_REGION || "us-east-1";
-const maxTargets = Number(process.env.COMMAND_MAX_TARGETS || 50);
-const maxCommandLength = Number(process.env.COMMAND_MAX_LENGTH || 4000);
+const maxTargets = Math.min(Math.max(Number(process.env.COMMAND_MAX_TARGETS || 50) || 50, 1), 100);
+const maxCommandLength = Math.min(Math.max(Number(process.env.COMMAND_MAX_LENGTH || 4000) || 4000, 1), 16_000);
 
 const sharedDangerousPatterns: Array<[RegExp, string]> = [
   [/\b(reboot|shutdown|halt|poweroff)\b/i, "Apagado o reinicio del sistema"],
@@ -169,17 +177,30 @@ function mapSsmStatus(status?: string): ExecutionStatus {
   return "error";
 }
 
-function auditLog(entry: {
-  timestamp: string;
-  user?: string | null;
-  command: string;
-  osType: OsType;
-  targets: CommandTarget[];
-  blocked: boolean;
-  reason?: string;
-  ip?: string;
-}) {
-  console.log("[COMMAND_AUDIT]", JSON.stringify(entry));
+function safeTarget(target: CommandTarget) {
+  return {
+    instanceId: target.instanceId,
+    accountId: target.accountId,
+    osType: target.osType,
+  };
+}
+
+function parseTarget(value: unknown): CommandTarget | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const candidate = value as Record<string, unknown>;
+  const instanceId = typeof candidate.instanceId === "string" ? candidate.instanceId.trim() : "";
+  const accountId = typeof candidate.accountId === "string" ? candidate.accountId.trim() : "";
+  const osType = candidate.osType === "linux" || candidate.osType === "windows" ? candidate.osType : undefined;
+  const safeIdentifier = /^[A-Za-z0-9_.:/-]{1,128}$/;
+
+  if (!safeIdentifier.test(instanceId) || !safeIdentifier.test(accountId)) return null;
+  return {
+    instanceId,
+    accountId,
+    accountName: typeof candidate.accountName === "string" ? candidate.accountName.slice(0, 256) : undefined,
+    name: typeof candidate.name === "string" ? candidate.name.slice(0, 256) : undefined,
+    osType,
+  };
 }
 
 async function runOnTarget(target: CommandTarget, command: string, osType: OsType): Promise<CommandResult> {
@@ -214,101 +235,146 @@ async function runOnTarget(target: CommandTarget, command: string, osType: OsTyp
       name: target.name,
       status: mapSsmStatus(result.Status),
       commandId,
-      output: result.StandardOutputContent || "",
-      error: result.StandardErrorContent || "",
+      output: redactSensitiveText(result.StandardOutputContent || "", 4_000),
+      error: redactSensitiveText(result.StandardErrorContent || "", 1_000),
       durationMs: Date.now() - started,
     };
-  } catch (error) {
+  } catch {
     return {
       instanceId: target.instanceId,
       accountId: target.accountId,
       accountName: target.accountName,
       name: target.name,
       status: "error",
-      error: error instanceof Error ? error.message : "Error ejecutando comando",
+      error: "No se pudo completar la ejecución en SSM",
       durationMs: Date.now() - started,
     };
   }
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const guard = await requireApiSession("inventory:modify");
-    if (guard.response) return guard.response;
+  const startedAt = Date.now();
+  const guard = await requireApiSession("command:execute", req);
+  if (guard.response) return guard.response;
+  const session = guard.session;
+  const context = getRequestContext(req);
 
-    const body = (await req.json()) as {
-      instances?: CommandTarget[];
-      command?: string;
-      osType?: OsType;
+  if (!hasAuditHashSecret()) {
+    await recordAuditEvent({
+      request: req,
+      context,
+      session,
+      action: "command.failed",
+      result: "error",
+      statusCode: 503,
+      durationMs: Date.now() - startedAt,
+      metadata: { code: "audit_hash_unavailable" },
+    }).catch(() => undefined);
+    return NextResponse.json({ error: "Ejecución no disponible" }, { status: 503 });
+  }
+
+  try {
+    const body = (await req.json()) as Record<string, unknown>;
+    const command = typeof body.command === "string" ? body.command : "";
+    const osType = body.osType === "linux" || body.osType === "windows" ? body.osType : undefined;
+    const rawInstances = Array.isArray(body.instances) ? body.instances : [];
+    const instances = rawInstances.map(parseTarget);
+    const hasInvalidTarget = instances.some((target): target is null => target === null);
+    const targets = instances.filter((target): target is CommandTarget => target !== null);
+
+    if (!osType) return NextResponse.json({ error: "Sistema operativo inválido" }, { status: 400 });
+    if (rawInstances.length === 0) return NextResponse.json({ error: "Selecciona al menos una instancia" }, { status: 400 });
+    if (rawInstances.length > maxTargets) {
+      return NextResponse.json({ error: `Máximo ${maxTargets} instancias por ejecución` }, { status: 400 });
+    }
+    if (hasInvalidTarget) return NextResponse.json({ error: "Target inválido" }, { status: 400 });
+
+    const mixedOsTarget = targets.find((target) => target.osType && target.osType !== osType);
+    if (mixedOsTarget) {
+      return NextResponse.json({ error: "No mezcles Linux y Windows en la misma ejecución" }, { status: 400 });
+    }
+
+    const trimmedCommand = command.trim();
+    const commandHash = hashAuditValue(trimmedCommand);
+    const auditMetadata = {
+      osType,
+      commandHash,
+      commandPreview: redactCommandPreview(trimmedCommand),
+      targetCount: targets.length,
+      targets: targets.map(safeTarget),
     };
 
-    const command = body.command || "";
-    const instances = body.instances || [];
-    const osType = body.osType;
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
-    const timestamp = new Date().toISOString();
-
-    if (osType !== "linux" && osType !== "windows") {
-      return NextResponse.json({ error: "Sistema operativo inválido" }, { status: 400 });
-    }
-
-    if (instances.length === 0) {
-      return NextResponse.json({ error: "Selecciona al menos una instancia" }, { status: 400 });
-    }
-
-    if (instances.length > maxTargets) {
-      return NextResponse.json(
-        { error: `Máximo ${maxTargets} instancias por ejecución` },
-        { status: 400 },
-      );
-    }
-
-    const invalidTarget = instances.find((target) => !target.instanceId || !target.accountId);
-    if (invalidTarget) {
-      return NextResponse.json({ error: "Target inválido" }, { status: 400 });
-    }
-
-    const mixedOsTarget = instances.find((target) => target.osType && target.osType !== osType);
-    if (mixedOsTarget) {
-      return NextResponse.json(
-        { error: "No mezcles Linux y Windows en la misma ejecución" },
-        { status: 400 },
-      );
-    }
-
-    const validation = validateCommand(command, osType);
-
-    auditLog({
-      timestamp,
-      user: guard.session?.user?.email,
-      command,
-      osType,
-      targets: instances,
-      blocked: validation.blocked,
-      reason: validation.reason,
-      ip,
+    // This event is the fail-closed commit point before any SSM call.
+    await recordAuditEvent({
+      request: req,
+      context,
+      session,
+      action: "command.request",
+      result: "success",
+      statusCode: 202,
+      durationMs: Date.now() - startedAt,
+      metadata: auditMetadata,
     });
 
+    const validation = validateCommand(trimmedCommand, osType);
     if (validation.blocked) {
-      return NextResponse.json(
-        {
-          error: "Comando bloqueado por política de seguridad",
-          reason: validation.reason,
-        },
-        { status: 403 },
-      );
+      await recordAuditEvent({
+        request: req,
+        context,
+        session,
+        action: "command.blocked",
+        result: "denied",
+        statusCode: 403,
+        durationMs: Date.now() - startedAt,
+        metadata: { ...auditMetadata, reason: validation.reason },
+      }).catch(() => undefined);
+      return NextResponse.json({ error: "Comando bloqueado por política de seguridad", reason: validation.reason }, { status: 403 });
     }
 
-    const results = await Promise.all(
-      instances.map((target) => runOnTarget(target, command.trim(), osType)),
-    );
+    const results = await Promise.all(targets.map((target) => runOnTarget(target, trimmedCommand, osType)));
+    const successCount = results.filter((result) => result.status === "success").length;
+    const aggregateResult = successCount === results.length
+      ? "success"
+      : successCount > 0
+        ? "partial"
+        : "failure";
+    const action = aggregateResult === "success" || aggregateResult === "partial"
+      ? "command.completed"
+      : "command.failed";
+
+    await recordAuditEvent({
+      request: req,
+      context,
+      session,
+      action,
+      result: aggregateResult,
+      statusCode: aggregateResult === "success" ? 200 : 502,
+      durationMs: Date.now() - startedAt,
+      metadata: {
+        ...auditMetadata,
+        successCount,
+        failureCount: results.length - successCount,
+        results: results.map((result) => ({
+          instanceId: result.instanceId,
+          accountId: result.accountId,
+          status: result.status,
+          durationMs: result.durationMs,
+        })),
+      },
+    }).catch(() => undefined);
 
     return NextResponse.json(results);
-  } catch (error) {
-    console.error("COMMAND EXECUTION ERROR:", error);
-    return NextResponse.json(
-      { error: "No se pudo ejecutar el comando" },
-      { status: 500 },
-    );
+  } catch {
+    await recordAuditEvent({
+      request: req,
+      context,
+      session,
+      action: "command.failed",
+      result: "error",
+      statusCode: 500,
+      durationMs: Date.now() - startedAt,
+      metadata: { code: "command_request_failed" },
+    }).catch(() => undefined);
+    return NextResponse.json({ error: "No se pudo ejecutar el comando" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 import { getAWSBilling } from "@/lib/billing/aws";
 import { applyBillingFilters } from "@/lib/billing/filters";
@@ -7,6 +8,7 @@ import { normalizeBillingData } from "@/lib/billing/normalize";
 import { readBillingCache, writeBillingCache } from "@/lib/billing/cache";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 const CACHE_TTL = 100 * 60 * 10;
 
@@ -29,8 +31,9 @@ async function refreshBilling() {
 }
 
 export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
   try {
-    const guard = await requireApiSession("billing:view");
+    const guard = await requireApiSession("billing:view", request);
     if (guard.response) return guard.response;
 
     const { searchParams } = new URL(request.url);
@@ -94,6 +97,13 @@ export async function GET(request: NextRequest) {
     /* ── TOTAL ── */
     const total = filtered.reduce((acc, item) => acc + item.cost, 0);
 
+    await recordApiAudit(request, guard.session, {
+      action: "billing.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { source: cached ? "cache" : "fresh", itemCount: filtered.length },
+    });
     return NextResponse.json({
       success: true,
       source: cached ? "cache" : "fresh",
@@ -107,9 +117,17 @@ export async function GET(request: NextRequest) {
       data: filtered
     });
 
-  } catch (error) {
+  } catch {
     refreshing = false;
-    console.error("BILLING API ERROR:", error);
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "billing.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
     return NextResponse.json({ success: false }, { status: 500 });
   }
 }

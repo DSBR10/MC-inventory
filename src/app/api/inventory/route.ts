@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import { recordApiAudit } from "@/lib/audit/server";
 import { requireApiSession } from "@/lib/auth/server";
 
 import { getAWSInventory } from "@/lib/aws";
@@ -53,6 +54,7 @@ import {
 
 export const dynamic =
   "force-dynamic";
+export const runtime = "nodejs";
 
 const CACHE_TTL =
   100 * 60 * 10;
@@ -63,9 +65,6 @@ const CACHE_TTL =
 
 let refreshing =
   false;
-
-let lastRefresh =
-  0;
 
 /* ───────────────────────────── */
 /* BUILD INVENTORY */
@@ -181,9 +180,6 @@ async function refreshInventory() {
 
     });
 
-    lastRefresh =
-      Date.now();
-
     console.log(
       "BACKGROUND REFRESH DONE"
     );
@@ -203,10 +199,11 @@ async function refreshInventory() {
 /* API */
 /* ───────────────────────────── */
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const startedAt = Date.now();
 
   try {
-    const guard = await requireApiSession("inventory:view");
+    const guard = await requireApiSession("inventory:view", request);
     if (guard.response) return guard.response;
 
     const cached =
@@ -249,6 +246,13 @@ export async function GET() {
 
       }
 
+      await recordApiAudit(request, guard.session, {
+        action: "inventory.view",
+        result: "success",
+        statusCode: 200,
+        startedAt,
+        metadata: { source: "cache", itemCount: cached.data.length },
+      });
       return NextResponse.json({
 
         source:
@@ -291,6 +295,13 @@ export async function GET() {
 
     refreshing = false;
 
+    await recordApiAudit(request, guard.session, {
+      action: "inventory.view",
+      result: "success",
+      statusCode: 200,
+      startedAt,
+      metadata: { source: "fresh", itemCount: inventory.length },
+    });
     return NextResponse.json({
 
       source:
@@ -307,14 +318,19 @@ export async function GET() {
 
     });
 
-  } catch (error) {
+  } catch {
 
     refreshing = false;
 
-    console.error(
-      "INVENTORY ERROR:",
-      error
-    );
+    const guard = await requireApiSession(undefined, request);
+    if (guard.session) {
+      await recordApiAudit(request, guard.session, {
+        action: "inventory.view",
+        result: "error",
+        statusCode: 500,
+        startedAt,
+      });
+    }
 
     return NextResponse.json(
 

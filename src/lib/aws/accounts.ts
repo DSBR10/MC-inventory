@@ -1,3 +1,5 @@
+import { resolveSecret } from "@/lib/secrets/crypto";
+
 export type AWSAccount = {
 
   name: string;
@@ -19,13 +21,15 @@ export function getAWSAccounts(): AWSAccount[] {
   let i = 1;
 
   while (process.env[`AWS_ACCOUNT_${i}_NAME`] || process.env[`AWS_ACCOUNT_${i}_ACCESS_KEY`] || process.env[`AWS_ACCOUNT_${i}_ACCESS_KEY_ID`]) {
-    const accessKeyId =
+    const accessKeyId = resolveSecret(
       process.env[`AWS_ACCOUNT_${i}_ACCESS_KEY_ID`] ||
-      process.env[`AWS_ACCOUNT_${i}_ACCESS_KEY`];
+      process.env[`AWS_ACCOUNT_${i}_ACCESS_KEY`],
+    );
 
-    const secretAccessKey =
+    const secretAccessKey = resolveSecret(
       process.env[`AWS_ACCOUNT_${i}_SECRET_ACCESS_KEY`] ||
-      process.env[`AWS_ACCOUNT_${i}_SECRET_KEY`];
+      process.env[`AWS_ACCOUNT_${i}_SECRET_KEY`],
+    );
 
     if (!accessKeyId || !secretAccessKey) {
       i++;

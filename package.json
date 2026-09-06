@@ -10,7 +10,11 @@
     "test:huawei": "npx tsx scripts/test-huawei-auth.ts",
     "test:huawei-services": "npx tsx scripts/test-huawei-services.ts",
     "debug:cce-tags": "npx tsx scripts/debug-cce-tags.ts",
-    "db:migrate": "node scripts/migrate.mjs"
+    "db:migrate": "node scripts/migrate.mjs",
+    "secrets:key": "node scripts/secrets.mjs generate-key",
+    "secrets:encrypt": "node scripts/secrets.mjs encrypt",
+    "secrets:hash": "node scripts/secrets.mjs hash-password",
+    "secrets:migrate": "node scripts/secrets.mjs migrate-env --write"
   },
   "dependencies": {
     "@aws-sdk/client-api-gateway": "^3.1001.0",

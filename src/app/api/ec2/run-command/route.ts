@@ -6,6 +6,7 @@ import {
 } from "@aws-sdk/client-ssm";
 
 import { requireApiSession } from "@/lib/auth/server";
+import { resolveSecret } from "@/lib/secrets/crypto";
 import {
   getRequestContext,
   hasAuditHashSecret,
@@ -115,12 +116,14 @@ function getAllAccounts(): { id: string; accessKey: string; secretKey: string }[
 
     const index = match[1];
     const id = env[`AWS_ACCOUNT_${index}_ID`];
-    const accessKey =
+    const accessKey = resolveSecret(
       env[`AWS_ACCOUNT_${index}_ACCESS_KEY`] ||
-      env[`AWS_ACCOUNT_${index}_ACCESS_KEY_ID`];
-    const secretKey =
+      env[`AWS_ACCOUNT_${index}_ACCESS_KEY_ID`],
+    );
+    const secretKey = resolveSecret(
       env[`AWS_ACCOUNT_${index}_SECRET_KEY`] ||
-      env[`AWS_ACCOUNT_${index}_SECRET_ACCESS_KEY`];
+      env[`AWS_ACCOUNT_${index}_SECRET_ACCESS_KEY`],
+    );
 
     if (id && accessKey && secretKey) accounts.push({ id, accessKey, secretKey });
   });

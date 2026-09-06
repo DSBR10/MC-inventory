@@ -3,6 +3,7 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { getPermissions, mapGroupsToRole, type GroupRoleMap, type Role } from "@/lib/auth/roles";
+import { isPasswordHash, resolveSecret, verifyPassword } from "@/lib/secrets/crypto";
 
 function parseCsv(value?: string) {
   return (value || "")
@@ -158,7 +159,7 @@ export const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID || "",
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET || "",
+      clientSecret: resolveSecret(process.env.AZURE_AD_CLIENT_SECRET || ""),
       tenantId: process.env.AZURE_AD_TENANT_ID || "",
       authorization: {
         params: {
@@ -174,9 +175,31 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const user = process.env.LOCAL_ADMIN_USER;
-        const pass = process.env.LOCAL_ADMIN_PASSWORD;
+        const passHash = process.env.LOCAL_ADMIN_PASSWORD_HASH;
+        const passPlain = process.env.LOCAL_ADMIN_PASSWORD;
 
-        if (user && pass && credentials?.username === user && credentials?.password === pass) {
+        if (!user || credentials?.username !== user) return null;
+
+        // Preferido: hash irreversible scrypt (no se puede desencriptar, solo verificar).
+        if (passHash && isPasswordHash(passHash)) {
+          if (credentials?.password && verifyPassword(credentials.password, passHash)) {
+            return {
+              id: "local-admin",
+              name: "Administrator",
+              email: "admin@ux.local",
+              role: "admin" as Role,
+              permissions: getPermissions("admin"),
+              groups: ["UX_INVENTORY"],
+            };
+          }
+          return null;
+        }
+
+        // Migración: password en texto plano (eliminar tras migrar con scripts/secrets.mjs).
+        if (passPlain && credentials?.password === passPlain) {
+          if (process.env.NODE_ENV !== "test") {
+            console.warn("[auth] LOCAL_ADMIN_PASSWORD en texto plano: migra a LOCAL_ADMIN_PASSWORD_HASH con scrypt.");
+          }
           return {
             id: "local-admin",
             name: "Administrator",
@@ -194,7 +217,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: resolveSecret(process.env.NEXTAUTH_SECRET),
   pages: {
     signIn: "/login",
   },

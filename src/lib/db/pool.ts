@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 
 import { Pool, type PoolConfig, type QueryResult, type QueryResultRow } from "pg";
 
+import { resolveSecret } from "@/lib/secrets/crypto";
+
 const DEFAULT_POOL_MAX = 10;
 const DEFAULT_IDLE_TIMEOUT_MS = 30_000;
 const DEFAULT_CONNECTION_TIMEOUT_MS = 5_000;
@@ -18,7 +20,8 @@ function positiveInteger(value: string | undefined, fallback: number, maximum: n
 }
 
 function createPool() {
-  const connectionString = process.env.DATABASE_URL?.trim();
+  // DATABASE_URL puede venir cifrado como ENC:v1:... (AES-256-GCM).
+  const connectionString = resolveSecret(process.env.DATABASE_URL?.trim());
   if (!connectionString) {
     throw new Error("AUDIT_DATABASE_NOT_CONFIGURED");
   }

@@ -5,6 +5,7 @@ import {
   DescribeLogStreamsCommand,
 } from "@aws-sdk/client-cloudwatch-logs";
 import { CloudWatchLog, LogGroup, LogStream } from "@/types/monitoring-aws";
+import { resolveSecret } from "@/lib/secrets/crypto";
 
 export class CloudWatchLogsService {
   private client: CloudWatchLogsClient;
@@ -19,8 +20,8 @@ export class CloudWatchLogsService {
     this.client = new CloudWatchLogsClient({
       region,
       credentials: credentials || {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+        accessKeyId: resolveSecret(process.env.AWS_ACCESS_KEY_ID || ""),
+        secretAccessKey: resolveSecret(process.env.AWS_SECRET_ACCESS_KEY || ""),
       },
     });
   }

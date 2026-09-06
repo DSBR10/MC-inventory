@@ -372,7 +372,7 @@ export default function Sidebar({
 
             "
           >
-            v8.5
+            v9.0
           </div>
         </div>
       </div>

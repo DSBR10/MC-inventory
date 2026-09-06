@@ -1,3 +1,5 @@
+import { resolveSecret } from "@/lib/secrets/crypto";
+
 export type HuaweiAccount = {
   name: string;
   projectId: string;
@@ -24,11 +26,13 @@ export function getHuaweiAccounts(): HuaweiAccount[] {
     const projectId =
       process.env[`HUAWEI_ACCOUNT_${index}_PROJECT_ID`];
 
-    const ak =
-      process.env[`HUAWEI_ACCOUNT_${index}_AK`];
+    const ak = resolveSecret(
+      process.env[`HUAWEI_ACCOUNT_${index}_AK`],
+    );
 
-    const sk =
-      process.env[`HUAWEI_ACCOUNT_${index}_SK`];
+    const sk = resolveSecret(
+      process.env[`HUAWEI_ACCOUNT_${index}_SK`],
+    );
 
     const region =
       process.env[`HUAWEI_ACCOUNT_${index}_REGION`] || 'la-south-2';

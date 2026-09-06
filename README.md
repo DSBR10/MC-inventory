@@ -100,6 +100,8 @@ HUAWEI_ACCOUNT_1_REGION=la-north-2
 
 **Note:** You can add multiple accounts by incrementing the index (1, 2, 3, etc.)
 
+> 🔐 **No dejes las keys en texto plano.** Los ejemplos anteriores usan placeholders; los valores reales van **cifrados** (`ENC:v1:...`) y el password admin como **hash scrypt**. Sigue el paso **§5. Cifrado de secretos** antes de arrancar.
+
 #### NextAuth Configuration
 
 ```env
@@ -128,7 +130,43 @@ The Compose file requires `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `
 
 For a production image, the multi-stage `Dockerfile` builds Next standalone output, includes only the migration runner and migration files, and starts the application only after a successful migration. A failed migration prevents the application from starting.
 
-### 5. Run the development server
+### 5. Cifrado de secretos (AK/SK y passwords) 🔐
+
+> **Concepto clave:** lo "encriptado sin posibilidad de desencriptar" solo existe como **hash**, y un hash de una AK/SK la vuelve **inutilizable** (la app ya no podría firmar peticiones a AWS/Huawei). Por eso el proyecto separa dos casos, cada uno con el mejor método disponible:
+
+| Secreto | Método | Reversible | Dónde |
+|---|---|---|---|
+| AK/SK y secrets operativos (AWS, Huawei, `NEXTAUTH_SECRET`, `AUDIT_HASH_SECRET`, `AZURE_AD_CLIENT_SECRET`) | **AES-256-GCM** (AEAD, estándar NIST) con master key de 256 bits | Sí, solo en memoria al usarse | `ENC:v1:...` en `.env` |
+| Password del admin local (`LOCAL_ADMIN_PASSWORD`) | **scrypt** (N=16384, r=8, p=1, OWASP) | **No, irreversible.** Solo se verifica | `LOCAL_ADMIN_PASSWORD_HASH=scrypt$...` |
+
+- En disco **nunca hay texto plano**: las AK/SK viven como `ENC:v1:<iv>:<tag>:<ct>` y el password solo como hash. La app descifra **únicamente en memoria** (`src/lib/secrets/crypto.ts`: `resolveSecret()` / `decryptSecret()` / `verifyPassword()`).
+- Excepción honesta: `POSTGRES_PASSWORD` queda en texto plano porque el contenedor `postgres` de Compose lo necesita así para bootstrapping. Es solo local (gitignored); en producción inyéctalo desde un secret manager.
+- La master key vive en `.env.master.key` (gitignored, `chmod 600`) o en el secret manager en producción. **Jamás se commitea.** La app la auto-carga en local; en Docker llega vía `env_file`.
+
+Comandos (`scripts/secrets.mjs`, sin dependencias externas):
+
+```bash
+node scripts/secrets.mjs generate-key              # master key base64 (32 bytes)
+node scripts/secrets.mjs encrypt "<valor>"         # → ENC:v1:... (requiere CREDENTIALS_MASTER_KEY)
+node scripts/secrets.mjs decrypt "<ENC:v1:...>"    # verificación puntual
+node scripts/secrets.mjs hash-password "<pass>"    # → scrypt$... (irreversible)
+node scripts/secrets.mjs migrate-env --write       # cifra .env y .env.local en su lugar
+# Atajos npm: secrets:key | secrets:encrypt | secrets:hash | secrets:migrate
+```
+
+Flujo para agregar/rotar una key (ej. nueva cuenta AWS):
+
+```bash
+node scripts/secrets.mjs encrypt "AKIA..."     # → copiar el ENC:v1:...
+# pegar en .env como AWS_ACCOUNT_3_ACCESS_KEY=ENC:v1:...
+# recrear: docker compose up -d (o npm run dev en local)
+```
+
+⚠️ **Trampa de Docker Compose con `$`:** compose interpola `$VAR` incluso dentro del `.env`. El hash scrypt contiene `$`, así que **en `.env` se guarda con `$$`** (`scrypt$$16384$$8$$1$$...`); compose lo desescapa a `$` dentro del contenedor y el parser acepta ambas formas. Si ves warnings `variable "..." is not set` al hacer `up`, es un `$` sin escapar. Los valores `ENC:v1:...` (base64) no contienen `$` y son seguros. Por el mismo motivo, `LOCAL_ADMIN_PASSWORD_HASH` **no** se lista en el bloque `environment:` del Compose: llega literal vía `env_file`.
+
+Tras migrar secretos que estuvieron en texto plano, **rótalos** en las consolas de AWS/Huawei (el cifrado protege hacia adelante, no borra la exposición previa).
+
+### 6. Run the development server
 
 ```bash
 npm run dev
@@ -198,8 +236,11 @@ Compose **requiere** un archivo `.env` junto al `docker-compose.yml` (no usa `.e
 | `POSTGRES_DB` / `POSTGRES_USER` | ej. `mc_inventory` / `mc_inventory` |
 | `POSTGRES_PASSWORD` | ≥ 24 caracteres aleatorios, sin `:` `/` `@` `#` (rompen la `DATABASE_URL` construida) |
 | `NEXTAUTH_URL` | URL pública **https**, ej. `https://inventario.tudominio.com` (si es incorrecta falla el login) |
-| `NEXTAUTH_SECRET` | ≥ 32 caracteres aleatorios |
-| `AUDIT_HASH_SECRET` | ≥ 32 caracteres aleatorios, distinto del anterior |
+| `NEXTAUTH_SECRET` | ≥ 32 caracteres aleatorios, **cifrado** como `ENC:v1:...` (ver §5) |
+| `AUDIT_HASH_SECRET` | ≥ 32 caracteres aleatorios, distinto del anterior, **cifrado** como `ENC:v1:...` |
+| `CREDENTIALS_MASTER_KEY` | **No va en `.env`.** Va en `.env.master.key` junto al compose (o secret manager). Generar con `node scripts/secrets.mjs generate-key` |
+| `LOCAL_ADMIN_PASSWORD_HASH` | Hash scrypt del password admin (`node scripts/secrets.mjs hash-password`), con `$` escapados como `$$` en `.env`. Elimina `LOCAL_ADMIN_PASSWORD` |
+| `AWS_ACCOUNT_*_ACCESS_KEY` / `SECRET_KEY`, `HUAWEI_ACCOUNT_*_AK` / `SK` | **Cifradas** como `ENC:v1:...` con `node scripts/secrets.mjs encrypt` |
 | `DATABASE_SSL` | `disable` si usas el `postgres` del Compose (no tiene certificados). `require` solo con RDS/postgres con TLS |
 | Resto (AWS/Huawei/Auth) | copiar los bloques que uses desde `.env.example` |
 
@@ -208,8 +249,23 @@ Generar secretos en el servidor (no reutilizar los de desarrollo):
 ```bash
 cd /libre/devops/apps/MC-Inventory
 openssl rand -base64 32  # POSTGRES_PASSWORD (quitar :/@# si aparecen)
-openssl rand -base64 48  # NEXTAUTH_SECRET
-openssl rand -base64 48  # AUDIT_HASH_SECRET
+node scripts/secrets.mjs generate-key  # CREDENTIALS_MASTER_KEY → guardar en .env.master.key (chmod 600)
+```
+
+Crear `.env` a partir de `.env.example` y `.env.master.key` con la master key:
+
+```bash
+cp .env.example .env
+chmod 600 .env
+node scripts/secrets.mjs generate-key > .env.master.key
+# editar .env.master.key → dejar solo: CREDENTIALS_MASTER_KEY=<clave>
+chmod 600 .env.master.key
+# Cifrar cada secreto y pegarlo como ENC:v1:... :
+node scripts/secrets.mjs encrypt "<NEXTAUTH_SECRET>"
+node scripts/secrets.mjs encrypt "<AUDIT_HASH_SECRET>"
+node scripts/secrets.mjs encrypt "<AWS_SECRET_KEY>"   # repetir por cada AK/SK
+# Hashear el password admin (escapar $ como $$ al pegar en .env):
+node scripts/secrets.mjs hash-password "<password-admin>"
 ```
 
 Crear `.env` a partir de `.env.example`:
@@ -223,7 +279,8 @@ chmod 600 .env
 
 Notas importantes:
 
-- El servicio `app` además carga todo el `.env` vía `env_file`, por eso las cuentas `AWS_ACCOUNT_*` / `HUAWEI_ACCOUNT_*` van en el mismo `.env`.
+- El servicio `app` además carga todo el `.env` vía `env_file`, por eso las cuentas `AWS_ACCOUNT_*` / `HUAWEI_ACCOUNT_*` van en el mismo `.env` (cifradas como `ENC:v1:...`). El Compose también carga `.env.master.key` vía `env_file`: **ese archivo debe existir junto al `docker-compose.yml`** (o la app falla con `CREDENTIALS_MASTER_KEY no configurada`).
+- El hash `LOCAL_ADMIN_PASSWORD_HASH` se guarda con `$$` en lugar de `$` en `.env` (compose interpola `$VAR`); el parser acepta ambas formas. Los valores `ENC:v1:...` no contienen `$` y no necesitan escape.
 - Si la instancia EC2 tiene **IAM Role**, preferirlo para la cuenta propia y reservar AK/SK en `.env` solo para cuentas externas. Las keys del `getAWSAccounts()` aceptan `AWS_ACCOUNT_X_ACCESS_KEY` o `AWS_ACCOUNT_X_ACCESS_KEY_ID` (y `SECRET_KEY` o `SECRET_ACCESS_KEY`).
 - **Nunca** pongas `DATABASE_SSL_REJECT_UNAUTHORIZED=false` en producción.
 - `.env*` está en `.gitignore`: no se commitea. El backup del `.env` va al gestor de secretos (AWS Secrets Manager / SSM Parameter Store), no a Git.
@@ -356,6 +413,8 @@ pg_restore --list /libre/devops/backups/mc-inventory-2026-01-01.dump | grep -c "
 | `permission denied` con docker | Falta `usermod -aG docker`, re-login SSH, o usar `sudo` |
 | `port 3000 already in use` | Otro proceso/contenedor. `ss -tlnp \| grep 3000`, cambiar `APP_PORT` o detener el otro servicio |
 | App en loop / `migration failed` | Credenciales PG, `DATABASE_SSL` incorrecto para el destino, o migración SQL con error. Ver `docker logs app` |
+| `CREDENTIALS_MASTER_KEY no configurada` al arrancar | Falta `.env.master.key` junto al compose o la variable en el secret manager. Generar con `node scripts/secrets.mjs generate-key` |
+| Warnings `variable "..." is not set` con `docker compose up` | Un valor del `.env` contiene `$` sin escapar (típico: hash scrypt). Usar `$$` en `LOCAL_ADMIN_PASSWORD_HASH` (ver §5) |
 | Login redirige a localhost | `NEXTAUTH_URL` sigue en `http://localhost:3000`. Poner la URL pública y recrear |
 | `audit_events is append-only` | Normal: la tabla es solo-apéndice por trigger, no se puede UPDATE/DELETE/TRUNCATE |
 | Disco lleno | `docker system df`, `docker image prune`, podar logs, ampliar EBS |
@@ -379,8 +438,11 @@ mc-inventory/
 │   │   ├── monitoring/       # Monitoring components
 │   │   └── ...               # Other components
 │   ├── lib/                   # Library code
-│   │   ├── aws/              # AWS SDK integrations
-│   │   └── huawei/           # Huawei Cloud SDK integrations
+│   │   ├── aws/              # AWS SDK integrations (+ accounts.ts con descifrado)
+│   │   └── huawei/           # Huawei Cloud SDK integrations (+ accounts.ts con descifrado)
+│   ├── lib/secrets/             # AES-256-GCM + scrypt + fingerprints (crypto.ts)
+│   ├── scripts/secrets.mjs      # CLI: generate-key | encrypt | decrypt | hash-password | migrate-env
+│   ├── .env.master.key          # Master key 256 bits (gitignored, chmod 600)
 │   └── types/                 # TypeScript type definitions
 ├── data/                      # Cache files (gitignored)
 ├── .env.local            # Environment variables (gitignored)
@@ -390,8 +452,8 @@ mc-inventory/
 
 ## 🔐 Security
 
-- AWS and Huawei Cloud credentials are managed locally using environment variables
-- Never commit `.env.local` to version control
+- AK/SK y secrets operativos se guardan **cifrados con AES-256-GCM** (`ENC:v1:...`) y solo se descifran en memoria (`src/lib/secrets/crypto.ts`). El password admin local se guarda con **hash irreversible scrypt** (`LOCAL_ADMIN_PASSWORD_HASH`); nunca como texto plano (ver §5).
+- Never commit `.env`, `.env.local` ni `.env.master.key` to version control (los tres están en `.gitignore`; solo `.env.example` con placeholders se commitea). El backup de secretos va al gestor de secretos (AWS Secrets Manager / SSM Parameter Store), no a Git.
 - Use IAM roles with least privilege principle
 - Implement proper authentication with NextAuth.js
 - Do not store commands, command output, passwords, tokens, cookies, authorization headers or cloud keys in audit records. SSM execution is disabled when `AUDIT_HASH_SECRET` is absent or weak, or when the pre-execution audit insert fails.

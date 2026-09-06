@@ -24,8 +24,12 @@ services:
         condition: service_healthy
     env_file:
       - .env
+      - .env.master.key
     environment:
       NODE_ENV: production
+      # NOTA: CREDENTIALS_MASTER_KEY NO se lista aquí a propósito: `environment`
+      # tiene precedencia sobre `env_file` y la interpolación vacía la pisaría.
+      # Llega al contenedor vía env_file (.env.master.key).
       NEXTAUTH_URL: ${NEXTAUTH_URL:?NEXTAUTH_URL is required}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?NEXTAUTH_SECRET is required}
       AUDIT_HASH_SECRET: ${AUDIT_HASH_SECRET:?AUDIT_HASH_SECRET is required}
@@ -41,6 +45,27 @@ services:
       COMMAND_MAX_LENGTH: ${COMMAND_MAX_LENGTH:-4000}
       AWS_REGION: ${AWS_REGION:-us-east-1}
       HUAWEI_LTS_ENABLED: ${HUAWEI_LTS_ENABLED:-true}
+      # Cuentas cloud (soportan valores ENC:v1:... cifrados con la master key).
+      AWS_ACCOUNT_1_NAME: ${AWS_ACCOUNT_1_NAME:-}
+      AWS_ACCOUNT_1_ID: ${AWS_ACCOUNT_1_ID:-}
+      AWS_ACCOUNT_1_ACCESS_KEY: ${AWS_ACCOUNT_1_ACCESS_KEY:-}
+      AWS_ACCOUNT_1_SECRET_KEY: ${AWS_ACCOUNT_1_SECRET_KEY:-}
+      AWS_ACCOUNT_2_NAME: ${AWS_ACCOUNT_2_NAME:-}
+      AWS_ACCOUNT_2_ID: ${AWS_ACCOUNT_2_ID:-}
+      AWS_ACCOUNT_2_ACCESS_KEY: ${AWS_ACCOUNT_2_ACCESS_KEY:-}
+      AWS_ACCOUNT_2_SECRET_KEY: ${AWS_ACCOUNT_2_SECRET_KEY:-}
+      HUAWEI_ACCOUNT_1_NAME: ${HUAWEI_ACCOUNT_1_NAME:-}
+      HUAWEI_ACCOUNT_1_PROJECT_ID: ${HUAWEI_ACCOUNT_1_PROJECT_ID:-}
+      HUAWEI_ACCOUNT_1_AK: ${HUAWEI_ACCOUNT_1_AK:-}
+      HUAWEI_ACCOUNT_1_SK: ${HUAWEI_ACCOUNT_1_SK:-}
+      HUAWEI_ACCOUNT_1_REGION: ${HUAWEI_ACCOUNT_1_REGION:-la-north-2}
+      AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID:-}
+      AZURE_AD_CLIENT_SECRET: ${AZURE_AD_CLIENT_SECRET:-}
+      AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID:-}
+      LOCAL_ADMIN_USER: ${LOCAL_ADMIN_USER:-}
+      # NOTA: LOCAL_ADMIN_PASSWORD_HASH y LOCAL_ADMIN_PASSWORD NO se listan aquí
+      # a propósito: el hash scrypt contiene `$` y la interpolación de compose
+      # lo rompería. Llegan al contenedor literalmente vía env_file (.env).
     ports:
       - "${APP_PORT:-3000}:3000"
 

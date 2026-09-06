@@ -4,6 +4,7 @@ import {
   LookupAttribute,
 } from "@aws-sdk/client-cloudtrail";
 import { CloudTrailEvent } from "@/types/monitoring-aws";
+import { resolveSecret } from "@/lib/secrets/crypto";
 
 export class CloudTrailService {
   private client: CloudTrailClient;
@@ -18,8 +19,8 @@ export class CloudTrailService {
     this.client = new CloudTrailClient({
       region,
       credentials: credentials || {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+        accessKeyId: resolveSecret(process.env.AWS_ACCESS_KEY_ID || ""),
+        secretAccessKey: resolveSecret(process.env.AWS_SECRET_ACCESS_KEY || ""),
       },
     });
   }

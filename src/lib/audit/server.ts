@@ -3,6 +3,7 @@ import { createHmac, randomUUID } from "node:crypto";
 import type { Session } from "next-auth";
 
 import { queryAudit } from "@/lib/db/pool";
+import { resolveSecret } from "@/lib/secrets/crypto";
 import type {
   AuditEventInput,
   AuditRequestContext,
@@ -143,7 +144,8 @@ export function getRequestContext(request?: Request): AuditRequestContext {
 }
 
 export function getAuditHashSecret() {
-  const secret = process.env.AUDIT_HASH_SECRET?.trim();
+  // Soporta valor cifrado ENC:v1:... (se descifra solo en memoria).
+  const secret = resolveSecret(process.env.AUDIT_HASH_SECRET?.trim());
   if (!secret || secret.length < 32) throw new AuditConfigurationError();
   return secret;
 }

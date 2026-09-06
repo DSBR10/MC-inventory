@@ -1,5 +1,6 @@
 import { CloudWatchClient, GetMetricStatisticsCommand, ListMetricsCommand, Dimension } from '@aws-sdk/client-cloudwatch';
 import { MetricData, MetricStatistic } from '@/types/monitoring-aws';
+import { resolveSecret } from '@/lib/secrets/crypto';
 
 export class CloudWatchMetricsService {
   private client: CloudWatchClient;
@@ -14,8 +15,8 @@ export class CloudWatchMetricsService {
     this.client = new CloudWatchClient({
       region,
       credentials: credentials || {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+        accessKeyId: resolveSecret(process.env.AWS_ACCESS_KEY_ID || ''),
+        secretAccessKey: resolveSecret(process.env.AWS_SECRET_ACCESS_KEY || ''),
       },
     });
   }

@@ -84,6 +84,7 @@ export default function ClientLayout({
 
       {sidebarOpen && (
         <div
+          data-audit-action="layout.sidebar.overlay.close"
           onClick={() =>
             setSidebarOpen(false)
           }
@@ -122,6 +123,9 @@ export default function ClientLayout({
           <div className="flex items-center gap-3">
 
             <button
+              type="button"
+              data-audit-action="layout.sidebar.toggle"
+              data-audit-label={sidebarOpen ? "Cerrar menú lateral" : "Abrir menú lateral"}
               onClick={() =>
                 setSidebarOpen(!sidebarOpen)
               }

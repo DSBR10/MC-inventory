@@ -108,6 +108,9 @@ export default function Sidebar({
         </div>
 
         <button
+          type="button"
+          data-audit-action="layout.sidebar.close"
+          data-audit-label="Cerrar menú lateral"
           onClick={onClose}
           className="
             w-7
@@ -143,6 +146,9 @@ export default function Sidebar({
                     <Link
                       key={item.href}
                       href={item.href}
+                      data-audit-action="navigation.sidebar"
+                      data-audit-label={item.label}
+                      data-audit-target={item.label.toLowerCase()}
                       onClick={() => {
                         if (!active) onNavigate?.();
                         onClose();

@@ -1,11 +1,20 @@
 import { queryAudit } from "@/lib/db/pool";
-import type { AuditResult, JsonValue } from "@/types/audit";
+import type {
+  AuditActorType,
+  AuditCategory,
+  AuditConfidence,
+  AuditResult,
+  AuditSource,
+  JsonValue,
+} from "@/types/audit";
 
 export type AuditFilters = {
   from?: string;
   to?: string;
   actor?: string;
   action?: string;
+  category?: AuditCategory;
+  source?: AuditSource;
   result?: AuditResult;
   route?: string;
   ip?: string;
@@ -14,12 +23,25 @@ export type AuditFilters = {
 export type DbAuditEvent = {
   id: string;
   occurred_at: string | Date;
+  recorded_at: string | Date;
   request_id: string;
   actor_user_id: string;
   actor_email: string;
   actor_name: string;
   actor_role: string;
+  actor_type: AuditActorType;
   action: string;
+  category: AuditCategory;
+  source: AuditSource;
+  confidence: AuditConfidence;
+  auth_method: string | null;
+  target_type: string | null;
+  target_id: string | null;
+  operation_id: string | null;
+  client_session_id: string | null;
+  navigation_id: string | null;
+  interaction_id: string | null;
+  parent_event_id: string | null;
   method: string;
   route: string;
   result: AuditResult;
@@ -29,6 +51,14 @@ export type DbAuditEvent = {
   duration_ms: number | null;
   metadata: Record<string, JsonValue>;
 };
+
+const eventColumns = `
+  id, occurred_at, recorded_at, request_id,
+  actor_user_id, actor_email, actor_name, actor_role, actor_type,
+  action, category, source, confidence, auth_method,
+  target_type, target_id, operation_id, client_session_id,
+  navigation_id, interaction_id, parent_event_id,
+  method, route, result, status_code, ip, user_agent, duration_ms, metadata`;
 
 function buildWhere(filters: AuditFilters) {
   const values: unknown[] = [];
@@ -47,6 +77,8 @@ function buildWhere(filters: AuditFilters) {
     clauses.push(`(actor_user_id = ${exact} OR actor_email = ${email} OR actor_name ILIKE ${name})`);
   }
   if (filters.action) clauses.push(`action = ${parameter(filters.action)}`);
+  if (filters.category) clauses.push(`category = ${parameter(filters.category)}`);
+  if (filters.source) clauses.push(`source = ${parameter(filters.source)}`);
   if (filters.result) clauses.push(`result = ${parameter(filters.result)}`);
   if (filters.route) clauses.push(`route ILIKE ${parameter(`%${filters.route}%`)}`);
   if (filters.ip) clauses.push(`ip = ${parameter(filters.ip)}`);
@@ -66,8 +98,7 @@ export async function listAuditEvents(filters: AuditFilters, page: number, limit
 
   const [events, count, summary] = await Promise.all([
     queryAudit<DbAuditEvent>(
-      `SELECT id, occurred_at, request_id, actor_user_id, actor_email, actor_name, actor_role,
-              action, method, route, result, status_code, ip, user_agent, duration_ms, metadata
+      `SELECT ${eventColumns}
        FROM audit_events ${where.sql}
        ORDER BY occurred_at DESC, id DESC
        LIMIT ${limitParameter} OFFSET ${offsetParameter}`,
@@ -103,9 +134,7 @@ export async function listAuditEvents(filters: AuditFilters, page: number, limit
 
 export async function getAuditEvent(id: string) {
   const result = await queryAudit<DbAuditEvent>(
-    `SELECT id, occurred_at, request_id, actor_user_id, actor_email, actor_name, actor_role,
-            action, method, route, result, status_code, ip, user_agent, duration_ms, metadata
-     FROM audit_events WHERE id = $1::uuid`,
+    `SELECT ${eventColumns} FROM audit_events WHERE id = $1::uuid`,
     [id],
   );
   return result.rows[0] || null;
@@ -115,8 +144,7 @@ export async function exportAuditEvents(filters: AuditFilters, limit: number) {
   const where = buildWhere(filters);
   const limitParameter = `$${where.values.length + 1}`;
   return queryAudit<DbAuditEvent>(
-    `SELECT id, occurred_at, request_id, actor_user_id, actor_email, actor_name, actor_role,
-            action, method, route, result, status_code, ip, user_agent, duration_ms, metadata
+    `SELECT ${eventColumns}
      FROM audit_events ${where.sql}
      ORDER BY occurred_at DESC, id DESC
      LIMIT ${limitParameter}`,

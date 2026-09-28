@@ -3,12 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { recordApiAudit } from "@/lib/audit/server";
 import { listAuditEvents, type AuditFilters } from "@/lib/audit/repository";
 import { requireApiSession } from "@/lib/auth/server";
-import type { AuditResult } from "@/types/audit";
+import type { AuditCategory, AuditResult, AuditSource } from "@/types/audit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const results: AuditResult[] = ["success", "failure", "denied", "error", "partial"];
+const categories: AuditCategory[] = ["api", "ui", "navigation", "authentication", "data", "command", "configuration", "export", "system"];
+const sources: AuditSource[] = ["server", "client", "job", "cli"];
 
 function parseDate(value: string | null) {
   if (!value) return undefined;
@@ -31,6 +33,7 @@ function mapSummary(row: Awaited<ReturnType<typeof listAuditEvents>>["events"][n
   return {
     id: row.id,
     occurredAt: new Date(row.occurred_at).toISOString(),
+    recordedAt: new Date(row.recorded_at).toISOString(),
     requestId: row.request_id,
     actor: {
       userId: row.actor_user_id,
@@ -38,7 +41,17 @@ function mapSummary(row: Awaited<ReturnType<typeof listAuditEvents>>["events"][n
       name: row.actor_name,
       role: row.actor_role,
     },
+    actorType: row.actor_type,
     action: row.action,
+    category: row.category,
+    source: row.source,
+    confidence: row.confidence,
+    targetType: row.target_type,
+    targetId: row.target_id,
+    operationId: row.operation_id,
+    clientSessionId: row.client_session_id,
+    navigationId: row.navigation_id,
+    interactionId: row.interaction_id,
     method: row.method,
     route: row.route,
     result: row.result,
@@ -57,11 +70,15 @@ export async function GET(request: NextRequest) {
   try {
     const params = request.nextUrl.searchParams;
     const result = params.get("result");
+    const category = params.get("category");
+    const source = params.get("source");
     const filters: AuditFilters = {
       from: parseDate(params.get("from")),
       to: parseDate(params.get("to")),
       actor: textFilter(params.get("actor"), 256),
       action: textFilter(params.get("action"), 128),
+      category: category && categories.includes(category as AuditCategory) ? category as AuditCategory : undefined,
+      source: source && sources.includes(source as AuditSource) ? source as AuditSource : undefined,
       result: result && results.includes(result as AuditResult) ? result as AuditResult : undefined,
       route: textFilter(params.get("route"), 256),
       ip: textFilter(params.get("ip"), 128),

@@ -40,6 +40,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import { trackClientAuditEvent } from "@/lib/audit/client";
 import type { BillingItem } from "@/types/billing";
 
 type BillingResponse = {
@@ -1233,6 +1234,10 @@ function getMonthOffset(offset: number) {
 }
 
 async function exportBilling(rows: BillingItem[], format: "xlsx" | "pdf") {
+  trackClientAuditEvent("export.started", {
+    category: "export",
+    metadata: { module: "billing", format, rowCount: rows.length },
+  });
   const filename = `aws-billing-${new Date().toISOString().replace(/[:.]/g, "-")}.${format}`;
   const orderedRows = [...rows].sort((a, b) => (
     a.month.localeCompare(b.month)
@@ -1267,6 +1272,10 @@ async function exportBilling(rows: BillingItem[], format: "xlsx" | "pdf") {
     XLSX.utils.book_append_sheet(workbook, sheet, "AWS Billing");
     const buffer = XLSX.write(workbook, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
     downloadBlob(buffer, filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    trackClientAuditEvent("export.triggered", {
+      category: "export",
+      metadata: { module: "billing", format, rowCount: orderedRows.length },
+    });
     return;
   }
 
@@ -1302,6 +1311,10 @@ async function exportBilling(rows: BillingItem[], format: "xlsx" | "pdf") {
     },
   });
   doc.save(filename);
+  trackClientAuditEvent("export.triggered", {
+    category: "export",
+    metadata: { module: "billing", format, rowCount: orderedRows.length },
+  });
 }
 
 function downloadBlob(content: BlobPart, filename: string, type: string) {

@@ -12,7 +12,6 @@ import {
   hasAuditHashSecret,
   hashAuditValue,
   recordAuditEvent,
-  redactCommandPreview,
   redactSensitiveText,
 } from "@/lib/audit/server";
 
@@ -261,6 +260,22 @@ export async function POST(req: NextRequest) {
   if (guard.response) return guard.response;
   const session = guard.session;
   const context = getRequestContext(req);
+  const rejectRequest = async (code: string, statusCode = 400, message = "Solicitud de comando inválida") => {
+    await recordAuditEvent({
+      request: req,
+      context,
+      session,
+      action: "command.rejected",
+      category: "command",
+      targetType: "command",
+      operationId: context.requestId,
+      result: statusCode === 403 ? "denied" : "failure",
+      statusCode,
+      durationMs: Date.now() - startedAt,
+      metadata: { code },
+    }).catch(() => undefined);
+    return NextResponse.json({ error: message }, { status: statusCode });
+  };
 
   if (!hasAuditHashSecret()) {
     await recordAuditEvent({
@@ -268,6 +283,9 @@ export async function POST(req: NextRequest) {
       context,
       session,
       action: "command.failed",
+      category: "command",
+      targetType: "command",
+      operationId: context.requestId,
       result: "error",
       statusCode: 503,
       durationMs: Date.now() - startedAt,
@@ -285,16 +303,16 @@ export async function POST(req: NextRequest) {
     const hasInvalidTarget = instances.some((target): target is null => target === null);
     const targets = instances.filter((target): target is CommandTarget => target !== null);
 
-    if (!osType) return NextResponse.json({ error: "Sistema operativo inválido" }, { status: 400 });
-    if (rawInstances.length === 0) return NextResponse.json({ error: "Selecciona al menos una instancia" }, { status: 400 });
+    if (!osType) return rejectRequest("invalid_os", 400, "Sistema operativo inválido");
+    if (rawInstances.length === 0) return rejectRequest("missing_targets", 400, "Selecciona al menos una instancia");
     if (rawInstances.length > maxTargets) {
-      return NextResponse.json({ error: `Máximo ${maxTargets} instancias por ejecución` }, { status: 400 });
+      return rejectRequest("too_many_targets", 400, `Máximo ${maxTargets} instancias por ejecución`);
     }
-    if (hasInvalidTarget) return NextResponse.json({ error: "Target inválido" }, { status: 400 });
+    if (hasInvalidTarget) return rejectRequest("invalid_target", 400, "Target inválido");
 
     const mixedOsTarget = targets.find((target) => target.osType && target.osType !== osType);
     if (mixedOsTarget) {
-      return NextResponse.json({ error: "No mezcles Linux y Windows en la misma ejecución" }, { status: 400 });
+      return rejectRequest("mixed_operating_systems", 400, "No mezcles Linux y Windows en la misma ejecución");
     }
 
     const trimmedCommand = command.trim();
@@ -302,7 +320,7 @@ export async function POST(req: NextRequest) {
     const auditMetadata = {
       osType,
       commandHash,
-      commandPreview: redactCommandPreview(trimmedCommand),
+      commandLength: trimmedCommand.length,
       targetCount: targets.length,
       targets: targets.map(safeTarget),
     };
@@ -313,6 +331,9 @@ export async function POST(req: NextRequest) {
       context,
       session,
       action: "command.request",
+      category: "command",
+      targetType: "command",
+      operationId: context.requestId,
       result: "success",
       statusCode: 202,
       durationMs: Date.now() - startedAt,
@@ -326,6 +347,9 @@ export async function POST(req: NextRequest) {
         context,
         session,
         action: "command.blocked",
+        category: "command",
+        targetType: "command",
+        operationId: context.requestId,
         result: "denied",
         statusCode: 403,
         durationMs: Date.now() - startedAt,
@@ -350,6 +374,9 @@ export async function POST(req: NextRequest) {
       context,
       session,
       action,
+      category: "command",
+      targetType: "command",
+      operationId: context.requestId,
       result: aggregateResult,
       statusCode: aggregateResult === "success" ? 200 : 502,
       durationMs: Date.now() - startedAt,
@@ -360,6 +387,7 @@ export async function POST(req: NextRequest) {
         results: results.map((result) => ({
           instanceId: result.instanceId,
           accountId: result.accountId,
+          commandId: result.commandId || null,
           status: result.status,
           durationMs: result.durationMs,
         })),
@@ -373,6 +401,9 @@ export async function POST(req: NextRequest) {
       context,
       session,
       action: "command.failed",
+      category: "command",
+      targetType: "command",
+      operationId: context.requestId,
       result: "error",
       statusCode: 500,
       durationMs: Date.now() - startedAt,

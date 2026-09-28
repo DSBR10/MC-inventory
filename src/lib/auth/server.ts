@@ -2,13 +2,24 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/lib/auth/options";
-import { recordApiAudit } from "@/lib/audit/server";
+import { recordApiAudit, recordAuditEvent } from "@/lib/audit/server";
 import { hasPermission, type Permission } from "@/lib/auth/roles";
 
 export async function requireApiSession(permission?: Permission, request?: Request) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
+    if (request) {
+      await recordAuditEvent({
+        request,
+        actorType: "anonymous",
+        action: "api.access.unauthenticated",
+        category: "authentication",
+        result: "denied",
+        statusCode: 401,
+        metadata: permission ? { requiredPermission: permission } : {},
+      }).catch(() => undefined);
+    }
     return {
       session: null,
       response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
@@ -19,6 +30,7 @@ export async function requireApiSession(permission?: Permission, request?: Reque
     if (request) {
       await recordApiAudit(request, session, {
         action: "api.access.denied",
+        category: "authentication",
         result: "denied",
         statusCode: 403,
         metadata: { requiredPermission: permission },

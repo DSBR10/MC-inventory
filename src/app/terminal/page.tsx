@@ -10,6 +10,7 @@ const EC2Terminal = dynamic(() => import("../components/EC2Terminal"), {
 export default function TerminalPage() {
   const [instanceId, setInstanceId] = useState("");
   const [accountId, setAccountId] = useState("");
+  const [osType, setOsType] = useState<"linux" | "windows">("linux");
   const [connected, setConnected] = useState(false);
 
   return (
@@ -32,7 +33,19 @@ export default function TerminalPage() {
             className="bg-gray-800 p-2 rounded"
           />
 
+          <select
+            value={osType}
+            data-audit-field="osType"
+            onChange={(event) => setOsType(event.target.value as "linux" | "windows")}
+            className="bg-gray-800 px-3 py-2 rounded"
+          >
+            <option value="linux">Linux</option>
+            <option value="windows">Windows</option>
+          </select>
+
           <button
+            type="button"
+            data-audit-action="terminal.connect"
             onClick={() => setConnected(true)}
             className="bg-purple-600 px-4 py-2 rounded"
           >
@@ -42,7 +55,7 @@ export default function TerminalPage() {
       )}
 
       {connected && (
-        <EC2Terminal instanceId={instanceId} accountId={accountId} />
+        <EC2Terminal instanceId={instanceId} accountId={accountId} osType={osType} />
       )}
     </main>
   );

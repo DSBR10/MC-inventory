@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
         startMonitoringBackgroundJob();
         await recordApiAudit(request, guard.session, {
           action: "monitoring.background.start",
+          category: "configuration",
           result: "success",
           statusCode: 200,
           startedAt,
@@ -90,6 +91,7 @@ export async function POST(request: NextRequest) {
         stopMonitoringBackgroundJob();
         await recordApiAudit(request, guard.session, {
           action: "monitoring.background.stop",
+          category: "configuration",
           result: "success",
           statusCode: 200,
           startedAt,
@@ -104,6 +106,7 @@ export async function POST(request: NextRequest) {
         await refreshMonitoringCache();
         await recordApiAudit(request, guard.session, {
           action: "monitoring.background.refresh",
+          category: "configuration",
           result: "success",
           statusCode: 200,
           startedAt,
@@ -115,6 +118,14 @@ export async function POST(request: NextRequest) {
         });
 
       default:
+        await recordApiAudit(request, guard.session, {
+          action: "monitoring.background.update",
+          category: "configuration",
+          result: "failure",
+          statusCode: 400,
+          startedAt,
+          metadata: { code: "invalid_action" },
+        });
         return NextResponse.json(
           {
             success: false,
@@ -128,6 +139,7 @@ export async function POST(request: NextRequest) {
     if (guard.session) {
       await recordApiAudit(request, guard.session, {
         action: "monitoring.background.update",
+        category: "configuration",
         result: "error",
         statusCode: 500,
         startedAt,

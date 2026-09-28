@@ -1,13 +1,18 @@
 import { createHmac, randomUUID } from "node:crypto";
 
 import type { Session } from "next-auth";
+import type { PoolClient } from "pg";
 
-import { queryAudit } from "@/lib/db/pool";
+import { getAuditPool, queryAudit } from "@/lib/db/pool";
 import { resolveSecret } from "@/lib/secrets/crypto";
 import type {
+  AuditActor,
+  AuditCategory,
+  AuditConfidence,
   AuditEventInput,
   AuditRequestContext,
   AuditResult,
+  AuditSource,
   JsonValue,
 } from "@/types/audit";
 
@@ -19,7 +24,7 @@ const MAX_METADATA_ARRAY_ITEMS = 64;
 const MAX_METADATA_JSON_BYTES = 24_000;
 const MAX_COMMAND_PREVIEW_LENGTH = 320;
 
-const deniedKeyPattern = /(?:authorization|cookie|password|passwd|pwd|token|secret|credential|session|private[_-]?key|access[_-]?key|api[_-]?key|client[_-]?secret|stdout|stderr|output|rawcommand|command(?!preview|hash))/i;
+const deniedKeyPattern = /(?:authorization|cookie|password|passwd|pwd|token|secret|credential|session|private[_-]?key|access[_-]?key|api[_-]?key|client[_-]?secret|stdout|stderr|output|rawcommand|command(?!preview|hash|length))/i;
 const safeKeyPattern = /^[a-zA-Z][a-zA-Z0-9_.:-]{0,63}$/;
 
 export class AuditConfigurationError extends Error {
@@ -114,7 +119,7 @@ export function sanitizeAuditMetadata(value: unknown): Record<string, JsonValue>
   return { truncated: true };
 }
 
-function validUuid(value: string | null) {
+export function isValidAuditUuid(value: string | null | undefined): value is string {
   return !!value && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
@@ -133,18 +138,23 @@ export function getRequestContext(request?: Request): AuditRequestContext {
   }
 
   const receivedRequestId = request?.headers.get("x-request-id");
+  const clientSessionId = request?.headers.get("x-audit-client-session") || undefined;
+  const navigationId = request?.headers.get("x-audit-navigation-id") || undefined;
+  const interactionId = request?.headers.get("x-audit-interaction-id") || undefined;
   return {
-    requestId: validUuid(receivedRequestId ?? null) ? receivedRequestId! : randomUUID(),
+    requestId: isValidAuditUuid(receivedRequestId) ? receivedRequestId : randomUUID(),
     occurredAt: new Date().toISOString(),
     method: truncate((request?.method || "GET").toUpperCase(), 16),
     route: truncate(route, MAX_STRING_LENGTH),
     ip,
     userAgent: headerValue(request, "user-agent", MAX_USER_AGENT_LENGTH),
+    clientSessionId: isValidAuditUuid(clientSessionId) ? clientSessionId : undefined,
+    navigationId: isValidAuditUuid(navigationId) ? navigationId : undefined,
+    interactionId: isValidAuditUuid(interactionId) ? interactionId : undefined,
   };
 }
 
 export function getAuditHashSecret() {
-  // Soporta valor cifrado ENC:v1:... (se descifra solo en memoria).
   const secret = resolveSecret(process.env.AUDIT_HASH_SECRET?.trim());
   if (!secret || secret.length < 32) throw new AuditConfigurationError();
   return secret;
@@ -163,54 +173,113 @@ export function hashAuditValue(value: string) {
   return createHmac("sha256", getAuditHashSecret()).update(value, "utf8").digest("hex");
 }
 
-function actorFromSession(session: Session): [string, string, string, string] {
-  if (!session?.user) throw new AuditConfigurationError();
-  return [
-    truncate(session.user.id || "unknown", MAX_STRING_LENGTH),
-    truncate(session.user.email || "unknown", MAX_STRING_LENGTH),
-    truncate(session.user.name || "unknown", MAX_STRING_LENGTH),
-    truncate(session.user.role || "unknown", 64),
-  ];
+const unknownActor: AuditActor = {
+  userId: "unknown",
+  email: "unknown",
+  name: "Unknown",
+  role: "unknown",
+};
+
+function actorFromInput(input: AuditEventInput): AuditActor {
+  if (input.actor) return input.actor;
+  const sessionUser = input.session?.user;
+  if (!sessionUser) return unknownActor;
+
+  return {
+    userId: truncate(sessionUser.id || "unknown", MAX_STRING_LENGTH),
+    email: truncate(sessionUser.email || "unknown", MAX_STRING_LENGTH),
+    name: truncate(sessionUser.name || "unknown", MAX_STRING_LENGTH),
+    role: truncate(sessionUser.role || "unknown", 64),
+  };
 }
 
-export async function recordAuditEvent(input: AuditEventInput) {
-  const [actorUserId, actorEmail, actorName, actorRole] = actorFromSession(input.session);
+function boundedDuration(value: number | undefined) {
+  if (value === undefined) return null;
+  return Math.max(0, Math.min(Math.round(value), 2_147_483_647));
+}
+
+function boundedStatus(value: number) {
+  if (!Number.isInteger(value) || value < 100 || value > 599) {
+    throw new AuditConfigurationError();
+  }
+  return value;
+}
+
+async function persistAuditEvent(
+  executor: Pick<PoolClient, "query">,
+  input: AuditEventInput,
+) {
+  const actor = actorFromInput(input);
   const context = input.context || getRequestContext(input.request);
   const metadata = sanitizeAuditMetadata(input.metadata || {});
-  const id = randomUUID();
-  const durationMs = input.durationMs === undefined
-    ? null
-    : Math.max(0, Math.min(Math.round(input.durationMs), 2_147_483_647));
+  const id = input.id || randomUUID();
+  const recordedAt = new Date().toISOString();
+  const actorType = input.actorType || (input.session?.user ? "user" : input.actor ? "system" : "anonymous");
+  const category: AuditCategory = input.category || "api";
+  const source: AuditSource = input.source || "server";
+  const confidence: AuditConfidence = input.confidence || "authoritative";
 
   try {
-    await queryAudit(
+    await executor.query(
       `INSERT INTO audit_events
-        (id, occurred_at, request_id, actor_user_id, actor_email, actor_name, actor_role,
-         action, method, route, result, status_code, ip, user_agent, duration_ms, metadata)
-       VALUES ($1::uuid, $2::timestamptz, $3::uuid, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16::jsonb)`,
+        (id, occurred_at, recorded_at, request_id,
+         actor_user_id, actor_email, actor_name, actor_role, actor_type,
+         action, category, source, confidence, auth_method,
+         target_type, target_id, operation_id, client_session_id,
+         navigation_id, interaction_id, parent_event_id,
+         method, route, result, status_code, ip, user_agent, duration_ms, metadata)
+       VALUES ($1::uuid, $2::timestamptz, $3::timestamptz, $4::uuid,
+               $5, $6, $7, $8, $9,
+               $10, $11, $12, $13, $14,
+               $15, $16, $17::uuid, $18::uuid,
+               $19::uuid, $20::uuid, $21::uuid,
+               $22, $23, $24, $25, $26, $27, $28, $29::jsonb)
+       ON CONFLICT (id) DO NOTHING`,
       [
         id,
         context.occurredAt,
+        recordedAt,
         context.requestId,
-        actorUserId,
-        actorEmail,
-        actorName,
-        actorRole,
+        actor.userId,
+        actor.email,
+        actor.name,
+        actor.role,
+        actorType,
         truncate(input.action, 128),
+        category,
+        source,
+        confidence,
+        input.authMethod ? truncate(input.authMethod, 32) : null,
+        input.targetType ? truncate(input.targetType, 64) : null,
+        input.targetId ? truncate(input.targetId, MAX_STRING_LENGTH) : null,
+        input.operationId || null,
+        input.clientSessionId || context.clientSessionId || null,
+        input.navigationId || context.navigationId || null,
+        input.interactionId || context.interactionId || null,
+        input.parentEventId || null,
         context.method,
         context.route,
         input.result,
-        input.statusCode,
+        boundedStatus(input.statusCode),
         context.ip,
         context.userAgent,
-        durationMs,
+        boundedDuration(input.durationMs),
         JSON.stringify(metadata),
       ],
     );
     return id;
-  } catch {
+  } catch (error) {
+    if (error instanceof AuditConfigurationError) throw error;
     throw new AuditPersistenceError();
   }
+}
+
+export async function recordAuditEvent(input: AuditEventInput) {
+  return persistAuditEvent(getAuditPool(), input);
+}
+
+export async function recordAuditEventWithClient(client: PoolClient, input: AuditEventInput) {
+  return persistAuditEvent(client, input);
 }
 
 export async function recordApiAudit(
@@ -222,6 +291,10 @@ export async function recordApiAudit(
     statusCode: number;
     startedAt?: number;
     metadata?: unknown;
+    category?: AuditCategory;
+    targetType?: string;
+    targetId?: string;
+    operationId?: string;
   },
 ) {
   try {
@@ -229,12 +302,25 @@ export async function recordApiAudit(
       request,
       session,
       action: input.action,
+      category: input.category,
+      targetType: input.targetType,
+      targetId: input.targetId,
+      operationId: input.operationId,
       result: input.result,
       statusCode: input.statusCode,
       durationMs: input.startedAt === undefined ? undefined : Date.now() - input.startedAt,
       metadata: input.metadata,
     });
   } catch {
-    // Observability must never expose database or credential errors to callers.
+    // La API de lectura no debe revelar una caída del observability store.
   }
+}
+
+export async function recordSystemAuditEvent(input: Omit<AuditEventInput, "session" | "actorType">) {
+  return recordAuditEvent({
+    ...input,
+    actorType: "system",
+    source: input.source || "job",
+    category: input.category || "system",
+  });
 }

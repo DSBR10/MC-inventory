@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight, Download, Filter, Loader2, Search, ShieldCheck, X } from "lucide-react";
 
-import type { AuditEventSummary, AuditResult } from "@/types/audit";
+import type { AuditCategory, AuditEventSummary, AuditResult, AuditSource } from "@/types/audit";
 
 import { formatAuditDate } from "./AuditEventDetail";
 
@@ -21,6 +21,8 @@ type AuditFilters = {
   to: string;
   actor: string;
   action: string;
+  category: "" | AuditCategory;
+  source: "" | AuditSource;
   route: string;
   ip: string;
   result: "" | AuditResult;
@@ -51,7 +53,8 @@ function buildQuery(filters: AuditFilters, page: number) {
 }
 
 export default function AuditDashboard() {
-  const [filters, setFilters] = useState<AuditFilters>({ from: "", to: "", actor: "", action: "", route: "", ip: "", result: "" });
+  const [filters, setFilters] = useState<AuditFilters>({ from: "", to: "", actor: "", action: "", category: "", source: "", route: "", ip: "", result: "" });
+  const [appliedFilters, setAppliedFilters] = useState(filters);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [data, setData] = useState<AuditResponse>({ page: 1, limit: 50, total: 0, pages: 0, summary: emptySummary, events: [] });
@@ -59,8 +62,13 @@ export default function AuditDashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const timeout = window.setTimeout(() => setAppliedFilters(filters), 350);
+    return () => window.clearTimeout(timeout);
+  }, [filters]);
+
+  useEffect(() => {
     let active = true;
-    fetch(`/api/audit?${buildQuery(filters, page)}`, { cache: "no-store" })
+    fetch(`/api/audit?${buildQuery(appliedFilters, page)}`, { cache: "no-store" })
       .then(async (response) => {
         const payload = (await response.json()) as AuditResponse & { error?: string };
         if (!response.ok) throw new Error(payload.error || "No se pudo consultar la auditoría");
@@ -78,7 +86,7 @@ export default function AuditDashboard() {
     return () => {
       active = false;
     };
-  }, [filters, page]);
+  }, [appliedFilters, page]);
 
   function updateFilter(key: keyof AuditFilters, value: string) {
     setPage(1);
@@ -87,7 +95,7 @@ export default function AuditDashboard() {
 
   function clearFilters() {
     setPage(1);
-    setFilters({ from: "", to: "", actor: "", action: "", route: "", ip: "", result: "" });
+    setFilters({ from: "", to: "", actor: "", action: "", category: "", source: "", route: "", ip: "", result: "" });
   }
 
   function exportAudit() {
@@ -133,6 +141,8 @@ export default function AuditDashboard() {
             <FilterInput label="Hasta" type="datetime-local" value={filters.to} onChange={(value) => updateFilter("to", value)} />
             <FilterInput label="Actor" value={filters.actor} onChange={(value) => updateFilter("actor", value)} placeholder="ID, email o nombre" />
             <FilterInput label="Acción" value={filters.action} onChange={(value) => updateFilter("action", value)} placeholder="audit.view" />
+            <label className="block text-xs text-[var(--text-secondary)]">Categoría<select value={filters.category} onChange={(event) => updateFilter("category", event.target.value)} className="control mt-1.5"><option value="">Todas</option><option value="api">api</option><option value="ui">ui</option><option value="navigation">navigation</option><option value="authentication">authentication</option><option value="data">data</option><option value="command">command</option><option value="configuration">configuration</option><option value="export">export</option><option value="system">system</option></select></label>
+            <label className="block text-xs text-[var(--text-secondary)]">Fuente<select value={filters.source} onChange={(event) => updateFilter("source", event.target.value)} className="control mt-1.5"><option value="">Todas</option><option value="server">server</option><option value="client">client</option><option value="job">job</option><option value="cli">cli</option></select></label>
             <FilterInput label="Ruta" value={filters.route} onChange={(value) => updateFilter("route", value)} placeholder="/api/" />
             <FilterInput label="IP" value={filters.ip} onChange={(value) => updateFilter("ip", value)} />
             <label className="block text-xs text-[var(--text-secondary)]">Resultado<select value={filters.result} onChange={(event) => updateFilter("result", event.target.value)} className="control mt-1.5"><option value="">Todos</option><option value="success">success</option><option value="failure">failure</option><option value="denied">denied</option><option value="error">error</option><option value="partial">partial</option></select></label>
@@ -163,7 +173,42 @@ function FilterInput({ label, value, onChange, type = "text", placeholder }: { l
 }
 
 function AuditTable({ events, onSelect }: { events: AuditEventSummary[]; onSelect: (id: string) => void }) {
-  return <div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left text-sm"><thead className="border-b border-[var(--border)] text-xs uppercase tracking-wide text-[var(--text-secondary)]"><tr><th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Usuario</th><th className="px-4 py-3">Acción</th><th className="px-4 py-3">Ruta</th><th className="px-4 py-3">Resultado</th><th className="px-4 py-3">IP</th><th className="px-4 py-3">User-agent</th><th className="px-4 py-3">Duración</th></tr></thead><tbody className="divide-y divide-[var(--border)]">{events.map((event) => <tr key={event.id} onClick={() => onSelect(event.id)} title="Abrir detalle en pestaña nueva" className="cursor-pointer transition hover:bg-[var(--bg-hover)]"><td className="whitespace-nowrap px-4 py-3 text-xs text-[var(--text-secondary)]">{formatAuditDate(event.occurredAt)}</td><td className="max-w-[180px] px-4 py-3"><span className="block truncate font-medium text-[var(--text-primary)]">{event.actor.name}</span><span className="block truncate text-xs text-[var(--text-secondary)]">{event.actor.email}</span></td><td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-cyan-200">{event.action}</td><td className="max-w-[220px] truncate px-4 py-3 font-mono text-xs text-[var(--text-secondary)]">{event.route}</td><td className="px-4 py-3"><ResultBadge result={event.result} /></td><td className="px-4 py-3 font-mono text-xs text-[var(--text-secondary)]">{event.ip}</td><td className="max-w-[170px] truncate px-4 py-3 text-xs text-[var(--text-secondary)]" title={event.userAgent}>{shorten(event.userAgent, 28)}</td><td className="whitespace-nowrap px-4 py-3 text-xs text-[var(--text-secondary)]">{event.durationMs === null ? "-" : `${event.durationMs} ms`}</td></tr>)}</tbody></table></div>;
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[1120px] text-left text-sm">
+        <thead className="border-b border-[var(--border)] text-xs uppercase tracking-wide text-[var(--text-secondary)]">
+          <tr>
+            <th className="px-4 py-3">Fecha</th>
+            <th className="px-4 py-3">Usuario</th>
+            <th className="px-4 py-3">Acción</th>
+            <th className="px-4 py-3">Categoría</th>
+            <th className="px-4 py-3">Fuente</th>
+            <th className="px-4 py-3">Ruta</th>
+            <th className="px-4 py-3">Resultado</th>
+            <th className="px-4 py-3">IP</th>
+            <th className="px-4 py-3">User-agent</th>
+            <th className="px-4 py-3">Duración</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-[var(--border)]">
+          {events.map((event) => (
+            <tr key={event.id} onClick={() => onSelect(event.id)} title="Abrir detalle en pestaña nueva" className="cursor-pointer transition hover:bg-[var(--bg-hover)]">
+              <td className="whitespace-nowrap px-4 py-3 text-xs text-[var(--text-secondary)]">{formatAuditDate(event.occurredAt)}</td>
+              <td className="max-w-[180px] px-4 py-3"><span className="block truncate font-medium text-[var(--text-primary)]">{event.actor.name}</span><span className="block truncate text-xs text-[var(--text-secondary)]">{event.actor.email}</span></td>
+              <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-cyan-200">{event.action}</td>
+              <td className="px-4 py-3 text-xs text-[var(--text-secondary)]">{event.category}</td>
+              <td className="px-4 py-3 text-xs text-[var(--text-secondary)]">{event.source}</td>
+              <td className="max-w-[220px] truncate px-4 py-3 font-mono text-xs text-[var(--text-secondary)]">{event.route}</td>
+              <td className="px-4 py-3"><ResultBadge result={event.result} /></td>
+              <td className="px-4 py-3 font-mono text-xs text-[var(--text-secondary)]">{event.ip}</td>
+              <td className="max-w-[170px] truncate px-4 py-3 text-xs text-[var(--text-secondary)]" title={event.userAgent}>{shorten(event.userAgent, 28)}</td>
+              <td className="whitespace-nowrap px-4 py-3 text-xs text-[var(--text-secondary)]">{event.durationMs === null ? "-" : `${event.durationMs} ms`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 function ResultBadge({ result }: { result: AuditResult }) {

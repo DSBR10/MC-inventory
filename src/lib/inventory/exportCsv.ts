@@ -2,6 +2,7 @@ import ExcelJS from "exceljs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+import { trackClientAuditEvent } from "@/lib/audit/client";
 import { InventoryItem } from "@/types/inventory";
 
 const UX_LOGO_PATH = "/logo-dark.png";
@@ -195,6 +196,10 @@ export async function exportInventoryToExcel(
 
   const buffer = await workbook.xlsx.writeBuffer();
   downloadExcelBuffer(buffer, filename.replace(/\.csv$/i, ".xlsx"));
+  trackClientAuditEvent("export.triggered", {
+    category: "export",
+    metadata: { module: "inventory", format: "xlsx", rowCount: rows.length },
+  });
 }
 
 export async function exportInventoryToPDF(
@@ -322,6 +327,10 @@ export async function exportInventoryToPDF(
 
   drawFooters(doc);
   doc.save(filename.replace(/\.xlsx$/i, ".pdf"));
+  trackClientAuditEvent("export.triggered", {
+    category: "export",
+    metadata: { module: "inventory", format: "pdf", rowCount: rows.length },
+  });
 }
 
 type ExcelRecord = Record<string, string | number>;

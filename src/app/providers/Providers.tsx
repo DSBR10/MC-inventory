@@ -4,6 +4,8 @@ import {
   SessionProvider
 } from "next-auth/react";
 
+import { AuditClientProvider } from "@/lib/audit/client";
+
 import {
   ThemeProvider
 } from "./ThemeProvider";
@@ -17,6 +19,8 @@ export default function Providers({
   return (
 
     <SessionProvider>
+
+      <AuditClientProvider />
 
       <ThemeProvider>
 

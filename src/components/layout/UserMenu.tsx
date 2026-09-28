@@ -90,6 +90,9 @@ export default function UserMenu() {
     <div ref={ref} className="relative">
 
       <button
+        type="button"
+        data-audit-action="layout.user_menu.toggle"
+        data-audit-label="Abrir menú de usuario"
         onClick={() => setOpen(!open)}
         className="
           flex
@@ -207,6 +210,9 @@ export default function UserMenu() {
 
             <div className="grid grid-cols-3 gap-1.5 mb-4">
               <button
+                type="button"
+                data-audit-action="preference.appearance.change"
+                data-audit-target="dark"
                 onClick={() => setAppearance("dark")}
                 className={`
                   p-2
@@ -228,6 +234,9 @@ export default function UserMenu() {
               </button>
 
               <button
+                type="button"
+                data-audit-action="preference.appearance.change"
+                data-audit-target="light"
                 onClick={() => setAppearance("light")}
                 className={`
                   p-2
@@ -249,6 +258,9 @@ export default function UserMenu() {
               </button>
 
               <button
+                type="button"
+                data-audit-action="preference.appearance.change"
+                data-audit-target="system"
                 onClick={() => setAppearance("system")}
                 className={`
                   p-2
@@ -274,6 +286,9 @@ export default function UserMenu() {
               {themes.map((t) => (
                 <button
                   key={t.id}
+                  type="button"
+                  data-audit-action="preference.theme.change"
+                  data-audit-target={t.id}
                   onClick={() => setTheme(t.id)}
                   className={`
                     p-2
@@ -304,6 +319,8 @@ export default function UserMenu() {
 
           <div className="p-3 space-y-0.5">
             <button
+              type="button"
+              data-audit-action="navigation.profile"
               onClick={() => router.push("/profile")}
               className="
                 w-full
@@ -322,6 +339,8 @@ export default function UserMenu() {
             </button>
 
             <button
+              type="button"
+              data-audit-action="auth.logout.intent"
               onClick={() =>
                 signOut({
                   callbackUrl: "/login",

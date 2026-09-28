@@ -13,6 +13,7 @@ function mapDetail(row: NonNullable<Awaited<ReturnType<typeof getAuditEvent>>>) 
   return {
     id: row.id,
     occurredAt: new Date(row.occurred_at).toISOString(),
+    recordedAt: new Date(row.recorded_at).toISOString(),
     requestId: row.request_id,
     actor: {
       userId: row.actor_user_id,
@@ -20,7 +21,19 @@ function mapDetail(row: NonNullable<Awaited<ReturnType<typeof getAuditEvent>>>) 
       name: row.actor_name,
       role: row.actor_role,
     },
+    actorType: row.actor_type,
     action: row.action,
+    category: row.category,
+    source: row.source,
+    confidence: row.confidence,
+    targetType: row.target_type,
+    targetId: row.target_id,
+    operationId: row.operation_id,
+    clientSessionId: row.client_session_id,
+    navigationId: row.navigation_id,
+    interactionId: row.interaction_id,
+    parentEventId: row.parent_event_id,
+    authMethod: row.auth_method,
     method: row.method,
     route: row.route,
     result: row.result,
@@ -42,9 +55,27 @@ export async function GET(
 
   try {
     const { id } = await params;
-    if (!UUID_PATTERN.test(id)) return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    if (!UUID_PATTERN.test(id)) {
+      await recordApiAudit(request, guard.session, {
+        action: "audit.detail.view",
+        result: "failure",
+        statusCode: 404,
+        startedAt,
+        metadata: { code: "invalid_id" },
+      });
+      return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    }
     const event = await getAuditEvent(id);
-    if (!event) return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    if (!event) {
+      await recordApiAudit(request, guard.session, {
+        action: "audit.detail.view",
+        result: "failure",
+        statusCode: 404,
+        startedAt,
+        metadata: { code: "not_found", eventId: id },
+      });
+      return NextResponse.json({ error: "Evento no encontrado" }, { status: 404 });
+    }
 
     await recordApiAudit(request, guard.session, {
       action: "audit.detail.view",

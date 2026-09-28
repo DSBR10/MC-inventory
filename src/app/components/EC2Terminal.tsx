@@ -7,6 +7,7 @@ import "xterm/css/xterm.css";
 type Props = {
   instanceId: string;
   accountId: string;
+  osType: "linux" | "windows";
 };
 
 type CommandResult = {
@@ -14,7 +15,7 @@ type CommandResult = {
   error?: string;
 };
 
-export default function EC2Terminal({ instanceId, accountId }: Props) {
+export default function EC2Terminal({ instanceId, accountId, osType }: Props) {
   const terminalRef = useRef<HTMLDivElement>(null);
   const term = useRef<Terminal | null>(null);
   const commandRef = useRef("");
@@ -38,8 +39,9 @@ export default function EC2Terminal({ instanceId, accountId }: Props) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            instances: [{ instanceId, accountId }],
+            instances: [{ instanceId, accountId, osType }],
             command: trimmed,
+            osType,
           }),
         });
 
@@ -79,7 +81,7 @@ export default function EC2Terminal({ instanceId, accountId }: Props) {
 
       term.current.write("$ ");
     },
-    [accountId, instanceId],
+    [accountId, instanceId, osType],
   );
 
   const handleInput = useCallback(

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-import { Pool, type PoolConfig, type QueryResult, type QueryResultRow } from "pg";
+import { Pool, type PoolClient, type PoolConfig, type QueryResult, type QueryResultRow } from "pg";
 
 import { resolveSecret } from "@/lib/secrets/crypto";
 
@@ -80,5 +80,20 @@ export async function queryAudit<T extends QueryResultRow>(
     return await getAuditPool().query<T>(text, [...values]);
   } catch {
     throw new Error("AUDIT_DATABASE_UNAVAILABLE");
+  }
+}
+
+export async function withTransaction<T>(operation: (client: PoolClient) => Promise<T>) {
+  const client = await getAuditPool().connect();
+  try {
+    await client.query("BEGIN");
+    const result = await operation(client);
+    await client.query("COMMIT");
+    return result;
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw error;
+  } finally {
+    client.release();
   }
 }

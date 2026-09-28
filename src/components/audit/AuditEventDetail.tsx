@@ -13,12 +13,23 @@ export default function AuditEventDetailView({ event }: { event: AuditEventDetai
       </div>
       <div className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
         <DetailItem label="Fecha" value={formatAuditDate(event.occurredAt)} />
+        <DetailItem label="Registrado" value={formatAuditDate(event.recordedAt)} />
         <DetailItem label="Usuario" value={`${event.actor.name} · ${event.actor.email}`} />
+        <DetailItem label="Actor" value={event.actorType} />
+        <DetailItem label="Categoría" value={event.category} />
+        <DetailItem label="Fuente" value={`${event.source} · ${event.confidence}`} />
+        <DetailItem label="Autenticación" value={event.authMethod || "-"} />
         <DetailItem label="Ruta" value={`${event.method} ${event.route}`} />
         <DetailItem label="Resultado" value={`${event.result} (${event.statusCode})`} />
+        <DetailItem label="Objetivo" value={event.targetType ? `${event.targetType}${event.targetId ? ` · ${event.targetId}` : ""}` : "-"} />
         <DetailItem label="IP" value={event.ip} />
         <DetailItem label="User-agent" value={event.userAgent} />
         <DetailItem label="Request ID" value={event.requestId} />
+        <DetailItem label="Operation ID" value={event.operationId || "-"} />
+        <DetailItem label="Client Session" value={event.clientSessionId || "-"} />
+        <DetailItem label="Navigation ID" value={event.navigationId || "-"} />
+        <DetailItem label="Interaction ID" value={event.interactionId || "-"} />
+        <DetailItem label="Parent Event" value={event.parentEventId || "-"} />
         <DetailItem label="Duración" value={event.durationMs === null ? "-" : `${event.durationMs} ms`} />
       </div>
       <div className="mt-4">

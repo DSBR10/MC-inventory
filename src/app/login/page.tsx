@@ -15,7 +15,7 @@ function getAuthAlert(error: string | undefined | null, username: string): Alert
   switch (error) {
     case "CredentialsSignin": return { type: "error", title: "Credenciales incorrectas", body: "El usuario o la contraseña no son válidos. Verifica e intenta de nuevo." };
     case "SessionRequired": return { type: "warning", title: "Sesión requerida", body: "Debes iniciar sesión para acceder a esta sección." };
-    case "AccessDenied": return { type: "warning", title: "Acceso denegado", body: "Tu cuenta no tiene permisos. Contacta a un administrador." };
+    case "AccessDenied": return { type: "warning", title: "Acceso denegado", body: "Tu cuenta se autenticó correctamente, pero no coincide con los usuarios o dominios autorizados. Contacta a un administrador." };
     case "OAuthAccountNotLinked": return { type: "warning", title: "Cuenta no vinculada", body: "Ya existe una cuenta con ese correo con otro método de inicio." };
   }
 
@@ -219,9 +219,9 @@ export default function LoginPage() {
               <div className="space-y-5">
                 <div className="rounded-xl p-4" style={{ background: "rgba(0,120,212,0.06)", border: "1px solid rgba(0,120,212,0.12)" }}>
                   <p className="text-sm text-white/70 leading-relaxed text-center">
-                    Inicia sesión con tu cuenta corporativa
+                    Inicia sesión con la cuenta corporativa
                     <br />
-                    <span className="text-cyan-400 font-medium">@ux.local</span>
+                    <span className="text-cyan-400 font-medium">autorizada por la organización</span>
                   </p>
                 </div>
                 <button

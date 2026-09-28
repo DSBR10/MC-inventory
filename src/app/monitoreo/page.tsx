@@ -34,6 +34,7 @@ import {
 } from "recharts";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { trackClientAuditEvent } from "@/lib/audit/client";
 import type { CloudTrailEvent, CloudWatchLog, LogGroup, MetricData } from "@/types/monitoring-aws";
 
 type AwsAccount = {
@@ -1820,13 +1821,19 @@ function parseCloudTrailEvent(value?: string) {
 }
 
 async function exportLogs(logs: CloudWatchLog[], format: "txt" | "json" | "xlsx") {
+  trackClientAuditEvent("export.started", {
+    category: "export",
+    metadata: { module: "monitoring", format, rowCount: logs.length },
+  });
   const filename = `cloudwatch-logs-${new Date().toISOString().replace(/[:.]/g, "-")}.${format}`;
   if (format === "txt") {
     downloadBlob(logs.map((log) => `[${new Date(log.timestamp).toISOString()}] ${log.logStreamName || ""}\n${log.message}`).join("\n\n"), filename, "text/plain;charset=utf-8");
+    trackClientAuditEvent("export.triggered", { category: "export", metadata: { module: "monitoring", format, rowCount: logs.length } });
     return;
   }
   if (format === "json") {
     downloadBlob(JSON.stringify(logs, null, 2), filename, "application/json;charset=utf-8");
+    trackClientAuditEvent("export.triggered", { category: "export", metadata: { module: "monitoring", format, rowCount: logs.length } });
     return;
   }
 
@@ -1840,6 +1847,7 @@ async function exportLogs(logs: CloudWatchLog[], format: "txt" | "json" | "xlsx"
   XLSX.utils.book_append_sheet(workbook, sheet, "Logs");
   const buffer = XLSX.write(workbook, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
   downloadBlob(buffer, filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  trackClientAuditEvent("export.triggered", { category: "export", metadata: { module: "monitoring", format, rowCount: logs.length } });
 }
 
 function downloadBlob(content: BlobPart, filename: string, type: string) {

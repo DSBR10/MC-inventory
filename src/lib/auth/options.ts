@@ -2,6 +2,8 @@ import type { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+import { evaluateAzureAdAccess, getProfileEmails, isInAllowedAzureAdGroup } from "@/lib/auth/access";
+import { getRequestContext, recordAuditEvent } from "@/lib/audit/server";
 import { getPermissions, mapGroupsToRole, type GroupRoleMap, type Role } from "@/lib/auth/roles";
 import { isPasswordHash, resolveSecret, verifyPassword } from "@/lib/secrets/crypto";
 
@@ -33,25 +35,6 @@ function buildEnvGroupRoleMap(): GroupRoleMap {
   }, {});
 }
 
-function isAllowedEmail(email?: string | null) {
-  const normalizedEmail = email?.trim().toLowerCase() || "";
-  const allowedUsers = parseCsv(process.env.ALLOWED_USERS);
-  if (allowedUsers.length > 0) {
-    return allowedUsers.includes(normalizedEmail);
-  }
-
-  // En produccion no se permite el acceso Azure AD abierto por defecto.
-  // Si no hay allowlist, se exige al menos el dominio autorizado.
-  const allowedDomain = (process.env.AZURE_AD_ALLOWED_DOMAIN || "")
-    .trim()
-    .toLowerCase()
-    .replace(/^@/, "");
-  if (!allowedDomain) return process.env.NODE_ENV !== "production";
-
-  const domain = normalizedEmail.split("@")[1] || "";
-  return domain === allowedDomain;
-}
-
 function getUserRole(email?: string | null, groups: string[] = []): Role {
   const emailLower = email?.toLowerCase() || "";
   const adminEmails = parseCsv(process.env.ADMIN_EMAILS);
@@ -80,12 +63,7 @@ function getUserRole(email?: string | null, groups: string[] = []): Role {
 }
 
 function getProfileEmail(profile: unknown, fallback?: string | null) {
-  if (profile && typeof profile === "object") {
-    const candidate = profile as { email?: string; preferred_username?: string };
-    return candidate.email || candidate.preferred_username || fallback || null;
-  }
-
-  return fallback || null;
+  return getProfileEmails(profile, fallback)[0] || null;
 }
 
 function getProfileGroups(profile: unknown) {
@@ -168,6 +146,40 @@ async function getAzureAdMemberGroups(accessToken?: string) {
   }
 }
 
+function authAuditContext(method = "AUTH") {
+  const context = getRequestContext();
+  return {
+    ...context,
+    method,
+    route: "/auth/callback",
+  };
+}
+
+async function recordAuthAudit(input: Parameters<typeof recordAuditEvent>[0]) {
+  try {
+    await recordAuditEvent({
+      ...input,
+      category: "authentication",
+      source: "server",
+      confidence: "authoritative",
+      context: input.context || authAuditContext(),
+    });
+  } catch {
+    // La autenticación no se bloquea por una caída del registro de auditoría.
+  }
+}
+
+async function recordCredentialFailure(code: string) {
+  await recordAuthAudit({
+    actorType: "anonymous",
+    action: "auth.login.failure",
+    authMethod: "credentials",
+    result: "failure",
+    statusCode: 401,
+    metadata: { code },
+  });
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
@@ -191,7 +203,10 @@ export const authOptions: NextAuthOptions = {
         const passHash = process.env.LOCAL_ADMIN_PASSWORD_HASH;
         const passPlain = process.env.LOCAL_ADMIN_PASSWORD;
 
-        if (!user || credentials?.username !== user) return null;
+        if (!user || credentials?.username !== user) {
+          await recordCredentialFailure("invalid_credentials");
+          return null;
+        }
 
         // Preferido: hash irreversible scrypt (no se puede desencriptar, solo verificar).
         if (passHash && isPasswordHash(passHash)) {
@@ -205,6 +220,7 @@ export const authOptions: NextAuthOptions = {
               groups: ["UX_INVENTORY"],
             };
           }
+          await recordCredentialFailure("invalid_credentials");
           return null;
         }
 
@@ -223,6 +239,7 @@ export const authOptions: NextAuthOptions = {
           };
         }
 
+        await recordCredentialFailure(passPlain ? "invalid_credentials" : "credentials_unavailable");
         return null;
       },
     }),
@@ -233,14 +250,76 @@ export const authOptions: NextAuthOptions = {
   secret: resolveSecret(process.env.NEXTAUTH_SECRET),
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   callbacks: {
     async signIn({ user, profile, account }) {
       // El login local ya valida usuario y password contra el hash configurado.
       if (account?.provider === "credentials") return true;
 
-      const email = getProfileEmail(profile, user.email);
-      return isAllowedEmail(email);
+      const idTokenClaims = decodeJwtClaims(account?.id_token);
+      const decision = evaluateAzureAdAccess(
+        [profile, idTokenClaims],
+        user.email,
+      );
+      let allowedByGroup = false;
+
+      // Un grupo configurado es una via adicional de acceso, por ejemplo para
+      // guests. ALLOWED_USERS, cuando tiene valores, sigue siendo estricto.
+      if (
+        !decision.allowed &&
+        parseCsv(process.env.ALLOWED_USERS).length === 0 &&
+        (process.env.AZURE_AD_ALLOWED_GROUPS || "").trim()
+      ) {
+        const tokenGroups = uniqueStrings([
+          ...getProfileGroups(profile),
+          ...getProfileGroups(idTokenClaims),
+        ]);
+        let groups = tokenGroups;
+
+        if (!isInAllowedAzureAdGroup(groups)) {
+          groups = uniqueStrings([
+            ...tokenGroups,
+            ...await getAzureAdMemberGroups(account?.access_token),
+          ]);
+        }
+
+        allowedByGroup = isInAllowedAzureAdGroup(groups);
+      }
+
+      if (allowedByGroup) {
+        console.info("[auth] Azure AD sign-in allowed by configured group");
+        return true;
+      }
+
+      if (!decision.allowed) {
+        const profileClaims = profile && typeof profile === "object"
+          ? profile as Record<string, unknown>
+          : undefined;
+        const tenantId = typeof profileClaims?.tid === "string"
+          ? profileClaims.tid
+          : undefined;
+
+        console.warn("[auth] Azure AD sign-in denied", {
+          reason: decision.reason,
+          identityDomains: decision.identityDomains,
+          tenantId,
+        });
+        await recordAuthAudit({
+          actorType: "anonymous",
+          action: "auth.login.denied",
+          authMethod: account?.provider || "azure-ad",
+          result: "denied",
+          statusCode: 403,
+          metadata: {
+            reason: decision.reason,
+            identityDomains: decision.identityDomains,
+            tenantId: tenantId || null,
+          },
+        });
+      }
+
+      return decision.allowed;
     },
     async jwt({ token, user, account, profile }) {
       if (user) {
@@ -280,6 +359,45 @@ export const authOptions: NextAuthOptions = {
       }
 
       return session;
+    },
+  },
+  events: {
+    async signIn({ user, account, profile }) {
+      const role = (user.role as Role | undefined) || getUserRole(user.email);
+      const profileClaims = profile && typeof profile === "object"
+        ? profile as Record<string, unknown>
+        : undefined;
+      await recordAuthAudit({
+        actorType: "user",
+        actor: {
+          userId: user.id || "unknown",
+          email: user.email || "unknown",
+          name: user.name || "Unknown",
+          role,
+        },
+        action: "auth.login.success",
+        authMethod: account?.provider || "unknown",
+        result: "success",
+        statusCode: 200,
+        targetType: "session",
+        metadata: {
+          role,
+          tenantId: typeof profileClaims?.tid === "string" ? profileClaims.tid : null,
+        },
+        context: authAuditContext("SIGNIN"),
+      });
+    },
+    async signOut({ session }) {
+      if (!session?.user) return;
+      await recordAuthAudit({
+        session,
+        action: "auth.logout.success",
+        authMethod: "session",
+        result: "success",
+        statusCode: 200,
+        targetType: "session",
+        context: authAuditContext("SIGNOUT"),
+      });
     },
   },
 };

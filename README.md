@@ -95,12 +95,19 @@ Plataforma SaaS para centralizar y automatizar la gestion de inventario de infra
 - Terminal interactiva basada en xterm.js
 - Conexion a instancias via SSM
 
-### Auditoria
+### Auditoria integral
 
-- Registro append-only de eventos (trigger DB que rechaza UPDATE/DELETE)
-- Hash HMAC de comandos con `AUDIT_HASH_SECRET`
-- Tabla `audit_events` con `timestamptz`
-- Exportacion de auditoria
+- Registro append-only en PostgreSQL; triggers bloquean `UPDATE`, `DELETE` y `TRUNCATE`.
+- Captura global de navegacion, cambios de pagina, clics, cambios de controles, teclado y drag-and-drop.
+- Resultado de cada llamada interna a `/api/*`, incluyendo polling, validaciones y errores HTTP.
+- Eventos autoritativos de login, logout, acceso denegado, lectura, exportacion y configuracion.
+- CRUD de columnas y valores de servidores dentro de una transaccion; si no se puede auditar, el cambio se revierte.
+- Ejecuciones SSM: intencion, rechazo por politica, comando bloqueado, resultado por target y Command ID.
+- Migraciones aplicadas y su checksum quedan registradas como eventos de sistema/CLI.
+- Correlacion por `requestId`, `operationId`, `clientSessionId`, `navigationId` e `interactionId`.
+- UI de consulta con filtros por categoria, fuente, actor, accion, ruta, resultado, IP y fecha.
+- Exportacion CSV de la auditoria.
+- Nunca se capturan valores de inputs, passwords, cookies, tokens, ordenes de busqueda, comandos, stdout/stderr ni contenido de logs. Para valores custom y comandos se guardan HMAC, longitud y conteos.
 
 ### Perfil y temas
 
@@ -557,7 +564,7 @@ Retencion sugerida: 7 diarios + 4 semanales, fuera del host (S3). Probar restore
 ### 8. Endurecimiento y checklist pre-produccion
 
 - [ ] `.env` con `chmod 600`, propietario correcto, fuera de Git y respaldado en Secrets Manager/SSM.
-- [ ] `ALLOWED_USERS` o `AZURE_AD_ALLOWED_DOMAIN` configurados; en produccion no se permite Azure AD abierto.
+- [ ] `ALLOWED_USERS`, `AZURE_AD_ALLOWED_DOMAIN` / `AZURE_AD_ALLOWED_DOMAINS` o `AZURE_AD_ALLOWED_GROUPS` configurados; en produccion no se permite Azure AD abierto.
 - [ ] `LOCAL_ADMIN_PASSWORD` eliminado despues de migrar a `LOCAL_ADMIN_PASSWORD_HASH`; rotar secretos expuestos.
 - [ ] `NEXTAUTH_URL` https publica, `NEXTAUTH_SECRET` y `AUDIT_HASH_SECRET` fuertes y distintos.
 - [ ] `POSTGRES_PASSWORD` fuerte, sin caracteres que rompan la URL.
@@ -583,6 +590,7 @@ Retencion sugerida: 7 diarios + 4 semanales, fuera del host (S3). Probar restore
 | `CREDENTIALS_MASTER_KEY no configurada` | Falta `.env.master.key` junto al compose. Generar con `node scripts/secrets.mjs generate-key` |
 | Warnings `variable "..." is not set` con `docker compose up` | Un valor del `.env` contiene `$` sin escapar (tipico: hash scrypt). Usar `$$` en `LOCAL_ADMIN_PASSWORD_HASH` |
 | Login redirige a localhost | `NEXTAUTH_URL` sigue en `http://localhost:3000`. Poner la URL publica y recrear |
+| Office 365 responde `AccessDenied` | Microsoft autentico la cuenta, pero la app no encontro coincidencia. Revisar `ALLOWED_USERS` (tiene prioridad), `AZURE_AD_ALLOWED_DOMAIN` / `AZURE_AD_ALLOWED_DOMAINS` o `AZURE_AD_ALLOWED_GROUPS`, recrear el contenedor y consultar el log `[auth] Azure AD sign-in denied`, que informa el motivo sin incluir el correo |
 | `audit_events is append-only` | Normal: la tabla es solo-apendice por trigger |
 | Disco lleno | `docker system df`, `docker image prune`, podar logs, ampliar EBS |
 | `Conflict. The container name ... is already in use` | Contenedor huerfano. Verificar el proyecto y ejecutar el comando de update de este README; no usar `docker compose down -v` |
@@ -597,7 +605,8 @@ Retencion sugerida: 7 diarios + 4 semanales, fuera del host (S3). Probar restore
 - Never commit `.env`, `.env.local` ni `.env.master.key` to version control (los tres estan en `.gitignore`; solo `.env.example` con placeholders se commitea). El backup de secretos va al gestor de secretos (AWS Secrets Manager / SSM Parameter Store), no a Git.
 - Use IAM roles with least privilege principle.
 - Implement proper authentication with NextAuth.js.
-- Do not store commands, command output, passwords, tokens, cookies, authorization headers or cloud keys in audit records.
+- Do not store commands, command output, passwords, tokens, cookies, authorization headers or cloud keys in audit records. La aplicacion registra solo HMAC, longitud y conteos para operaciones sensibles.
+- La auditoria de UI/API genera eventos continuamente. Vigilar crecimiento, definir retencion y respaldar `audit_events` sin permitir UPDATE/DELETE al rol de la aplicacion.
 - Use `npm run db:migrate` for every schema change; migration names are tracked in `schema_migrations`.
 - Rotate `NEXTAUTH_SECRET`, `AUDIT_HASH_SECRET`, PostgreSQL credentials and cloud credentials through the secret manager.
 - Keep PostgreSQL off the host network unless temporary administrative access is explicitly required and protected by TLS and network controls.

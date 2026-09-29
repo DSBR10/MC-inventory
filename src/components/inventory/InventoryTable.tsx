@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, ArrowDown, ChevronRight, ChevronDown } from "lucide-react";
+import { ArrowUp, ArrowDown, ChevronRight, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 import { useState } from "react";
 
@@ -81,10 +81,10 @@ export default function InventoryTable({
             <col style={{ width: "9%" }} />
             <col style={{ width: "12%" }} />
             <col style={{ width: "10%" }} />
-            <col style={{ width: "24%" }} />
-            <col style={{ width: "22%" }} />
-            <col style={{ width: "10%" }} />
-            <col style={{ width: "18%" }} />
+            <col style={{ width: "23%" }} />
+            <col style={{ width: "21%" }} />
+            <col style={{ width: "9%" }} />
+            <col style={{ width: "16%" }} />
           </colgroup>
 
           <thead
@@ -160,7 +160,13 @@ export default function InventoryTable({
           </thead>
 
           <tbody>
-            {rows.map(({ item, depth }) => {
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-sm text-[var(--text-secondary)]">
+                  Sin recursos para los filtros actuales.
+                </td>
+              </tr>
+            ) : rows.map(({ item, depth }) => {
               const hasChildren = (item.children?.length || 0) > 0;
               const isExpanded = expandedKeys.has(item.uniqueKey || "");
               const key = item.uniqueKey || `${item.id}-${depth}`;
@@ -168,12 +174,8 @@ export default function InventoryTable({
               return (
                 <tr
                   key={key}
-                  onClick={() => {
-                    if (hasChildren) {
-                      toggleExpand(item.uniqueKey || "");
-                    }
-                    onSelect(item);
-                  }}
+                  onClick={() => onSelect(item)}
+                  title="Ver detalle del recurso"
                   className={`
                     border-b
                     border-[var(--border)]
@@ -206,7 +208,7 @@ export default function InventoryTable({
                   </td>
 
                   <td className="px-4 py-3">
-                    <ServiceBadge service={item.service} />
+                    <ServiceBadge service={item.service} provider={item.provider} />
                   </td>
 
                   <td className="px-4 py-3">
@@ -332,7 +334,7 @@ function Header({ title, field, onSort, sortField, sortDirection }: any) {
             <ArrowDown size={12} />
           )
         ) : (
-          <ArrowUp size={12} className="opacity-30" />
+          <ChevronsUpDown size={12} className="opacity-30" />
         )}
       </div>
     </th>

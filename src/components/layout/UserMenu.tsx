@@ -20,42 +20,8 @@ import {
 import {
   useTheme,
   themeLabels,
-  type ThemeName,
 } from "@/app/providers/ThemeProvider";
-
-const themes: {
-  id: ThemeName;
-  colors: string[];
-}[] = [
-  {
-    id: "slate",
-    colors: ["#6366f1", "#818cf8"],
-  },
-  {
-    id: "purple",
-    colors: ["#8b5cf6", "#ec4899"],
-  },
-  {
-    id: "ocean",
-    colors: ["#06b6d4", "#14b8a6"],
-  },
-  {
-    id: "sunset",
-    colors: ["#f97316", "#ef4444"],
-  },
-  {
-    id: "forest",
-    colors: ["#10b981", "#14b8a6"],
-  },
-  {
-    id: "midnight",
-    colors: ["#6366f1", "#8b5cf6"],
-  },
-  {
-    id: "cherry",
-    colors: ["#f472b6", "#fb7185"],
-  },
-];
+import { ROLE_BADGE, ROLE_LABELS, THEMES, normalizeRole } from "@/lib/theme";
 
 export default function UserMenu() {
   const { data: session } = useSession();
@@ -69,20 +35,33 @@ export default function UserMenu() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!open) return;
     const handleClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
       }
     };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
 
     window.addEventListener("mousedown", handleClick);
+    window.addEventListener("keydown", handleKey);
 
-    return () => window.removeEventListener("mousedown", handleClick);
-  }, []);
+    return () => {
+      window.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [open ]);
+
+  const navigate = (href: string) => {
+    setOpen(false);
+    router.push(href);
+  };
 
   const user = session?.user;
 
-  const role = user?.role || "infraestructura";
+  const role = normalizeRole(user?.role);
 
   const initial = user?.name?.charAt(0).toUpperCase() || "U";
 
@@ -94,6 +73,9 @@ export default function UserMenu() {
         data-audit-action="layout.user_menu.toggle"
         data-audit-label="Abrir menú de usuario"
         onClick={() => setOpen(!open)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Abrir menú de usuario"
         className="
           flex
           items-center
@@ -115,7 +97,7 @@ export default function UserMenu() {
             flex
             items-center
             justify-center
-            text-[var(--text-primary)]
+            text-white
             text-sm
             font-semibold
           "
@@ -128,7 +110,7 @@ export default function UserMenu() {
 
         <div className="hidden md:block text-left">
           <p className="text-xs font-medium">{user?.name}</p>
-          <p className="text-[10px] text-[var(--text-secondary)]">{role}</p>
+          <p className="text-[10px] text-[var(--text-secondary)]">{ROLE_LABELS[role]}</p>
         </div>
 
         <ChevronDown
@@ -139,11 +121,14 @@ export default function UserMenu() {
 
       {open && (
         <div
+          role="menu"
+          aria-label="Menú de usuario"
           className="
             absolute
             right-0
             top-12
             w-[320px]
+            max-w-[calc(100vw-2rem)]
             rounded-xl
             border
             border-[var(--border)]
@@ -167,7 +152,7 @@ export default function UserMenu() {
                   justify-center
                   text-sm
                   font-semibold
-                  text-[var(--text-primary)]
+                  text-white
                 "
                 style={{
                   background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))",
@@ -180,7 +165,7 @@ export default function UserMenu() {
                 <p className="font-medium text-sm">{user?.name}</p>
                 <p className="text-xs text-[var(--text-secondary)]">{user?.email}</p>
                 <div
-                  className="
+                  className={`
                     mt-1
                     inline-flex
                     items-center
@@ -189,14 +174,12 @@ export default function UserMenu() {
                     py-0.5
                     rounded
                     text-[10px]
-                    bg-[var(--primary)]/10
-                    text-[var(--primary)]
                     border
-                    border-[var(--primary)]/15
-                  "
+                    ${ROLE_BADGE[role]}
+                  `}
                 >
                   <Shield size={10} />
-                  {role}
+                  {ROLE_LABELS[role]}
                 </div>
               </div>
             </div>
@@ -283,7 +266,7 @@ export default function UserMenu() {
             </div>
 
             <div className="grid grid-cols-4 gap-1.5">
-              {themes.map((t) => (
+              {THEMES.map((t) => (
                 <button
                   key={t.id}
                   type="button"
@@ -311,7 +294,7 @@ export default function UserMenu() {
                     ))}
                   </div>
 
-                  <p className="text-[10px] leading-tight">{themeLabels[t.id]}</p>
+                  <p className="truncate text-[10px] leading-tight" title={themeLabels[t.id]}>{themeLabels[t.id]}</p>
                 </button>
               ))}
             </div>
@@ -320,8 +303,9 @@ export default function UserMenu() {
           <div className="p-3 space-y-0.5">
             <button
               type="button"
+              role="menuitem"
               data-audit-action="navigation.profile"
-              onClick={() => router.push("/profile")}
+              onClick={() => navigate("/profile")}
               className="
                 w-full
                 p-2.5
@@ -340,6 +324,7 @@ export default function UserMenu() {
 
             <button
               type="button"
+              role="menuitem"
               data-audit-action="auth.logout.intent"
               onClick={() =>
                 signOut({

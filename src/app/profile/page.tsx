@@ -3,16 +3,11 @@
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ArrowLeft, CheckCircle2, LogOut } from "lucide-react";
 
 import type { Role } from "@/lib/auth/roles";
-import { useTheme, themeLabels, type ThemeName } from "../providers/ThemeProvider";
-
-const roleLabels: Record<Role, string> = {
-  admin: "Administrador",
-  plataformas: "Plataformas",
-  operaciones: "Operaciones",
-  audit: "Auditoria",
-};
+import { useTheme, themeLabels } from "@/app/providers/ThemeProvider";
+import { ROLE_BADGE, ROLE_GRADIENT, ROLE_LABELS, THEMES, normalizeRole } from "@/lib/theme";
 
 const roleDescriptions: Record<Role, string[]> = {
   admin: [
@@ -43,29 +38,6 @@ const roleAccessSummary: Record<Role, string> = {
   audit: "Acceso de consulta",
 };
 
-const roleColors: Record<Role, string> = {
-  admin: "bg-gradient-to-r from-purple-600 to-indigo-600",
-  plataformas: "bg-gradient-to-r from-blue-600 to-cyan-600",
-  operaciones: "bg-gradient-to-r from-green-600 to-emerald-600",
-  audit: "bg-gradient-to-r from-yellow-600 to-amber-600",
-};
-
-const roleBadgeColors: Record<Role, string> = {
-  admin: "bg-purple-500/20 text-purple-400 border-purple-500",
-  plataformas: "bg-blue-500/20 text-blue-400 border-blue-500",
-  operaciones: "bg-green-500/20 text-green-400 border-green-500",
-  audit: "bg-yellow-500/20 text-yellow-400 border-yellow-500",
-};
-
-const themes: { id: ThemeName; colors: string[] }[] = [
-  { id: "purple", colors: ["#8b5cf6", "#ec4899", "#d946ef"] },
-  { id: "ocean", colors: ["#06b6d4", "#14b8a6", "#2dd4bf"] },
-  { id: "sunset", colors: ["#f97316", "#ef4444", "#ec4899"] },
-  { id: "forest", colors: ["#10b981", "#14b8a6", "#6ee7b7"] },
-  { id: "midnight", colors: ["#6366f1", "#8b5cf6", "#c084fc"] },
-  { id: "cherry", colors: ["#f472b6", "#fb7185", "#f43f5e"] },
-];
-
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -79,12 +51,11 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!session?.user) return;
-
-    const stored = localStorage.getItem("last-login");
-    const nextValue = stored || session.user.lastLogin || new Date().toISOString();
-
-    if (!stored) {
-      localStorage.setItem("last-login", nextValue);
+    // El último acceso siempre refleja la sesión actual (nunca stale).
+    if (session.user.lastLogin) {
+      localStorage.setItem("last-login", session.user.lastLogin);
+    } else if (!localStorage.getItem("last-login")) {
+      localStorage.setItem("last-login", new Date().toISOString());
     }
   }, [session]);
 
@@ -101,7 +72,7 @@ export default function ProfilePage() {
 
   if (!session?.user) return null;
 
-  const userRole = session.user.role || "audit";
+  const userRole = normalizeRole(session.user.role);
   const lastLogin = session.user.lastLogin;
   const userInitial = session.user.name?.charAt(0).toUpperCase() || "U";
   const userEmail = session.user.email || "usuario@ejemplo.com";
@@ -113,28 +84,28 @@ export default function ProfilePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
           <button
             onClick={() => router.push("/")}
-            className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
           >
-            Volver al Dashboard
+            <ArrowLeft className="h-4 w-4" /> Volver al Dashboard
           </button>
 
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="px-4 py-2 rounded-lg bg-[var(--error)]/10 text-[var(--error)] hover:bg-[var(--error)]/20 transition-colors border border-[var(--error)]/20"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--error)]/10 text-[var(--error)] hover:bg-[var(--error)]/20 transition-colors border border-[var(--error)]/20"
           >
-            Cerrar sesión
+            <LogOut className="h-4 w-4" /> Cerrar sesión
           </button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <section className="bg-[var(--bg-card)]/50 backdrop-blur-sm rounded-2xl border border-[var(--border)] overflow-hidden shadow-2xl">
-          <div className={`h-32 sm:h-40 ${roleColors[userRole]}`} />
+          <div className="h-32 sm:h-40" style={{ background: ROLE_GRADIENT[userRole] }} />
 
           <div className="px-6 sm:px-8 pb-8 sm:pb-10">
             <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6 -mt-12 sm:-mt-16 mb-8">
-              <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-2xl ${roleColors[userRole]} flex items-center justify-center shadow-xl border-4 border-[var(--bg-card)]`}>
-                <span className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)]">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl flex items-center justify-center shadow-xl border-4 border-white/90" style={{ background: ROLE_GRADIENT[userRole] }}>
+                <span className="text-4xl sm:text-5xl font-bold text-white">
                   {userInitial}
                 </span>
               </div>
@@ -143,8 +114,8 @@ export default function ProfilePage() {
                 <h1 className="text-2xl sm:text-4xl font-bold text-[var(--text-primary)] mb-2">
                   {userName}
                 </h1>
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm border ${roleBadgeColors[userRole]}`}>
-                  {roleLabels[userRole]}
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm border ${ROLE_BADGE[userRole]}`}>
+                  {ROLE_LABELS[userRole]}
                 </span>
               </div>
             </div>
@@ -167,8 +138,9 @@ export default function ProfilePage() {
               <div className="bg-[var(--bg-hover)]/30 rounded-xl p-4 sm:p-6 border border-[var(--border)]">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {roleDescriptions[userRole].map((permission) => (
-                    <p key={permission} className="text-sm sm:text-base text-[var(--text-secondary)]">
-                      {permission}
+                    <p key={permission} className="flex items-start gap-2 text-sm sm:text-base text-[var(--text-secondary)]">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                      <span>{permission}</span>
                     </p>
                   ))}
                 </div>
@@ -184,30 +156,35 @@ export default function ProfilePage() {
                   Tema actual: <span className="text-[var(--text-primary)] font-medium">{themeName}</span>
                 </p>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                  {themes.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => setTheme(item.id)}
-                      className={`group relative p-4 rounded-xl transition-all ${
-                        theme === item.id ? "ring-2 ring-white shadow-lg scale-105" : "hover:scale-105 hover:shadow-xl"
-                      }`}
-                      style={{
-                        background: `linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1]})`,
-                      }}
-                    >
-                      <div className="relative z-10">
-                        <div className="flex justify-center gap-1 mb-2">
-                          {item.colors.map((color) => (
-                            <div key={color} className="w-4 h-4 rounded-full" style={{ backgroundColor: color }} />
-                          ))}
-                        </div>
-                        <p className="text-xs font-medium text-[var(--text-primary)] text-center">
-                          {themeLabels[item.id]}
-                        </p>
-                      </div>
-                    </button>
-                  ))}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3">
+                  {THEMES.map((item) => {
+                    const selected = theme === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setTheme(item.id)}
+                        aria-pressed={selected}
+                        title={themeLabels[item.id]}
+                        className={`group relative overflow-hidden rounded-xl transition-all ${
+                          selected ? "ring-2 ring-[var(--primary)] ring-offset-2 ring-offset-[var(--bg-card)] shadow-lg scale-[1.03]" : "hover:scale-105 hover:shadow-xl"
+                        }`}
+                        style={{ background: `linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1]})` }}
+                      >
+                        <span className="flex flex-col items-center gap-1.5 px-2 py-3">
+                          <span className="flex justify-center gap-1">
+                            {item.colors.map((color) => (
+                              <span key={color} className="h-3.5 w-3.5 rounded-full border border-white/40" style={{ backgroundColor: color }} />
+                            ))}
+                          </span>
+                          <span className="truncate text-[11px] font-semibold text-white drop-shadow">
+                            {themeLabels[item.id]}
+                          </span>
+                          {selected && <CheckCircle2 className="h-4 w-4 text-white drop-shadow" />}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </section>

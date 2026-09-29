@@ -82,8 +82,28 @@ export default function LoginPage() {
   const handleLocalSignIn = async () => {
     if (isLoading) return;
     if (!username.trim()) { setAlert(getAuthAlert(null, "")); return; }
+    if (!password) { setAlert({ type: "warning", title: "Contraseña requerida", body: "Ingresa tu contraseña." }); return; }
     setIsLoading(true); setAlert(null);
-    await signIn("credentials", { username, password, callbackUrl: "/" });
+    // Safety: si signIn no responde, liberar el spinner y mostrar ayuda (evita "se queda cargando").
+    const safety = setTimeout(() => {
+      setIsLoading(false);
+      setAlert({ type: "error", title: "Tiempo agotado", body: "El servidor no respondió. Recarga con Ctrl+Shift+R y reintenta. Si persiste, abre F12 → Network y revisa POST /api/auth/callback/credentials." });
+    }, 10000);
+    try {
+      const res: any = await Promise.race([
+        signIn("credentials", { username: username.trim(), password, redirect: false }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error("timeout_signIn")), 9000)),
+      ]);
+      clearTimeout(safety);
+      if (res?.ok) { router.push("/"); router.refresh(); return; }
+      setAlert(getAuthAlert(res?.error, username));
+      setIsLoading(false);
+    } catch (e: any) {
+      clearTimeout(safety);
+      const isTimeout = e?.message === "timeout_signIn";
+      setAlert({ type: "error", title: isTimeout ? "Sin respuesta del servidor" : "Error de red", body: isTimeout ? "El servidor no respondió. Verifica que Docker esté corriendo y el puerto 3000 accesible, luego recarga." : "No se pudo conectar. Abre F12 → Console/Network para más detalles." });
+      setIsLoading(false);
+    }
   };
   const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === "Enter") handleLocalSignIn(); };
 
@@ -161,7 +181,7 @@ export default function LoginPage() {
             <div className="flex items-center gap-4 text-xs text-white/20">
               <span>UX Technology</span>
               <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span>v10.0</span>
+              <span>v10.2</span>
               <span className="w-1 h-1 rounded-full bg-white/20" />
               <span>Multi Cloud</span>
             </div>

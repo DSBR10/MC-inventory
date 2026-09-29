@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
-      - ${POSTGRES_DATA_PATH:-./db/data}:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -88,3 +88,6 @@ services:
       # lo rompería. Llegan al contenedor literalmente vía env_file (.env).
     ports:
       - "${APP_PORT:-3000}:3000"
+
+volumes:
+  postgres_data:

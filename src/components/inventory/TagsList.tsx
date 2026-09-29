@@ -11,19 +11,19 @@ export default function TagsList({
   const formatted = formatTags(tags);
 
   return (
-    <div className="flex flex-col gap-1 min-w-0">
-      {formatted.map((tag) => {
+    <div className="flex flex-wrap gap-1 min-w-0">
+      {formatted.map((tag, index) => {
         const isNoTag = tag === "Sin tags";
         const [key, ...valParts] = tag.split(": ");
         const value = valParts.join(": ");
 
         return (
           <div
-            key={tag}
+            key={`${tag}-${index}`}
             className={`
-              flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all
+              inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all max-w-full
               ${isNoTag
-                ? "bg-red-500/10 text-red-400 border-red-500/20"
+                ? "bg-[var(--bg-hover)] text-[var(--text-secondary)] border-[var(--border)]"
                 : "bg-[var(--primary)]/8 text-[var(--text-primary)] border-[var(--primary)]/15"
               }
             `}

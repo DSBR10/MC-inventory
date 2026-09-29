@@ -208,17 +208,15 @@ export default function Home() {
 
   /* ── Filtered + sorted data ── */
   const filteredData = useMemo(() => {
+    const safe = (v: unknown) => (typeof v === "string" ? v : "").toLowerCase();
     const result = data.filter((item) => {
       const q = search.toLowerCase();
       const tagText = Object.entries(item.tags || {})
         .map(([k, v]) => `${k} ${v}`)
         .join(" ")
         .toLowerCase();
-      const searchMatch =
-        item.name.toLowerCase().includes(q) ||
-        item.id.toLowerCase().includes(q) ||
-        item.host.toLowerCase().includes(q) ||
-        tagText.includes(q);
+      const haystack = `${safe(item.name)} ${safe(item.id)} ${safe(item.host)} ${tagText}`;
+      const searchMatch = !q || haystack.includes(q);
       const providerMatch =
         selectedProviders.length === 0 ||
         selectedProviders.includes(item.provider || "");
@@ -256,21 +254,22 @@ export default function Home() {
 
     result.sort((a, b) => {
       const dir = sortDirection === "asc" ? 1 : -1;
+      const str = (v: unknown) => (typeof v === "string" ? v : "");
       const map: Record<SortField, string> = {
-        name: a.name,
-        provider: a.provider || "",
-        service: a.service,
-        status: a.status,
-        host: a.host,
-        account: a.accountName,
+        name: str(a.name),
+        provider: str(a.provider),
+        service: str(a.service),
+        status: str(a.status),
+        host: str(a.host),
+        account: str(a.accountName),
       };
       const mapB: Record<SortField, string> = {
-        name: b.name,
-        provider: b.provider || "",
-        service: b.service,
-        status: b.status,
-        host: b.host,
-        account: b.accountName,
+        name: str(b.name),
+        provider: str(b.provider),
+        service: str(b.service),
+        status: str(b.status),
+        host: str(b.host),
+        account: str(b.accountName),
       };
       return map[sortField].localeCompare(mapB[sortField]) * dir;
     });
@@ -487,11 +486,12 @@ export default function Home() {
             >
               {filtersOpen && (
                 <div className="border-t border-[var(--border)] p-4 space-y-4">
-                  <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-3">
+                  <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
                   <FilterBlock
                     title="Infraestructura"
                     icon={<Cloud className="w-4 h-4" />}
                     accentColor="#06b6d4"
+                    defaultOpen
                   >
                     <ProviderFilterSection
                       values={providers}
@@ -529,6 +529,7 @@ export default function Home() {
                     title="Etiquetas"
                     icon={<Shield className="w-4 h-4" />}
                     accentColor="#f59e0b"
+                    className="lg:col-span-2"
                   >
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                       <DropdownSection
@@ -761,12 +762,12 @@ function ExportMenu({ rows }: { rows: InventoryItem[] }) {
   );
 }
 
-function FilterBlock({ title, icon, accentColor, children }: any) {
-  const [open, setOpen] = useState(false);
+function FilterBlock({ title, icon, accentColor, children, className, defaultOpen }: any) {
+  const [open, setOpen] = useState(!!defaultOpen);
   const contentId = `inventory-filter-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return (
     <div
-      className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/30"
+      className={`overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-hover)]/30 ${className || ""}`}
     >
       <button
         type="button"
@@ -960,7 +961,8 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
 
   const selectMatches = useCallback(() => {
     if (!dropdownSearch.trim() || filtered.length === 0) return;
-    setSelected(filtered);
+    // Une con lo ya seleccionado (no lo reemplaza).
+    setSelected((p: string[]) => [...new Set([...p, ...filtered])]);
   }, [dropdownSearch, filtered, setSelected]);
 
   const allSelected = values.length > 0 && values.every((v: string) => selected.includes(v));
@@ -977,7 +979,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm border transition-all ${
           selected.length > 0
             ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
-            : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20"
+            : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-[var(--border)]"
         }`}
       >
         <div className="text-left min-w-0 flex-1">
@@ -1006,7 +1008,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
           }}
         >
           {/* Search inside dropdown */}
-          <div className="relative border-b border-white/5">
+          <div className="relative border-b border-[var(--border)]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-primary)]/25 pointer-events-none" />
             <input
               type="text"
@@ -1018,7 +1020,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
             />
           </div>
           {/* Select all / None */}
-          <div className="flex gap-2 px-3 py-2 border-b border-white/5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2 border-b border-[var(--border)]">
             <button
               type="button"
               onClick={selectAll}
@@ -1054,7 +1056,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
             </span>
           </div>
           {/* Items */}
-          <div className="max-h-48 overflow-y-auto divide-y divide-white/5">
+          <div className="max-h-48 overflow-y-auto divide-y divide-[var(--border)]">
             {filtered.length === 0 ? (
               <div className="px-4 py-6 text-center text-xs text-[var(--text-primary)]/20">
                 Sin resultados
@@ -1074,7 +1076,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
                     className={`w-full text-left px-4 py-2.5 text-xs transition-colors flex items-center justify-between ${
                       active
                         ? "text-cyan-400 bg-cyan-500/10"
-                        : "text-[var(--text-primary)]/60 hover:bg-white/[0.03] hover:text-[var(--text-primary)]"
+                        : "text-[var(--text-primary)]/60 hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     <span className="truncate pr-2">{value}</span>
@@ -1082,7 +1084,7 @@ function DropdownSection({ title, values, selected, setSelected }: any) {
                       className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all ${
                         active
                           ? "bg-cyan-500 border-cyan-500"
-                          : "border-white/20 bg-transparent"
+                          : "border-[var(--border)] bg-transparent"
                       }`}
                     >
                       {active && (
@@ -1112,5 +1114,5 @@ function getStatusChipStyle(status: string) {
     return "bg-amber-500/10 border-amber-500/20 text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/30";
   if (["paused", "suspended", "standby"].includes(s))
     return "bg-sky-500/10 border-sky-500/20 text-sky-400 hover:bg-sky-500/20 hover:border-sky-500/30";
-  return "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-white/20 hover:bg-[var(--bg-hover)]";
+  return "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/50 hover:text-[var(--text-primary)] hover:border-[var(--border)] hover:bg-[var(--bg-hover)]";
 }

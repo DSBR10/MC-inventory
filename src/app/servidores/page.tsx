@@ -291,6 +291,7 @@ export default function ServidoresPage() {
   const exportMenuRef = useRef<HTMLDivElement>(null);
   const exportContainerRef = useRef<HTMLDivElement>(null);
   const renameInputRef = useRef<HTMLInputElement>(null);
+  const renameSavingRef = useRef<string | null>(null);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkColumnId, setBulkColumnId] = useState("");
@@ -301,9 +302,7 @@ export default function ServidoresPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
 
-  const topScrollRef = useRef<HTMLDivElement>(null);
   const tableScrollRef = useRef<HTMLDivElement>(null);
-  const isSyncingScroll = useRef(false);
 
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [filterProvider, setFilterProvider] = useState<string>("all");
@@ -469,7 +468,16 @@ export default function ServidoresPage() {
     finally { setLoading(false); setRefreshing(false); }
   }, []);
 
-  useEffect(() => { loadData(true); const interval = setInterval(() => loadData(false), 30000); return () => clearInterval(interval); }, [loadData]);
+  // Polling pausado con pestaña oculta y durante ediciones/bulk (no pisa el trabajo en curso).
+  useEffect(() => {
+    loadData(true);
+    const interval = setInterval(() => {
+      if (document.hidden) return;
+      if (manageModalOpen || confirmModalOpen || selectedIds.size > 0) return;
+      loadData(false);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [loadData, manageModalOpen, confirmModalOpen, selectedIds.size]);
 
   const handleSaveValue = useCallback(async (columnId: string, serverId: string, value: string) => {
     try {
@@ -519,12 +527,15 @@ export default function ServidoresPage() {
   }, []);
 
   const handleRenameColumn = useCallback(async (id: string) => {
+    // Enter + blur disparan doble guardado; el ref lo hace idempotente.
+    if (renameSavingRef.current === id) return;
     if (!renameValue.trim()) { setRenamingColumnId(null); return; }
+    renameSavingRef.current = id;
     try {
       const res = await fetch("/api/server-columns", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, name: renameValue.trim() }) });
       const json = await res.json();
       if (json.column) { setCustomColumns((prev) => prev.map((c) => (c.id === id ? json.column : c))); toast.success("Columna renombrada"); } else toast.error(json.error || "Error renombrando columna");
-    } catch { toast.error("Error renombrando columna"); } finally { setRenamingColumnId(null); }
+    } catch { toast.error("Error renombrando columna"); } finally { renameSavingRef.current = null; setRenamingColumnId(null); }
   }, [renameValue]);
 
   const handleReorderColumns = useCallback(async (reordered: ServerColumn[]) => {
@@ -574,14 +585,6 @@ export default function ServidoresPage() {
   }, []);
 
   const allPageSelected = paginatedData.length > 0 && paginatedData.every((item) => selectedIds.has(item.id));
-
-  const syncScroll = useCallback((source: "top" | "bottom") => {
-    if (isSyncingScroll.current) return; isSyncingScroll.current = true;
-    const srcEl = source === "top" ? topScrollRef.current : tableScrollRef.current;
-    const dstEl = source === "top" ? tableScrollRef.current : topScrollRef.current;
-    if (srcEl && dstEl) dstEl.scrollLeft = srcEl.scrollLeft;
-    requestAnimationFrame(() => { isSyncingScroll.current = false; });
-  }, []);
 
   const formatLaunchTime = (t?: string) => { if (!t) return "—"; try { return new Date(t).toLocaleDateString("es-CO", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); } catch { return t; } };
 
@@ -678,7 +681,7 @@ export default function ServidoresPage() {
             <div className="relative z-10 flex items-start justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-xl animate-ping opacity-15" style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }} />
+                  <div className="absolute inset-0 rounded-xl opacity-15" style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }} />
                   <div className="relative w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold text-white shadow-lg" style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }}><Server size={18} /></div>
                 </div>
                 <div>
@@ -708,25 +711,25 @@ export default function ServidoresPage() {
             <div className="p-4 flex items-center gap-3 flex-wrap">
               <div className="relative flex-1 min-w-[200px] group">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/20 pointer-events-none transition-colors group-focus-within:text-cyan-400/60" />
-                <input type="text" placeholder="Buscar servidores..." value={search} onChange={(e) => handleSearchChange(e.target.value)} className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-primary)]/25 outline-none transition-all duration-200 border focus:border-cyan-500/40" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }} />
-                {search && <button type="button" onClick={() => handleSearchChange("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/70 transition-colors"><X className="w-4 h-4" /></button>}
+                <input type="text" placeholder="Buscar servidores..." value={search} onChange={(e) => handleSearchChange(e.target.value)} aria-label="Buscar servidores" className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] outline-none transition-all duration-200 bg-[var(--bg-hover)]/40 border border-[var(--border)] focus:border-cyan-500/40" />
+                {search && <button type="button" onClick={() => handleSearchChange("")} aria-label="Limpiar búsqueda" className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/70 transition-colors"><X className="w-4 h-4" /></button>}
               </div>
 
-              <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-[var(--text-primary)]/30" />
-                <select value={filterProvider} onChange={(e) => { setFilterProvider(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-1.5 outline-none cursor-pointer min-w-[100px]">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Filter className="w-4 h-4 text-[var(--text-primary)]/30" aria-hidden />
+                <select value={filterProvider} aria-label="Filtrar por proveedor" onChange={(e) => { setFilterProvider(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-2 outline-none cursor-pointer min-w-[130px]">
                   <option value="all">Proveedor</option>
                   {uniqueProviders.map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
-                <select value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-1.5 outline-none cursor-pointer min-w-[100px]">
+                <select value={filterStatus} aria-label="Filtrar por estado" onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-2 outline-none cursor-pointer min-w-[130px]">
                   <option value="all">Estado</option>
                   {uniqueStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select value={filterAccount} onChange={(e) => { setFilterAccount(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-1.5 outline-none cursor-pointer min-w-[120px]">
+                <select value={filterAccount} aria-label="Filtrar por cuenta" onChange={(e) => { setFilterAccount(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-2 outline-none cursor-pointer min-w-[140px]">
                   <option value="all">Cuenta</option>
                   {uniqueAccounts.map((a) => <option key={a} value={a}>{a}</option>)}
                 </select>
-                {activeFilterCount > 0 && <button type="button" onClick={() => { setFilterProvider("all"); setFilterStatus("all"); setFilterAccount("all"); setCurrentPage(1); }} className="px-2 py-1.5 rounded-lg text-xs text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-[var(--bg-hover)] transition-all"><X className="w-3.5 h-3.5" /></button>}
+                {activeFilterCount > 0 && <button type="button" onClick={() => { setFilterProvider("all"); setFilterStatus("all"); setFilterAccount("all"); setCurrentPage(1); }} aria-label="Limpiar filtros" className="px-2 py-2 rounded-lg text-xs text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-[var(--bg-hover)] transition-all"><X className="w-3.5 h-3.5" /></button>}
               </div>
 
               <div className="relative">
@@ -734,7 +737,7 @@ export default function ServidoresPage() {
                   <Settings2 className="w-4 h-4" />
                 </button>
                 {prefsOpen && (
-                  <div ref={prefsPanelRef} className="absolute top-full right-0 mt-2 w-80 max-h-[480px] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_18px_50px_rgba(0,0,0,0.42)] z-50">
+                  <div ref={prefsPanelRef} className="absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-[480px] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_18px_50px_rgba(0,0,0,0.42)] z-50">
                     <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
                       <div>
                         <p className="text-sm font-semibold text-[var(--text-primary)]">Preferencias</p>
@@ -757,7 +760,7 @@ export default function ServidoresPage() {
                     </div>
                     <div className="px-4 py-2.5 border-t border-[var(--border)] flex items-center justify-between">
                       <span className="text-[10px] text-[var(--text-primary)]/30">{hiddenSet.size} oculta{hiddenSet.size !== 1 ? "s" : ""} · {allColumnsForPrefs.length - hiddenSet.size} visible{((allColumnsForPrefs.length - hiddenSet.size) !== 1) ? "s" : ""}</span>
-                      <button type="button" onClick={() => updateColPrefs(() => ({ order: ALL_BUILTIN_COLUMNS.map((c) => c.key), hidden: [] }))} className="text-[10px] text-cyan-400/70 hover:text-cyan-300 transition-colors">Restaurar</button>
+                      <button type="button" onClick={() => updateColPrefs(() => ({ order: [...ALL_BUILTIN_COLUMNS.map((c) => c.key), ...customColumns.map((c) => c.id)], hidden: [] }))} className="text-[10px] text-cyan-400/70 hover:text-cyan-300 transition-colors">Restaurar</button>
                     </div>
                   </div>
                 )}
@@ -786,18 +789,14 @@ export default function ServidoresPage() {
 
             {sortedData.length > pageSize && <PaginationControls currentPage={safeCurrentPage} totalPages={totalPages} totalItems={sortedData.length} pageSize={pageSize} startIndex={startIndex} endIndex={endIndex} onPageChange={handlePageChange} onPageSizeChange={handlePageSizeChange} />}
 
-            <div ref={topScrollRef} onScroll={() => syncScroll("top")} className="h-[14px] rounded bg-[var(--bg-hover)]/30 overflow-x-auto mx-0">
-              <div style={{ width: tableScrollRef.current ? tableScrollRef.current.scrollWidth + "px" : undefined, minWidth: "100%", height: "1px" }} />
-            </div>
-
-            <div ref={tableScrollRef} onScroll={() => syncScroll("bottom")} className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-[var(--bg-hover)]/70 border-b border-[var(--border)]">
+            <div ref={tableScrollRef} className="overflow-x-auto">
+              <table className="w-full text-sm" style={{ minWidth: "1100px" }}>
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-[var(--bg-card)] border-b border-[var(--border)]">
                     <th className="px-4 py-3 text-left w-[40px]">
-                      <div className="cursor-pointer flex items-center justify-center" onClick={toggleSelectAll}>
+                      <button type="button" onClick={toggleSelectAll} aria-label={allPageSelected ? "Deseleccionar página" : "Seleccionar página"} aria-pressed={allPageSelected} className="flex items-center justify-center rounded hover:opacity-80">
                         {allPageSelected ? <CheckSquare className="w-4 h-4 text-[var(--primary)]" /> : <Square className="w-4 h-4 text-[var(--text-primary)]/30" />}
-                      </div>
+                      </button>
                     </th>
                     {visibleColumns.map((col) => {
                       const isSorted = sortConfig?.key === col.key;
@@ -819,9 +818,9 @@ export default function ServidoresPage() {
                     paginatedData.map((item) => (
                       <tr key={item.id} className={`hover:bg-[var(--bg-hover)]/50 transition-colors ${selectedIds.has(item.id) ? "bg-[var(--primary)]/5" : ""}`}>
                         <td className="px-4 py-3 w-[40px]">
-                          <div className="cursor-pointer flex items-center justify-center" onClick={() => toggleSelectOne(item.id)}>
+                          <button type="button" onClick={() => toggleSelectOne(item.id)} aria-label={selectedIds.has(item.id) ? `Deseleccionar ${item.id}` : `Seleccionar ${item.id}`} aria-pressed={selectedIds.has(item.id)} className="flex items-center justify-center rounded hover:opacity-80">
                             {selectedIds.has(item.id) ? <CheckSquare className="w-4 h-4 text-[var(--primary)]" /> : <Square className="w-4 h-4 text-[var(--text-primary)]/30" />}
-                          </div>
+                          </button>
                         </td>
                         {visibleColumns.map((col) => (
                           <td key={col.key} className={getCellClassName(col)}>{renderCellValue(item, col)}</td>

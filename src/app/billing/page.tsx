@@ -277,7 +277,7 @@ export default function BillingPage() {
             className="flex min-w-0 items-center gap-3 text-left"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-400/20 bg-cyan-400/10">
-              <SlidersHorizontal className="h-4.5 w-4.5 text-cyan-300" />
+              <SlidersHorizontal className="h-4 w-4 text-cyan-300" />
             </span>
             <span className="min-w-0">
               <span className="flex flex-wrap items-center gap-2">
@@ -402,7 +402,7 @@ export default function BillingPage() {
         <>
           <section className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             <KpiCard icon={WalletCards} label="Costo total" value={formatCurrency(stats.total)} detail={`${stats.currency} en ${stats.months} mes(es)`} />
-            <KpiCard icon={Activity} label="Variación mensual" value={formatDelta(stats.delta)} detail={stats.delta >= 0 ? "Subió vs mes anterior" : "Bajó vs mes anterior"} trend={stats.delta} />
+            <KpiCard icon={Activity} label="Variación mensual" value={stats.hasPrevious ? formatDelta(stats.delta) : "N/A"} detail={stats.hasPrevious ? (stats.delta >= 0 ? "Subió vs mes anterior" : "Bajó vs mes anterior") : "Sin mes previo para comparar"} trend={stats.delta} />
             <KpiCard icon={Server} label="Top servicio" value={stats.topService.name || "N/A"} detail={formatCurrency(stats.topService.value)} />
             <KpiCard icon={Cloud} label="Top cuenta" value={stats.topAccount.name || "N/A"} detail={formatCurrency(stats.topAccount.value)} />
           </section>
@@ -488,7 +488,7 @@ function KpiCard({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs uppercase tracking-wide text-[var(--text-secondary)]">{label}</p>
-          <p className="mt-1 truncate text-2xl font-semibold text-[var(--text-primary)]">{value}</p>
+          <p className="mt-1 truncate text-2xl font-semibold tabular-nums text-[var(--text-primary)]" title={value}>{value}</p>
         </div>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10">
           <Icon className="h-5 w-5 text-cyan-300" />
@@ -803,7 +803,7 @@ function TagFilterBuilder({
               key={`${filter.key}:${filter.value}`}
               type="button"
               onClick={() => onChange(selected.filter((item) => item.key !== filter.key || item.value !== filter.value))}
-              className="inline-flex max-w-full items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/8 px-2.5 py-1.5 text-xs text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/15"
+              className="inline-flex max-w-full items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1.5 text-xs text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/15"
             >
               <span className="max-w-[260px] truncate"><span className="text-cyan-300">{filter.key}</span>: {filter.value}</span>
               <X className="h-3.5 w-3.5 shrink-0 text-cyan-200/70" />
@@ -940,7 +940,7 @@ function BillingTable({ rows }: { rows: BillingItem[] }) {
 
 function ActiveFilter({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-cyan-400/20 bg-cyan-400/8 px-2.5 py-1.5 text-cyan-100">
+    <span className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1.5 text-cyan-100">
       <span className="max-w-[240px] truncate">{label}</span>
       <button
         type="button"
@@ -1150,6 +1150,7 @@ function buildStats(items: BillingItem[]) {
   return {
     total,
     delta,
+    hasPrevious: previous > 0,
     topService,
     topAccount,
     months: monthly.length,
@@ -1215,7 +1216,7 @@ function round(value: number) {
 }
 
 function formatCurrency(value: number, currency = "USD") {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 2 }).format(value || 0);
+  return new Intl.NumberFormat("es-CO", { style: "currency", currency, maximumFractionDigits: 2 }).format(value || 0);
 }
 
 function formatDelta(value: number) {

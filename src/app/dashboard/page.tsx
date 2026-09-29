@@ -30,7 +30,7 @@ import BrandLogo from "@/components/layout/BrandLogo";
 
 function LoadingScreen() {
   return (
-    <div className="fixed inset-0 bg-[#080c14] flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[var(--bg-dark)] flex items-center justify-center z-50">
       <style jsx global>{`
         @keyframes shimmer {
           0% {
@@ -95,20 +95,22 @@ type MetricCardProps = {
 
 function MetricCard({ label, value, icon, accentColor }: MetricCardProps) {
   return (
-    <div
-      className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5"
-      style={{ borderLeftWidth: 4, borderLeftColor: accentColor }}
-    >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-all hover:-translate-y-0.5 hover:shadow-lg">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)] truncate">
             {label}
           </p>
-          <p className="text-3xl font-bold text-[var(--text-primary)] mt-1">
+          <p className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mt-1 tabular-nums truncate" title={value.toLocaleString("es-CO")}>
             {value.toLocaleString("es-CO")}
           </p>
         </div>
-        <div className="opacity-40">{icon}</div>
+        <div
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+          style={{ background: `${accentColor}18`, color: accentColor }}
+        >
+          {icon}
+        </div>
       </div>
     </div>
   );
@@ -133,37 +135,49 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>("");
+  const [loadError, setLoadError] = useState("");
+
+  const load = async (initial = false) => {
+    try {
+      if (initial) {
+        setLoading(true);
+        setLoadError("");
+      } else {
+        setRefreshing(true);
+      }
+      const res = await fetch("/api/inventory", { cache: "no-store" });
+      if (!res.ok) throw new Error(`Inventario respondió ${res.status}`);
+      const json = await res.json();
+      setData(Array.isArray(json.data) ? json.data : []);
+      setLastUpdate(
+        new Date(json.timestamp).toLocaleTimeString("es-CO", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    } catch (err) {
+      console.error("Dashboard fetch error:", err);
+      if (initial) setLoadError("No se pudieron cargar los datos del dashboard.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
-    const load = async (initial = false) => {
-      try {
-        if (initial) setLoading(true);
-        else setRefreshing(true);
-        const res = await fetch("/api/inventory", { cache: "no-store" });
-        const json = await res.json();
-        if (!mounted) return;
-        setData(json.data);
-        setLastUpdate(
-          new Date(json.timestamp).toLocaleTimeString("es-CO", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        );
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-      } finally {
-        if (!mounted) return;
-        setLoading(false);
-        setRefreshing(false);
-      }
+    const guarded = (initial = false) => {
+      if (!mounted) return;
+      if (document.hidden && !initial) return;
+      void load(initial);
     };
-    load(true);
-    const interval = setInterval(() => load(false), 60000);
+    void guarded(true);
+    const interval = setInterval(() => guarded(false), 60000);
     return () => {
       mounted = false;
       clearInterval(interval);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const totalResources = data.length;
@@ -171,7 +185,7 @@ export default function DashboardPage() {
   const runningCount = useMemo(
     () =>
       data.filter((item) => {
-        const s = item.status.toLowerCase();
+        const s = (item.status || "").toLowerCase();
         return [
           "running",
           "available",
@@ -187,7 +201,7 @@ export default function DashboardPage() {
   const stoppedCount = useMemo(
     () =>
       data.filter((item) => {
-        const s = item.status.toLowerCase();
+        const s = (item.status || "").toLowerCase();
         return [
           "stopped",
           "terminated",
@@ -242,7 +256,7 @@ export default function DashboardPage() {
     let stopped = 0;
     let other = 0;
     data.forEach((item) => {
-      const s = item.status.toLowerCase();
+      const s = (item.status || "").toLowerCase();
       if (
         [
           "running",
@@ -291,7 +305,7 @@ export default function DashboardPage() {
         "ok",
         "in-use",
         "associated",
-      ].includes(item.status.toLowerCase());
+      ].includes((item.status || "").toLowerCase());
       const isStopped = [
         "stopped",
         "terminated",
@@ -299,7 +313,7 @@ export default function DashboardPage() {
         "shutting-down",
         "deleted",
         "failed",
-      ].includes(item.status.toLowerCase());
+      ].includes((item.status || "").toLowerCase());
       if (existing) {
         existing.total++;
         if (isRunning) existing.running++;
@@ -335,6 +349,24 @@ export default function DashboardPage() {
 
   if (loading) return <LoadingScreen />;
 
+  if (loadError) {
+    return (
+      <div className="min-h-screen space-y-6">
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.06] p-8 text-center">
+          <p className="text-base font-semibold text-red-300">No se pudieron cargar los datos</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{loadError} Revisa tu conexión e inténtalo de nuevo.</p>
+          <button
+            type="button"
+            onClick={() => void load(true)}
+            className="mt-4 inline-flex h-10 items-center gap-2 rounded-lg bg-cyan-500 px-5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+          >
+            <RefreshCw className="h-4 w-4" /> Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen space-y-6">
       <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] p-5"
@@ -346,7 +378,7 @@ export default function DashboardPage() {
         <div className="relative z-10 flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="absolute inset-0 rounded-xl animate-ping opacity-15"
+              <div className="absolute inset-0 rounded-xl opacity-15"
                 style={{ background: "linear-gradient(135deg, var(--gradient-start), var(--gradient-end))" }}
               />
               <div
@@ -423,19 +455,23 @@ export default function DashboardPage() {
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
         <SectionTitle>Distribución por Servicio</SectionTitle>
+        {serviceDistribution.length === 0 ? (
+          <p className="py-10 text-center text-sm text-[var(--text-secondary)]">Sin datos para mostrar.</p>
+        ) : (
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={serviceDistribution}
               layout="vertical"
-              margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis type="number" tick={{ fill: "var(--text-secondary)", fontSize: 12 }} />
               <YAxis
                 type="category"
                 dataKey="name"
                 tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
-                width={75}
+                width={130}
+                tickFormatter={(v: string) => (v.length > 18 ? `${v.slice(0, 17)}…` : v)}
               />
               <Tooltip
                 contentStyle={{
@@ -450,6 +486,7 @@ export default function DashboardPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -460,14 +497,15 @@ export default function DashboardPage() {
               <BarChart
                 data={providerDistribution}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
                 <XAxis type="number" tick={{ fill: "var(--text-secondary)", fontSize: 12 }} />
                 <YAxis
                   type="category"
                   dataKey="name"
                   tick={{ fill: "var(--text-secondary)", fontSize: 11 }}
-                  width={95}
+                  width={120}
+                  tickFormatter={(v: string) => (v.length > 16 ? `${v.slice(0, 15)}…` : v)}
                 />
                 <Tooltip
                   contentStyle={{
@@ -584,13 +622,16 @@ export default function DashboardPage() {
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
         <SectionTitle>Detalle de Servicios</SectionTitle>
+        {topServicesDetail.length === 0 ? (
+          <p className="py-10 text-center text-sm text-[var(--text-secondary)]">Sin datos para mostrar.</p>
+        ) : (
         <div className="space-y-3">
           {topServicesDetail.map((svc) => (
             <div
               key={svc.name}
-              className="flex items-center gap-4"
+              className="flex flex-wrap items-center gap-x-4 gap-y-2"
             >
-              <div className="w-36 flex-shrink-0">
+              <div className="w-36 min-w-0 flex-shrink-0">
                 <ServiceBadge service={svc.name} />
               </div>
               <span className="text-sm font-semibold text-[var(--text-primary)] tabular-nums w-12 text-right flex-shrink-0">
@@ -611,6 +652,7 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
+  Check,
   CheckCircle2,
   ChevronDown,
   Clock,
@@ -268,6 +269,9 @@ export default function CommandCenter() {
     return filteredServers.filter((server) => selected.has(targetKey(server)));
   }, [filteredServers, selected]);
 
+  // Selecciones que quedaron fuera del filtro visible (no se pierden, pero no se ejecutan).
+  const hiddenSelectedCount = Math.max(0, selected.size - selectedTargets.length);
+
   const stats = useMemo(() => {
     const linux = runnableServers.filter((server) => server.osType === "linux").length;
     const windows = runnableServers.filter((server) => server.osType === "windows").length;
@@ -393,10 +397,14 @@ export default function CommandCenter() {
     setSelected(new Set());
   }
 
+  // "Limpiar" solo vacía editor y resultados; el historial se borra desde su propio panel con confirmación.
   function clearConsole() {
     setCommand("");
     setResults([]);
     setSelected(new Set());
+  }
+
+  function clearHistory() {
     setHistory([]);
     saveHistory([]);
   }
@@ -453,12 +461,12 @@ export default function CommandCenter() {
                   <button
                     type="button"
                     onClick={toggleAllFiltered}
-                    disabled={filteredServers.length === 0}
+                    disabled={filteredServers.length === 0 || running}
                     className="rounded-md border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] disabled:opacity-50"
                   >
                     {filteredServers.length > 0 && filteredServers.every((server) => selected.has(targetKey(server)))
-                      ? "Limpiar"
-                      : "Seleccionar"}
+                      ? `Limpiar visibles (${filteredServers.length})`
+                      : `Seleccionar visibles (${filteredServers.length})`}
                   </button>
                 </div>
               </div>
@@ -500,19 +508,20 @@ export default function CommandCenter() {
             </div>
 
             <label className="relative block">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Buscar por nombre, instancia o cuenta"
-                className="h-10 w-full rounded-md border border-[var(--border)] bg-[var(--bg-hover)]/40 pl-9 pr-3 text-sm outline-none focus:border-cyan-400"
+                aria-label="Buscar servidores"
+                className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/40 pl-9 pr-3 text-sm outline-none focus:border-cyan-400"
               />
             </label>
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
               <div ref={accountPickerRef} className="relative">
                 <label className="relative block">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-300" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-300" />
                   <input
                     value={accountQuery}
                     onChange={(event) => setAccountQuery(event.target.value)}
@@ -523,15 +532,15 @@ export default function CommandCenter() {
                     aria-controls="command-account-options"
                     aria-label="Buscar y seleccionar cuentas"
                     placeholder={selectedAccounts.size === 0 ? "Todas las cuentas" : `${selectedAccounts.size} cuentas seleccionadas`}
-                    className="h-10 w-full rounded-md border border-cyan-400/20 bg-[#07111d] pl-9 pr-9 text-sm text-cyan-50 outline-none placeholder:text-cyan-100/80 focus:border-cyan-300 focus:bg-[#081827]"
+                    className="h-10 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/40 pl-9 pr-9 text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)] focus:border-cyan-400"
                   />
                   {(selectedAccounts.size > 0 || accountQuery) && (
                     <button
                       type="button"
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={clearAccountFilter}
-                      className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-cyan-200 transition hover:bg-cyan-400/10 hover:text-white"
-                      aria-label="Limpiar cuenta"
+                      className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-[var(--text-secondary)] transition hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"
+                      aria-label="Limpiar filtro de cuentas"
                     >
                       <XCircle size={14} />
                     </button>
@@ -539,41 +548,41 @@ export default function CommandCenter() {
                 </label>
 
                 {accountPickerOpen && (
-                  <div className="absolute left-0 right-0 top-11 z-20 overflow-hidden rounded-md border border-cyan-400/20 bg-[#07111d] shadow-2xl shadow-black/40">
-                    <div className="flex flex-wrap items-center gap-2 border-b border-cyan-400/10 px-3 py-2">
+                  <div className="absolute left-0 right-0 top-11 z-30 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
+                    <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] px-3 py-2">
                       <button
                         type="button"
                         onClick={() => {
                           setSelectedAccounts(new Set(accounts));
                           setSelected(new Set());
                         }}
-                        className="text-[10px] uppercase tracking-wider text-cyan-100/80 transition hover:text-cyan-50"
+                        className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] transition hover:text-cyan-300"
                       >
                         Todo
                       </button>
-                      <span className="text-cyan-100/30">|</span>
+                      <span className="text-[var(--text-secondary)]/40">|</span>
                       <button
                         type="button"
                         onClick={clearAccountFilter}
-                        className="text-[10px] uppercase tracking-wider text-cyan-100/80 transition hover:text-red-200"
+                        className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] transition hover:text-red-300"
                       >
                         Ninguno
                       </button>
-                      <span className="text-cyan-100/30">|</span>
+                      <span className="text-[var(--text-secondary)]/40">|</span>
                       <button
                         type="button"
                         onClick={selectMatchingAccounts}
                         disabled={selectMatchingAccountsDisabled}
                         title={selectMatchingAccountsDisabled ? "Escribe una búsqueda con coincidencias" : undefined}
-                        className="text-[10px] uppercase tracking-wider text-cyan-200/80 transition hover:text-cyan-50 disabled:cursor-not-allowed disabled:text-cyan-100/30"
+                        className="text-[10px] uppercase tracking-wider text-cyan-300/80 transition hover:text-cyan-200 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         Seleccionar coincidencias
                       </button>
                     </div>
 
-                    <div id="command-account-options" className="max-h-56 overflow-y-auto border-t border-cyan-400/10" role="listbox" aria-label="Cuentas disponibles">
+                    <div id="command-account-options" className="max-h-56 overflow-y-auto border-t border-[var(--border)]" role="listbox" aria-label="Cuentas disponibles">
                       {filteredAccounts.length === 0 ? (
-                        <div className="px-3 py-3 text-sm text-cyan-100/60">
+                        <div className="px-3 py-3 text-sm text-[var(--text-secondary)]">
                           Sin cuentas coincidentes
                         </div>
                       ) : (
@@ -586,15 +595,19 @@ export default function CommandCenter() {
                               type="button"
                               onMouseDown={(event) => event.preventDefault()}
                               onClick={() => toggleAccount(item)}
-                              className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition hover:bg-cyan-500/10 ${
-                                checked ? "bg-cyan-500/10 text-cyan-200" : "text-cyan-50"
+                              role="option"
+                              aria-selected={checked}
+                              className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition hover:bg-[var(--bg-hover)] ${
+                                checked ? "bg-cyan-500/10 text-cyan-300" : "text-[var(--text-primary)]"
                               }`}
                             >
                               <span
-                                className={`h-4 w-4 shrink-0 rounded border ${
-                                  checked ? "border-cyan-300 bg-cyan-400" : "border-cyan-400/30"
+                                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                                  checked ? "border-cyan-400 bg-cyan-500 text-slate-950" : "border-[var(--border)]"
                                 }`}
-                              />
+                              >
+                                {checked && <Check size={11} strokeWidth={3} />}
+                              </span>
                               <span className="min-w-0 truncate">{item}</span>
                             </button>
                           );
@@ -610,8 +623,9 @@ export default function CommandCenter() {
                       <button
                         key={item}
                         type="button"
+                        title={`${item} (clic para quitar)`}
                         onClick={() => toggleAccount(item)}
-                        className="max-w-full truncate rounded-md border border-cyan-400/20 bg-cyan-500/10 px-2 py-1 text-xs text-cyan-100 transition hover:bg-cyan-500/20"
+                        className="max-w-[180px] truncate rounded-md border border-[var(--border)] bg-[var(--bg-hover)]/60 px-2 py-1 text-xs text-[var(--text-primary)] transition hover:border-red-400/40 hover:text-red-300"
                       >
                         {item}
                       </button>
@@ -705,11 +719,17 @@ export default function CommandCenter() {
                   type="button"
                   onClick={runCommand}
                   disabled={running || selectedTargets.length === 0 || !command.trim()}
+                  title={hiddenSelectedCount > 0 ? `${hiddenSelectedCount} seleccionado(s) ocultos por el filtro (no se ejecutan)` : undefined}
                   className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-emerald-500 px-4 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Play size={16} />
                   {running ? "Ejecutando..." : `Ejecutar en ${selectedTargets.length}`}
                 </button>
+                {hiddenSelectedCount > 0 && (
+                  <p className="w-full text-xs text-amber-200/80">
+                    {hiddenSelectedCount} seleccionado(s) ocultos por el filtro — no se ejecutarán.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -719,8 +739,9 @@ export default function CommandCenter() {
                   <button
                     key={template.label}
                     type="button"
+                    disabled={running}
                     onClick={() => setCommand(template.command)}
-                    className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-200 transition hover:bg-white/10"
+                    className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-zinc-200 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {template.label}
                   </button>
@@ -731,7 +752,14 @@ export default function CommandCenter() {
                 value={command}
                 onChange={(event) => setCommand(event.target.value)}
                 spellCheck={false}
-                className="h-32 min-h-28 w-full resize-none rounded-md border border-white/10 bg-[#050805] p-3 font-mono text-sm leading-5 text-emerald-300 outline-none focus:border-emerald-400"
+                disabled={running}
+                onKeyDown={(event) => {
+                  if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !running && selectedTargets.length > 0 && command.trim()) {
+                    event.preventDefault();
+                    runCommand();
+                  }
+                }}
+                className="h-32 min-h-28 w-full resize-none rounded-md border border-white/10 bg-[#050805] p-3 font-mono text-sm leading-5 text-emerald-300 outline-none focus:border-emerald-400 disabled:opacity-60"
                 placeholder={osType === "linux" ? "hostname" : "Get-ComputerInfo"}
               />
 
@@ -748,7 +776,7 @@ export default function CommandCenter() {
         </div>
       </section>
 
-      <HistoryPanel history={history} onUse={(item) => {
+      <HistoryPanel history={history} onClear={clearHistory} onUse={(item) => {
         setOsType(item.osType);
          setCommand(item.commandPreview);
       }} />
@@ -827,16 +855,17 @@ function ResultsPanel({ results, running }: { results: CommandResult[]; running:
 }
 
 function StatusBadge({ status }: { status: ExecutionStatus }) {
-  const success = status === "success";
-  const Icon = success ? CheckCircle2 : XCircle;
+  const tone =
+    status === "success"
+      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
+      : status === "timedOut" || status === "cancelled"
+        ? "border-amber-400/30 bg-amber-500/10 text-amber-300"
+        : "border-red-400/30 bg-red-500/10 text-red-300";
+  const Icon = status === "success" ? CheckCircle2 : status === "timedOut" || status === "cancelled" ? Clock : XCircle;
 
   return (
     <span
-      className={`inline-flex w-fit items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium ${
-        success
-          ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-300"
-          : "border-red-400/30 bg-red-500/10 text-red-300"
-      }`}
+      className={`inline-flex w-fit items-center gap-1 whitespace-nowrap rounded-md border px-2 py-1 text-xs font-medium ${tone}`}
     >
       <Icon size={13} />
       {status}
@@ -844,11 +873,28 @@ function StatusBadge({ status }: { status: ExecutionStatus }) {
   );
 }
 
-function HistoryPanel({ history, onUse }: { history: HistoryItem[]; onUse: (item: HistoryItem) => void }) {
+function HistoryPanel({ history, onUse, onClear }: { history: HistoryItem[]; onUse: (item: HistoryItem) => void; onClear: () => void }) {
+  const [confirmClear, setConfirmClear] = useState(false);
+  const copyItem = (item: HistoryItem) => {
+    navigator.clipboard?.writeText(item.commandPreview).catch(() => undefined);
+  };
   return (
     <section className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]/70">
-      <div className="border-b border-[var(--border)] p-4">
+      <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] p-4">
         <h2 className="font-semibold text-[var(--text-primary)]">Historial local</h2>
+        {history.length > 0 && (
+          confirmClear ? (
+            <span className="flex items-center gap-2 text-xs">
+              <span className="text-[var(--text-secondary)]">¿Borrar historial?</span>
+              <button type="button" onClick={() => { onClear(); setConfirmClear(false); }} className="rounded-md border border-red-400/40 bg-red-500/10 px-2 py-1 font-medium text-red-300 hover:bg-red-500/20">Sí, borrar</button>
+              <button type="button" onClick={() => setConfirmClear(false)} className="rounded-md border border-[var(--border)] px-2 py-1 text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]">No</button>
+            </span>
+          ) : (
+            <button type="button" onClick={() => setConfirmClear(true)} className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] px-2 py-1 text-xs text-[var(--text-secondary)] transition hover:border-red-400/40 hover:text-red-300">
+              <Trash2 size={13} /> Vaciar
+            </button>
+          )
+        )}
       </div>
 
       {history.length === 0 ? (
@@ -856,20 +902,25 @@ function HistoryPanel({ history, onUse }: { history: HistoryItem[]; onUse: (item
       ) : (
         <div className="divide-y divide-[var(--border)]">
           {history.map((item) => (
-            <button
+            <div
               key={item.id}
-              type="button"
-              onClick={() => onUse(item)}
-              className="flex w-full items-center justify-between gap-4 p-4 text-left transition hover:bg-[var(--bg-hover)]"
+              className="flex w-full items-center justify-between gap-3 p-4 transition hover:bg-[var(--bg-hover)]/50"
             >
-              <span className="min-w-0">
+              <button type="button" onClick={() => onUse(item)} title="Cargar en el editor" className="min-w-0 flex-1 text-left">
                  <span className="block truncate font-mono text-sm text-[var(--text-primary)]">{item.commandPreview}</span>
                 <span className="mt-1 block text-xs text-[var(--text-secondary)]">
                   {new Date(item.timestamp).toLocaleString()} - {item.osType} - {item.success}/{item.total} OK
                 </span>
+              </button>
+              <span className="flex shrink-0 items-center gap-1">
+                <button type="button" onClick={() => onUse(item)} title="Reusar comando" aria-label="Reusar comando" className="rounded-md p-2 text-[var(--text-secondary)] transition hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
+                  <Play size={14} />
+                </button>
+                <button type="button" onClick={() => copyItem(item)} title="Copiar comando" aria-label="Copiar comando" className="rounded-md p-2 text-[var(--text-secondary)] transition hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]">
+                  <Copy size={14} />
+                </button>
               </span>
-              <Copy className="h-4 w-4 shrink-0 text-[var(--text-secondary)]" />
-            </button>
+            </div>
           ))}
         </div>
       )}

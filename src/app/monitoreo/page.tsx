@@ -573,8 +573,8 @@ export default function MonitoringPage() {
         </div>
 
         <div id="monitoring-filter-options" hidden={!filtersOpen}>
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]/70 p-4">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(280px,420px)_180px_auto]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)]/70 p-4">
+              <div className="grid grid-cols-1 items-end gap-3 md:grid-cols-[minmax(280px,420px)_180px_auto]">
                 <Field label="Cuenta">
                   <AccountPicker
                     accounts={accounts}
@@ -602,7 +602,7 @@ export default function MonitoringPage() {
                     fetchInventory();
                   }}
                   disabled={overviewLoading}
-                  className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-cyan-400/30 bg-cyan-500/15 px-4 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-cyan-500 px-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {overviewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                   Actualizar
@@ -1015,20 +1015,23 @@ function SearchableResourceSelect({
           aria-controls={listboxId}
           aria-label={`Seleccionar ${label}`}
         >
-          <span className="truncate">{selected?.label || `Todos / ${options.length} opciones`}</span>
-          <Search className="h-4 w-4 text-[var(--text-secondary)]" />
+          <span className="min-w-0 flex-1 truncate">{selected?.label || `Todos / ${options.length} opciones`}</span>
+          <Search className="h-4 w-4 shrink-0 text-[var(--text-secondary)]" />
         </button>
         {open && (
           <div id={listboxId} className="absolute z-30 mt-2 w-full overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl">
             <div className="border-b border-[var(--border)] p-2">
-              <input
-                autoFocus
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                className="control h-9"
-                placeholder={placeholder}
-                aria-label={placeholder}
-              />
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
+                <input
+                  autoFocus
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  className="control h-9 pl-9"
+                  placeholder={placeholder}
+                  aria-label={placeholder}
+                />
+              </div>
             </div>
             <button
               type="button"
@@ -1102,7 +1105,7 @@ function ResourceSummaryGrid({
           <p className="text-xs text-[var(--text-secondary)]">Selecciona un recurso del desplegable para abrir sus graficas CloudWatch.</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <div className="flex min-w-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-input)] sm:w-80">
+          <div className="flex min-w-0 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/40 sm:w-80">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center border-r border-[var(--border)] text-[var(--text-secondary)]">
               <Search className="h-4 w-4" />
             </div>
@@ -1214,14 +1217,14 @@ function LogsPanel({
 
       {state.error && <StatusMessage tone="error" message={state.error} />}
 
-      <div className="mt-5 overflow-hidden rounded-lg border border-[var(--border)]">
+      <div className="mt-5 overflow-x-auto rounded-xl border border-[var(--border)]">
         {state.loadingLogs ? (
           <LoadingPanel label="Consultando logs..." />
         ) : state.logs.length === 0 ? (
           <EmptyState icon={FileSearch} title="Sin logs" description="Selecciona un log group y aplica filtros." />
         ) : (
-          <div className="max-h-[68vh] min-h-[420px] overflow-y-auto divide-y divide-[var(--border)]">
-            <div className="sticky top-0 z-10 grid grid-cols-[170px_220px_1fr_88px] gap-2 border-b border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
+          <div className="max-h-[68vh] min-h-[420px] min-w-[760px] overflow-y-auto divide-y divide-[var(--border)]">
+            <div className="sticky top-0 z-10 grid grid-cols-[170px_220px_minmax(0,1fr)_88px] gap-2 border-b border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
               <span>Hora</span>
               <span>Stream</span>
               <span>Mensaje</span>
@@ -1239,12 +1242,19 @@ function LogsPanel({
 
 function ExportButtons({ logs }: { logs: CloudWatchLog[] }) {
   const disabled = logs.length === 0;
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const runExport = (format: "txt" | "json" | "xlsx") => {
+    setExportError(null);
+    exportLogs(logs, format).catch((e) => setExportError(e instanceof Error ? e.message : "No se pudo exportar"));
+  };
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <button type="button" onClick={() => exportLogs(logs, "txt")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />TXT</button>
-      <button type="button" onClick={() => exportLogs(logs, "json")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />JSON</button>
-      <button type="button" onClick={() => exportLogs(logs, "xlsx")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />XLSX</button>
+    <div className="flex flex-wrap items-center gap-2">
+      <button type="button" onClick={() => runExport("txt")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />TXT</button>
+      <button type="button" onClick={() => runExport("json")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />JSON</button>
+      <button type="button" onClick={() => runExport("xlsx")} disabled={disabled} className="secondary-button"><Download className="h-4 w-4" />XLSX</button>
+      {exportError && <span role="alert" className="text-xs text-red-300">{exportError}</span>}
     </div>
   );
 }
@@ -1309,14 +1319,14 @@ function CloudTrailPanel({
 
       {state.error && <StatusMessage tone="error" message={state.error} />}
 
-      <div className="mt-5 overflow-hidden rounded-lg border border-[var(--border)]">
+      <div className="mt-5 overflow-x-auto rounded-xl border border-[var(--border)]">
         {state.loading ? (
           <LoadingPanel label="Consultando CloudTrail..." />
         ) : filteredEvents.length === 0 ? (
           <EmptyState icon={ShieldCheck} title="Sin eventos" description="Ajusta la fecha o la busqueda libre para revisar actividad." />
         ) : (
-          <div className="max-h-[68vh] min-h-[420px] overflow-y-auto divide-y divide-[var(--border)]">
-            <div className="sticky top-0 z-10 grid grid-cols-[170px_1fr_200px_180px_92px] gap-2 border-b border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
+          <div className="max-h-[68vh] min-h-[420px] min-w-[820px] overflow-y-auto divide-y divide-[var(--border)]">
+            <div className="sticky top-0 z-10 grid grid-cols-[170px_minmax(0,1fr)_200px_180px_92px] gap-2 border-b border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
               <span>Hora</span>
               <span>Evento</span>
               <span>Usuario</span>
@@ -1467,13 +1477,13 @@ function ChartPanel({ title, metric, unit, emptyMessage }: { title: string; metr
       {data.length === 0 ? (
         <EmptyState icon={Activity} title="Sin datos" description={emptyMessage || "CloudWatch no devolvio puntos para esta metrica."} compact />
       ) : (
-        <div className="h-72">
+        <div className="h-64 md:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.18)" />
               <XAxis dataKey="time" stroke="rgb(148,163,184)" fontSize={11} />
               <YAxis stroke="rgb(148,163,184)" fontSize={11} />
-              <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid rgba(148,163,184,0.25)", borderRadius: 8 }} />
+              <Tooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text-primary)" }} labelStyle={{ color: "var(--text-secondary)" }} />
               <Line type="monotone" dataKey="avg" name="Avg" stroke="#22d3ee" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="max" name="Max" stroke="#a7f3d0" strokeWidth={1.5} dot={false} />
               <Line type="monotone" dataKey="min" name="Min" stroke="#fbbf24" strokeWidth={1.5} dot={false} />
@@ -1622,11 +1632,13 @@ function CloudTrailDetailModal({ event, onClose }: { event: TrailEvent; onClose:
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
+  // Se usa <div> (no <label>) porque varios controles contienen <button>/<input>
+  // propios y anidarlos en un <label> es HTML inválido y rompe foco/click.
   return (
-    <label className="block">
+    <div className="block">
       <span className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">{label}</span>
       {children}
-    </label>
+    </div>
   );
 }
 
@@ -1837,7 +1849,11 @@ async function exportLogs(logs: CloudWatchLog[], format: "txt" | "json" | "xlsx"
     return;
   }
 
-  const XLSX = await import("xlsx");
+  const XLSX = await import("xlsx").catch(() => null);
+  if (!XLSX) {
+    trackClientAuditEvent("export.failed", { category: "export", metadata: { module: "monitoring", format, reason: "xlsx_unavailable" } });
+    throw new Error("No se pudo cargar el generador de Excel");
+  }
   const sheet = XLSX.utils.json_to_sheet(logs.map((log) => ({
     timestamp: new Date(log.timestamp).toISOString(),
     stream: log.logStreamName || "",
@@ -1856,8 +1872,10 @@ function downloadBlob(content: BlobPart, filename: string, type: string) {
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;
+  document.body.appendChild(anchor);
   anchor.click();
-  URL.revokeObjectURL(url);
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function formatAge(ms: number) {
@@ -1870,7 +1888,7 @@ function formatAge(ms: number) {
 }
 
 function formatDate(value: string | number | Date) {
-  return new Date(value).toLocaleString("es-CO", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+  return new Date(value).toLocaleString("es-CO", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
 }
 
 function formatTime(value: string | number | Date) {

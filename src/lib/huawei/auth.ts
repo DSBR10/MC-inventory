@@ -18,6 +18,9 @@ type HuaweiRequestParams = {
 
   body?: any;
 
+  // Query params firmados (ordenados) para listados paginados (ej. CBR).
+  query?: Record<string, string | number | boolean | undefined | null>;
+
 };
 
 export async function getHuaweiToken(): Promise<string> {
@@ -34,7 +37,8 @@ export async function huaweiRequest({
   ak,
   sk,
   projectId,
-  body
+  body,
+  query
 
 }: HuaweiRequestParams) {
 
@@ -48,8 +52,20 @@ export async function huaweiRequest({
     const canonicalUri =
       cleanUri + "/";
 
+    // Canonical query string (SDK-HMAC-SHA256): pares ordenados k=v codificados.
+    const queryEntries = Object.entries(query || {})
+      .filter((entry): entry is [string, string | number | boolean] => entry[1] !== undefined && entry[1] !== null && entry[1] !== "")
+      .map(([k, v]) => [encodeURIComponent(k), encodeURIComponent(String(v))] as const)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+
+    const canonicalQueryString = queryEntries
+      .map(([k, v]) => `${k}=${v}`)
+      .join("&");
+
     const endpoint =
-      `https://${host}${cleanUri}`;
+      queryEntries.length > 0
+        ? `https://${host}${cleanUri}?${canonicalQueryString}`
+        : `https://${host}${cleanUri}`;
 
     const timestamp =
       new Date()
@@ -62,7 +78,7 @@ export async function huaweiRequest({
 
     const canonicalRequest = `${method}
 ${canonicalUri}
-
+${canonicalQueryString}
 content-type:application/json;charset=UTF-8
 host:${host}
 x-project-id:${projectId}

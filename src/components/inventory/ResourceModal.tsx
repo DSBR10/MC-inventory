@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Check,
   Copy,
   ShieldAlert,
   ShieldCheck,
@@ -12,7 +13,7 @@ import {
   Activity,
 } from "lucide-react";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { InventoryItem } from "@/types/inventory";
 
@@ -40,6 +41,27 @@ export default function ResourceModal({
   onClose,
 }: Props) {
   const [tab, setTab] = useState<Tab>("overview");
+
+  const itemKey = item?.uniqueKey || item?.id || "";
+
+  // Reset de tab al cambiar de recurso + cierre con Escape + bloqueo de scroll.
+  useEffect(() => {
+    setTab("overview");
+  }, [itemKey]);
+
+  useEffect(() => {
+    if (!item) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [item, onClose]);
 
   const securityAnalysis = useMemo(() => {
     const findings: string[] = [];
@@ -81,6 +103,10 @@ export default function ResourceModal({
 
   return (
     <div
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Detalle de ${item.name}`}
       className="
         fixed
         inset-0
@@ -94,6 +120,7 @@ export default function ResourceModal({
       "
     >
       <div
+        onClick={(e) => e.stopPropagation()}
         className="
           bg-[var(--bg-card)]
           border
@@ -518,6 +545,63 @@ export default function ResourceModal({
               </SectionCard>
             </div>
           )}
+
+          {/* LOAD BALANCING */}
+
+          {tab === "loadbalancer" && (
+            <div className="space-y-6">
+              <SectionCard title="Listeners">
+                {(item.listeners || []).length === 0 ? (
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    Este recurso no expone listeners registrados.
+                  </p>
+                ) : (
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {item.listeners!.map((listener, idx) => (
+                      <InfoCard
+                        key={idx}
+                        label={listener.name || `Listener ${idx + 1}`}
+                        value={`${listener.protocol || "—"}:${listener.port ?? "—"}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </SectionCard>
+
+              <SectionCard title="Target Groups">
+                {(item.targetGroups || []).length === 0 ? (
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    Sin target groups asociados.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {item.targetGroups!.map((group, idx) => (
+                      <div
+                        key={idx}
+                        className="rounded-xl border border-[var(--border)] bg-black/20 p-4"
+                      >
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-semibold">{group.name || `Target group ${idx + 1}`}</p>
+                          {group.protocol && <Badge value={`${group.protocol}:${group.port ?? "—"}`} />}
+                          {group.targetType && <Badge value={group.targetType} />}
+                        </div>
+                        {(group.targets || []).length > 0 && (
+                          <div className="mt-3 space-y-1.5">
+                            {group.targets!.map((target, tIdx) => (
+                              <p key={tIdx} className="flex items-center justify-between gap-3 font-mono text-[11px] text-[var(--text-secondary)]">
+                                <span className="truncate">{target.id || "—"}:{target.port ?? "—"}</span>
+                                {target.health && <HealthBadge status={target.health} />}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </SectionCard>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -602,20 +686,29 @@ function RiskBadge({ risk }: { risk: string }) {
 }
 
 function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
   return (
     <button
-      onClick={() => navigator.clipboard.writeText(value)}
-      className="
+      type="button"
+      aria-label={copied ? "Copiado" : "Copiar ID"}
+      title={copied ? "Copiado" : "Copiar ID"}
+      onClick={() => {
+        navigator.clipboard.writeText(value).catch(() => undefined);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      }}
+      className={`
         p-2
         rounded-xl
         border
-        border-[var(--border)]
-        hover:bg-[var(--bg-hover)]
         transition-all
         interactive-button
-      "
+        ${copied
+          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+          : "border-[var(--border)] hover:bg-[var(--bg-hover)]"}
+      `}
     >
-      <Copy size={14} />
+      {copied ? <Check size={14} /> : <Copy size={14} />}
     </button>
   );
 }

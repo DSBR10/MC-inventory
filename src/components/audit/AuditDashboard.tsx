@@ -67,24 +67,24 @@ export default function AuditDashboard() {
   }, [filters]);
 
   useEffect(() => {
-    let active = true;
-    fetch(`/api/audit?${buildQuery(appliedFilters, page)}`, { cache: "no-store" })
+    const controller = new AbortController();
+    setLoading(true);
+    setError("");
+    fetch(`/api/audit?${buildQuery(appliedFilters, page)}`, { cache: "no-store", signal: controller.signal })
       .then(async (response) => {
         const payload = (await response.json()) as AuditResponse & { error?: string };
         if (!response.ok) throw new Error(payload.error || "No se pudo consultar la auditoría");
-        if (active) {
-          setError("");
-          setData(payload);
-        }
+        setData(payload);
       })
       .catch((reason: unknown) => {
-        if (active) setError(reason instanceof Error ? reason.message : "No se pudo consultar la auditoría");
+        if (reason instanceof DOMException && reason.name === "AbortError") return;
+        setError(reason instanceof Error ? reason.message : "No se pudo consultar la auditoría");
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       });
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [appliedFilters, page]);
 
@@ -99,7 +99,8 @@ export default function AuditDashboard() {
   }
 
   function exportAudit() {
-    window.location.assign(`/api/audit/export?${buildQuery(filters, 1)}`);
+    // Exporta exactamente lo visible: usa los filtros aplicados, no el borrador.
+    window.location.assign(`/api/audit/export?${buildQuery(appliedFilters, 1)}`);
   }
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
@@ -116,11 +117,11 @@ export default function AuditDashboard() {
           <p className="mt-1 text-sm text-[var(--text-secondary)]">Trazabilidad de accesos, operaciones y denegaciones sin guardar secretos.</p>
         </div>
         <button type="button" onClick={exportAudit} className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-cyan-400/30 bg-cyan-500/10 px-4 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/20">
-          <Download className="h-4 w-4" /> Exportar CSV
+          <Download className="h-4 w-4" /> Exportar Excel
         </button>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         <SummaryCard label="Total" value={data.total} tone="cyan" />
         <SummaryCard label="Éxitos" value={summary.success} tone="emerald" />
         <SummaryCard label="Fallos" value={summary.failure + summary.error} tone="rose" />

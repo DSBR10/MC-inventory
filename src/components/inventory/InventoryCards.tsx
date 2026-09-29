@@ -46,7 +46,7 @@ export default function InventoryCards({ data, onSelect }: Props) {
               </p>
             </div>
 
-            <ServiceBadge service={item.service} />
+            <ServiceBadge service={item.service} provider={item.provider} />
           </div>
 
           <div className="flex items-center gap-3 mb-3">

@@ -14,21 +14,22 @@ export default function AuditDetailPage({ id }: { id: string }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    let active = true;
-    fetch(`/api/audit/${id}`, { cache: "no-store" })
+    const controller = new AbortController();
+    fetch(`/api/audit/${id}`, { cache: "no-store", signal: controller.signal })
       .then(async (response) => {
         const payload = (await response.json()) as { event?: AuditEventDetail; error?: string };
         if (!response.ok || !payload.event) throw new Error(payload.error || "Evento no encontrado");
-        if (active) setEvent(payload.event);
+        setEvent(payload.event);
       })
       .catch((reason: unknown) => {
-        if (active) setError(reason instanceof Error ? reason.message : "No se pudo consultar el detalle");
+        if (reason instanceof DOMException && reason.name === "AbortError") return;
+        setError(reason instanceof Error ? reason.message : "No se pudo consultar el detalle");
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       });
     return () => {
-      active = false;
+      controller.abort();
     };
   }, [id]);
 

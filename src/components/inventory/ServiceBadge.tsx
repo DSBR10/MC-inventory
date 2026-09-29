@@ -7,9 +7,10 @@ type Props = {
 
 export default function ServiceBadge({
   service,
-  provider = 'AWS'
+  provider
 }: Props) {
-  const color = getServiceColor(provider, service);
+  // Sin provider explícito no se asume color (evita teñir Huawei como AWS).
+  const color = provider ? getServiceColor(provider, service) : null;
 
   return (
     <span
@@ -24,11 +25,17 @@ export default function ServiceBadge({
         border
         whitespace-nowrap
       "
-      style={{
-        backgroundColor: `${color}15`,
-        color: color,
-        borderColor: `${color}40`,
-      }}
+      style={color
+        ? {
+            backgroundColor: `${color}15`,
+            color: color,
+            borderColor: `${color}40`,
+          }
+        : {
+            backgroundColor: "var(--bg-hover)",
+            color: "var(--text-secondary)",
+            borderColor: "var(--border)",
+          }}
     >
       {service}
     </span>

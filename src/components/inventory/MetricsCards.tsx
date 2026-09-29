@@ -17,7 +17,7 @@ export default function MetricsCards({ data }: Props) {
   const total = data.length;
 
   const running = data.filter((i) =>
-    ["running", "available", "active", "ok"].includes(i.status.toLowerCase()),
+    ["running", "available", "active", "ok"].includes((i.status || "").toLowerCase()),
   ).length;
 
   const servers = data.filter((i) =>

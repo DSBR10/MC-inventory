@@ -11,8 +11,10 @@ export default function StatusBadge({
   return (
 
     <span
+      title={status}
       className={`
         inline-block
+        whitespace-nowrap
         px-2
         py-1
         rounded-lg

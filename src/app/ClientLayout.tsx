@@ -16,10 +16,20 @@ const PAGE_NAMES: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/monitoreo": "Monitoreo",
   "/servidores": "Servidores",
+  "/backups": "Backups",
   "/comandos": "Comandos",
   "/billing": "Billing",
   "/auditoria": "Auditoría",
+  "/profile": "Perfil",
+  "/terminal": "Terminal",
 };
+
+function pageNameFor(pathname: string | null): string {
+  if (!pathname) return "MC Inventory";
+  if (PAGE_NAMES[pathname]) return PAGE_NAMES[pathname];
+  if (pathname.startsWith("/auditoria/")) return "Detalle de auditoría";
+  return "MC Inventory";
+}
 
 export default function ClientLayout({
   children
@@ -39,25 +49,48 @@ export default function ClientLayout({
     setSidebarOpen
   ] = useState(false);
 
+  // En desktop el sidebar arranca abierto; en móvil cerrado.
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    setSidebarOpen(media.matches);
+  }, []);
+
   const [
     routeLoading,
     setRouteLoading
   ] = useState(false);
 
+  const [
+    routeLoadingVisible,
+    setRouteLoadingVisible
+  ] = useState(false);
+
+  // Overlay con retardo de entrada (evita flash en navegación instantánea)
+  // y tope de seguridad para navegaciones lentas.
   useEffect(() => {
     if (!routeLoading) return;
 
-    const timeout =
-      setTimeout(() => {
-        setRouteLoading(false);
-      }, 850);
+    const showTimer = window.setTimeout(() => {
+      setRouteLoadingVisible(true);
+    }, 250);
+    const hideTimer = window.setTimeout(() => {
+      setRouteLoading(false);
+      setRouteLoadingVisible(false);
+    }, 4000);
 
-    return () =>
-      clearTimeout(timeout);
-
+    return () => {
+      window.clearTimeout(showTimer);
+      window.clearTimeout(hideTimer);
+    };
   }, [pathname, routeLoading]);
 
-  const pageName = PAGE_NAMES[pathname || ""] || "MC Inventory";
+  useEffect(() => {
+    // Al completar la navegación se oculta de inmediato.
+    setRouteLoading(false);
+    setRouteLoadingVisible(false);
+  }, [pathname]);
+
+  const pageName = pageNameFor(pathname);
 
   if (isAuthPage) {
     return (
@@ -88,7 +121,7 @@ export default function ClientLayout({
           onClick={() =>
             setSidebarOpen(false)
           }
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity duration-300 lg:hidden"
         />
       )}
 
@@ -112,8 +145,10 @@ export default function ClientLayout({
             h-14
             border-b
             border-[var(--border)]
-            bg-[var(--bg-dark)]
-            px-5
+            bg-[var(--bg-dark)]/85
+            backdrop-blur-xl
+            px-4
+            sm:px-6
             flex
             items-center
             justify-between
@@ -147,7 +182,7 @@ export default function ClientLayout({
 
             <div className="flex items-center gap-1.5 text-sm">
               <BrandLogo size={22} />
-              <ChevronRight size={14} className="text-[var(--border)]" />
+              <ChevronRight size={14} className="text-[var(--text-secondary)]/50" />
               <span className="font-medium text-[var(--text-primary)]">{pageName}</span>
             </div>
 
@@ -159,15 +194,17 @@ export default function ClientLayout({
 
         </header>
 
-        <main className="flex-1 p-6">
-          {children}
+        <main className="flex-1 p-4 sm:p-6">
+          <div className="mx-auto w-full max-w-[1600px]">
+            {children}
+          </div>
         </main>
 
         <SiteFooter />
 
       </div>
 
-      <RouteLoadingOverlay visible={routeLoading} />
+      <RouteLoadingOverlay visible={routeLoadingVisible} />
 
     </div>
 

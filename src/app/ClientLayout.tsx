@@ -17,6 +17,7 @@ const PAGE_NAMES: Record<string, string> = {
   "/monitoreo": "Monitoreo",
   "/servidores": "Servidores",
   "/backups": "Backups",
+  "/informes": "Informes",
   "/comandos": "Comandos",
   "/billing": "Billing",
   "/auditoria": "Auditoría",
@@ -49,10 +50,8 @@ export default function ClientLayout({
     setSidebarOpen
   ] = useState(false);
 
-  // En desktop el sidebar arranca abierto; en móvil cerrado.
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
-    setSidebarOpen(media.matches);
+    setSidebarOpen(false);
   }, []);
 
   const [

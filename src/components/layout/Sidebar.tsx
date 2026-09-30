@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-import { LayoutDashboard, Boxes, BarChart3, Server, Archive, Terminal, DollarSign, ShieldCheck, X } from "lucide-react";
+import { LayoutDashboard, Boxes, BarChart3, Server, Archive, Terminal, DollarSign, ShieldCheck, X, FileBarChart } from "lucide-react";
 import BrandLogo from "@/components/layout/BrandLogo";
 import { hasPermission, type Permission } from "@/lib/auth/roles";
 
@@ -40,6 +40,11 @@ const menuSections = [
         label: "Backups",
         href: "/backups",
         icon: Archive,
+      },
+      {
+        label: "Informes",
+        href: "/informes",
+        icon: FileBarChart,
       },
     ],
   },
@@ -194,7 +199,7 @@ export default function Sidebar({
           MC Inventory
         </p>
         <span className="px-1.5 py-0.5 rounded text-[10px] text-[var(--text-secondary)] bg-[var(--bg-hover)]">
-          v10.2
+          v10.5
         </span>
       </div>
     </aside>

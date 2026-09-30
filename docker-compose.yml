@@ -34,6 +34,7 @@ services:
       - .env.master.key
     environment:
       NODE_ENV: production
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
       # NOTA: CREDENTIALS_MASTER_KEY NO se lista aquí a propósito: `environment`
       # tiene precedencia sobre `env_file` y la interpolación vacía la pisaría.
       # Llega al contenedor vía env_file (.env.master.key).
@@ -86,6 +87,10 @@ services:
       # NOTA: LOCAL_ADMIN_PASSWORD_HASH y LOCAL_ADMIN_PASSWORD NO se listan aquí
       # a propósito: el hash scrypt contiene `$` y la interpolación de compose
       # lo rompería. Llegan al contenedor literalmente vía env_file (.env).
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      SENDGRID_SENDER_EMAIL: ${SENDGRID_SENDER_EMAIL:-}
+      SENDGRID_RECIPIENTS: ${SENDGRID_RECIPIENTS:-}
+      INFORMES_SCHEDULE_HOUR: ${INFORMES_SCHEDULE_HOUR:-7}
     ports:
       - "${APP_PORT:-3000}:3000"
 

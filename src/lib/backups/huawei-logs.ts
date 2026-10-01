@@ -1,0 +1,135 @@
+import ObsClient from "esdk-obs-nodejs";
+import { getHuaweiAccounts } from "@/lib/huawei/accounts";
+import type { BackupAccountResult } from "./types";
+import type { NormalizedLogBackup } from "./aws-logs";
+
+export const HUAWEI_OBS_LOGS_HINT =
+  "La credencial Huawei (AK/SK) necesita permisos de listado sobre el bucket OBS ux-backup " +
+  "(recomendado: rol de sistema OBS OperateAccess + OBS BucketListAccess).";
+
+function getYesterdayBogotaDate(): string {
+  const now = new Date();
+  const bogotaOffset = -5 * 60;
+  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
+  const bogotaMs = utcMs + bogotaOffset * 60000;
+  const bogotaDate = new Date(bogotaMs);
+  bogotaDate.setDate(bogotaDate.getDate() - 1);
+  const y = bogotaDate.getFullYear();
+  const m = String(bogotaDate.getMonth() + 1).padStart(2, "0");
+  const d = String(bogotaDate.getDate()).padStart(2, "0");
+  return `${y}${m}${d}`;
+}
+
+export async function collectHuaweiLogBackups(): Promise<{
+  records: NormalizedLogBackup[];
+  accounts: BackupAccountResult[];
+}> {
+  const accounts = getHuaweiAccounts();
+  const records: NormalizedLogBackup[] = [];
+  const results: BackupAccountResult[] = [];
+  const backupDate = getYesterdayBogotaDate();
+  const BUCKET_NAME = "ux-backup";
+
+  for (const account of accounts) {
+    const base = {
+      provider: "HUAWEI CLOUD" as const,
+      accountId: account.projectId,
+      accountName: account.name,
+      region: account.region,
+    };
+
+    try {
+      const obsClient = new ObsClient({
+        access_key_id: account.ak,
+        secret_access_key: account.sk,
+        server: `https://obs.${account.region}.myhuaweicloud.com`,
+      });
+
+      const prefix = `${backupDate}/`;
+      let accountRecords = 0;
+
+      const listResult = await obsClient.listObjects({
+        Bucket: BUCKET_NAME,
+        Prefix: prefix,
+        Delimiter: "/",
+        MaxKeys: 1000,
+      });
+
+      const commonPrefixes = listResult?.InterfaceResult?.CommonPrefixes || [];
+      const serverFolders = new Map<string, number>();
+
+      for (const item of commonPrefixes) {
+        const folderPrefix = item.Prefix || "";
+        const parts = folderPrefix.replace(prefix, "").split("/");
+        const serverName = parts[0];
+        if (!serverName) continue;
+
+        const serverPrefix = `${prefix}${serverName}/`;
+        let serverSize = 0;
+        let isTruncated = true;
+        let marker: string | undefined;
+
+        while (isTruncated) {
+          const objResult = await obsClient.listObjects({
+            Bucket: BUCKET_NAME,
+            Prefix: serverPrefix,
+            MaxKeys: 1000,
+            Marker: marker || "",
+          });
+          const contents = objResult?.InterfaceResult?.Contents || [];
+          for (const obj of contents) {
+            serverSize += Number(obj.Size) || 0;
+          }
+          isTruncated = objResult?.InterfaceResult?.IsTruncated === "true";
+          marker = objResult?.InterfaceResult?.NextMarker;
+        }
+
+        serverFolders.set(serverName, serverSize);
+      }
+
+      if (serverFolders.size === 0) {
+        records.push({
+          ...base,
+          bucketName: BUCKET_NAME,
+          backupDate,
+          serverName: "(sin carpetas)",
+          folderExists: false,
+          sizeBytes: 0,
+          status: "NO_BACKUP",
+          raw: { prefix, note: "No se encontraron carpetas de servidor para esta fecha" },
+        });
+        accountRecords++;
+      } else {
+        for (const [serverName, sizeBytes] of serverFolders) {
+          const hasContent = sizeBytes > 0;
+          records.push({
+            ...base,
+            bucketName: BUCKET_NAME,
+            backupDate,
+            serverName,
+            folderExists: true,
+            sizeBytes,
+            status: hasContent ? "COMPLETED" : "EMPTY",
+            raw: { prefix: `${prefix}${serverName}/`, sizeBytes },
+          });
+          accountRecords++;
+        }
+      }
+
+      results.push({ ...base, ok: true, vaults: 0, records: accountRecords });
+    } catch (error: any) {
+      const msg = error?.message || "Error desconocido consultando OBS logs";
+      const access = /401|403|denied|forbidden|unauthorized|AccessDenied/i.test(msg);
+      results.push({
+        ...base,
+        ok: false,
+        vaults: 0,
+        records: 0,
+        error: msg,
+        permissionHint: access ? HUAWEI_OBS_LOGS_HINT : undefined,
+      });
+    }
+  }
+
+  return { records, accounts: results };
+}

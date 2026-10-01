@@ -23,8 +23,8 @@ export function getBogotaNow(): { hour: number; day: string } {
 }
 
 export function getRefreshHourBogota(): number {
-  const raw = Number(process.env.BACKUP_REFRESH_HOUR_BOGOTA || 6);
-  if (!Number.isInteger(raw) || raw < 0 || raw > 23) return 6;
+  const raw = Number(process.env.BACKUP_REFRESH_HOUR_BOGOTA || 10);
+  if (!Number.isInteger(raw) || raw < 0 || raw > 23) return 10;
   return raw;
 }
 
@@ -46,9 +46,9 @@ async function tick(): Promise<void> {
 export function startBackupScheduler(): void {
   if (globalThis.__mcInventoryBackupScheduler) return;
   globalThis.__mcInventoryBackupScheduler = true;
-  // Revisión cada 5 minutos; el tick decide si ya es hora (06:00 Bogotá) y si hoy ya se refrescó.
+  // Revisión cada 5 minutos; el tick decide si ya es hora (10:00 Bogotá) y si hoy ya se refrescó.
   setInterval(tick, 5 * 60 * 1000).unref?.();
   // Primera revisión poco después del arranque (recupera el día si el servidor estuvo caído a las 06:00).
   setTimeout(tick, 60 * 1000).unref?.();
-  console.log("[backups] scheduler started (daily, America/Bogota)");
+  console.log("[backups] scheduler started (daily 10:00, America/Bogota)");
 }

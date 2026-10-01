@@ -181,7 +181,7 @@ export default function LoginPage() {
             <div className="flex items-center gap-4 text-xs text-white/20">
               <span>UX Technology</span>
               <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span>v10.5</span>
+              <span>v10.7</span>
               <span className="w-1 h-1 rounded-full bg-white/20" />
               <span>Multi Cloud</span>
             </div>

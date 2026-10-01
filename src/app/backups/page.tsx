@@ -44,10 +44,13 @@ import {
   ArrowDown,
   ChevronUp,
   XCircle,
+  FileText,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { exportTableToXlsx } from "@/lib/exports/xlsx";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import RdsBackupsTab from "./RdsBackupsTab";
+import LogBackupsTab from "./LogBackupsTab";
 
 type BackupRecord = {
   id: string;
@@ -258,6 +261,7 @@ function SortableColumnItem({ col, isHidden, onToggle, showDivider }: { col: { k
 }
 
 export default function BackupsPage() {
+  const [activeTab, setActiveTab] = useState<"servers" | "rds" | "logs">("servers");
   const [records, setRecords] = useState<BackupRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -629,9 +633,9 @@ export default function BackupsPage() {
                   <h1 className="text-xl font-bold tracking-tight">Backups de servidores</h1>
                   {refreshing && <span className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400"><RefreshCw size={12} className="animate-spin" /> Recolectando</span>}
                 </div>
-                <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  Bitácora diaria · AWS Backup + Huawei CBR · refresco automático 06:00 hora Colombia
-                </p>
+                 <p className="text-sm text-[var(--text-secondary)] mt-1">
+                   Bitácora diaria · AWS Backup + Huawei CBR · refresco automático 10:00 hora Colombia
+                 </p>
                 {lastRefresh && (
                   <p className="text-xs text-[var(--text-secondary)] mt-1 flex items-center gap-1.5">
                     <Clock3 size={12} />
@@ -653,6 +657,33 @@ export default function BackupsPage() {
         </div>
       </div>
 
+      <div className="page-section" style={{ animationDelay: "0.02s" }}>
+        <div className="flex gap-1 p-1 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]/60 backdrop-blur-xl w-fit">
+          {([
+            { key: "servers" as const, label: "Servidores", icon: Archive },
+            { key: "rds" as const, label: "Base de datos", icon: Database },
+            { key: "logs" as const, label: "Logs transaccionales", icon: FileText },
+          ] as const).map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === tab.key ? "bg-[var(--primary)]/15 text-[var(--primary)] border border-[var(--primary)]/30" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]/50 border border-transparent"}`}
+              >
+                <Icon size={16} />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {activeTab === "rds" && <RdsBackupsTab />}
+      {activeTab === "logs" && <LogBackupsTab />}
+
+      {activeTab === "servers" && (
+      <>
       <div className="page-section" style={{ animationDelay: "0.05s" }}>
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
           {[
@@ -901,10 +932,13 @@ export default function BackupsPage() {
         <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.06] p-4 flex items-start gap-3 text-sm">
           <AlertTriangle size={18} className="text-cyan-300 mt-0.5" />
           <p className="text-[var(--text-secondary)] text-xs leading-relaxed">
-            Aún no hay refrescos registrados. El programador corre a diario a las <strong className="text-white">06:00 hora Colombia</strong> (después de la ventana de backups 22:00–04:00).
+            Aún no hay refrescos registrados. El programador corre a diario a las <strong className="text-white">10:00 hora Colombia</strong>.
             Puedes adelantar la primera carga con <strong className="text-white">"Refrescar ahora"</strong>. Si alguna cuenta falla por permisos, verás aquí el detalle y el permiso requerido.
           </p>
         </div>
+      )}
+
+      </>
       )}
 
       <ScrollToTop />

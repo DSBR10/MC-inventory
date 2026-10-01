@@ -199,7 +199,7 @@ export default function Sidebar({
           MC Inventory
         </p>
         <span className="px-1.5 py-0.5 rounded text-[10px] text-[var(--text-secondary)] bg-[var(--bg-hover)]">
-          v10.5
+          v10.7
         </span>
       </div>
     </aside>

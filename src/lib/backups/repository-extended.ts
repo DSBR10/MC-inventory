@@ -52,20 +52,21 @@ export async function upsertRdsBackups(records: any[]): Promise<number> {
     const chunk = records.slice(start, start + CHUNK);
     const values: unknown[] = [];
     const rows = chunk.map((r, i) => {
-      const o = i * 14;
+      const o = i * 15;
       values.push(
         r.provider, r.accountId, r.accountName, r.region,
         r.dbInstanceId, r.dbInstanceName, r.engine,
         r.snapshotId, r.snapshotName, r.snapshotType, r.status,
         r.sizeBytes, r.snapshotCreatedAt, r.snapshotCompletedAt,
+        JSON.stringify(r.raw || {}),
       );
-      const ph = Array.from({ length: 14 }, (_, k) => `$${o + k + 1}`).join(", ");
+      const ph = Array.from({ length: 15 }, (_, k) => `$${o + k + 1}`).join(", ");
       return `(${ph})`;
     });
     const res = await queryAudit(
       `INSERT INTO rds_backups
         (provider, account_id, account_name, region, db_instance_id, db_instance_name, engine,
-         snapshot_id, snapshot_name, snapshot_type, status, size_bytes, snapshot_created_at, snapshot_completed_at)
+         snapshot_id, snapshot_name, snapshot_type, status, size_bytes, snapshot_created_at, snapshot_completed_at, raw)
        VALUES ${rows.join(", ")}
        ON CONFLICT (provider, account_id, snapshot_id) DO UPDATE SET
          account_name = EXCLUDED.account_name,
@@ -79,6 +80,7 @@ export async function upsertRdsBackups(records: any[]): Promise<number> {
          size_bytes = EXCLUDED.size_bytes,
          snapshot_created_at = EXCLUDED.snapshot_created_at,
          snapshot_completed_at = EXCLUDED.snapshot_completed_at,
+         raw = EXCLUDED.raw,
          collected_at = now()`,
       values,
     );
@@ -204,18 +206,19 @@ export async function upsertLogBackups(records: any[]): Promise<number> {
     const chunk = records.slice(start, start + CHUNK);
     const values: unknown[] = [];
     const rows = chunk.map((r: any, i: number) => {
-      const o = i * 10;
+      const o = i * 11;
       values.push(
         r.provider, r.accountId, r.accountName, r.region,
         r.bucketName, r.backupDate, r.serverName,
         r.folderExists, r.sizeBytes, r.status,
+        JSON.stringify(r.raw || {}),
       );
-      const ph = Array.from({ length: 10 }, (_, k) => `$${o + k + 1}`).join(", ");
+      const ph = Array.from({ length: 11 }, (_, k) => `$${o + k + 1}`).join(", ");
       return `(${ph})`;
     });
     const res = await queryAudit(
       `INSERT INTO log_backups
-        (provider, account_id, account_name, region, bucket_name, backup_date, server_name, folder_exists, size_bytes, status)
+        (provider, account_id, account_name, region, bucket_name, backup_date, server_name, folder_exists, size_bytes, status, raw)
        VALUES ${rows.join(", ")}
        ON CONFLICT (provider, account_id, bucket_name, backup_date, server_name) DO UPDATE SET
          account_name = EXCLUDED.account_name,
@@ -223,6 +226,7 @@ export async function upsertLogBackups(records: any[]): Promise<number> {
          folder_exists = EXCLUDED.folder_exists,
          size_bytes = EXCLUDED.size_bytes,
          status = EXCLUDED.status,
+         raw = EXCLUDED.raw,
          collected_at = now()`,
       values,
     );

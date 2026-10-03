@@ -14,17 +14,23 @@ function getInformeScheduleHour(): number {
 }
 
 async function getLastInformeDateBogota(): Promise<string | null> {
-  const res = await queryAudit(
-    `SELECT sent_at FROM informe_send_log ORDER BY sent_at DESC LIMIT 1`,
-  );
-  if (!res.rows[0]) return null;
-  const d = new Date(res.rows[0].sent_at);
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Bogota",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d);
+  try {
+    const res = await queryAudit(
+      `SELECT sent_at FROM informe_send_log ORDER BY sent_at DESC LIMIT 1`,
+    );
+    if (!res.rows[0]) return null;
+    const d = new Date(res.rows[0].sent_at);
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Bogota",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(d);
+  } catch (err: any) {
+    // Database unavailable — skip this tick, don't crash the scheduler
+    console.error("[informes] could not query last send date:", err?.message || err);
+    return null;
+  }
 }
 
 async function logInformeSend(status: string, details: unknown): Promise<void> {
@@ -33,23 +39,10 @@ async function logInformeSend(status: string, details: unknown): Promise<void> {
       `INSERT INTO informe_send_log (status, details) VALUES ($1, $2)`,
       [status, JSON.stringify(details || {})],
     );
-  } catch {
-    try {
-      await queryAudit(
-        `CREATE TABLE IF NOT EXISTS informe_send_log (
-          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-          sent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-          status TEXT NOT NULL,
-          details JSONB NOT NULL DEFAULT '{}'
-        )`,
-      );
-      await queryAudit(
-        `INSERT INTO informe_send_log (status, details) VALUES ($1, $2)`,
-        [status, JSON.stringify(details || {})],
-      );
-    } catch (e) {
-      console.error("[informes] could not log send:", e);
-    }
+  } catch (err: any) {
+    // Table is created by migration 009; if INSERT fails the DB is likely
+    // unavailable. Log the error but don't crash the scheduler.
+    console.error("[informes] could not log send:", err?.message || err);
   }
 }
 

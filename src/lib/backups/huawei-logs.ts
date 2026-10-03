@@ -2,23 +2,11 @@ import ObsClient from "esdk-obs-nodejs";
 import { getHuaweiAccounts } from "@/lib/huawei/accounts";
 import type { BackupAccountResult } from "./types";
 import type { NormalizedLogBackup } from "./aws-logs";
+import { getYesterdayBogotaDate } from "./date-utils";
 
 export const HUAWEI_OBS_LOGS_HINT =
   "La credencial Huawei (AK/SK) necesita permisos de listado sobre el bucket OBS ux-backup " +
   "(recomendado: rol de sistema OBS OperateAccess + OBS BucketListAccess).";
-
-function getYesterdayBogotaDate(): string {
-  const now = new Date();
-  const bogotaOffset = -5 * 60;
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const bogotaMs = utcMs + bogotaOffset * 60000;
-  const bogotaDate = new Date(bogotaMs);
-  bogotaDate.setDate(bogotaDate.getDate() - 1);
-  const y = bogotaDate.getFullYear();
-  const m = String(bogotaDate.getMonth() + 1).padStart(2, "0");
-  const d = String(bogotaDate.getDate()).padStart(2, "0");
-  return `${y}${m}${d}`;
-}
 
 export async function collectHuaweiLogBackups(): Promise<{
   records: NormalizedLogBackup[];
@@ -30,6 +18,9 @@ export async function collectHuaweiLogBackups(): Promise<{
   const backupDate = getYesterdayBogotaDate();
   const BUCKET_NAME = "ux-backup";
 
+  // Solo la cuenta acc_ux tiene backups de logs en OBS
+  const LOG_ACCOUNT_NAME = "acc_ux";
+
   for (const account of accounts) {
     const base = {
       provider: "HUAWEI CLOUD" as const,
@@ -37,6 +28,11 @@ export async function collectHuaweiLogBackups(): Promise<{
       accountName: account.name,
       region: account.region,
     };
+
+    // Excluir todas las cuentas excepto acc_ux
+    if (account.name !== LOG_ACCOUNT_NAME) {
+      continue;
+    }
 
     try {
       const obsClient = new ObsClient({
@@ -48,43 +44,52 @@ export async function collectHuaweiLogBackups(): Promise<{
       const prefix = `${backupDate}/`;
       let accountRecords = 0;
 
-      const listResult = await obsClient.listObjects({
-        Bucket: BUCKET_NAME,
-        Prefix: prefix,
-        Delimiter: "/",
-        MaxKeys: 1000,
-      });
-
-      const commonPrefixes = listResult?.InterfaceResult?.CommonPrefixes || [];
       const serverFolders = new Map<string, number>();
+      let isTopTruncated = true;
+      let topMarker: string | undefined;
 
-      for (const item of commonPrefixes) {
-        const folderPrefix = item.Prefix || "";
-        const parts = folderPrefix.replace(prefix, "").split("/");
-        const serverName = parts[0];
-        if (!serverName) continue;
+      while (isTopTruncated) {
+        const listResult = await obsClient.listObjects({
+          Bucket: BUCKET_NAME,
+          Prefix: prefix,
+          Delimiter: "/",
+          MaxKeys: 1000,
+          Marker: topMarker || "",
+        });
 
-        const serverPrefix = `${prefix}${serverName}/`;
-        let serverSize = 0;
-        let isTruncated = true;
-        let marker: string | undefined;
+        const commonPrefixes = listResult?.InterfaceResult?.CommonPrefixes || [];
 
-        while (isTruncated) {
-          const objResult = await obsClient.listObjects({
-            Bucket: BUCKET_NAME,
-            Prefix: serverPrefix,
-            MaxKeys: 1000,
-            Marker: marker || "",
-          });
-          const contents = objResult?.InterfaceResult?.Contents || [];
-          for (const obj of contents) {
-            serverSize += Number(obj.Size) || 0;
+        for (const item of commonPrefixes) {
+          const folderPrefix = item.Prefix || "";
+          const parts = folderPrefix.replace(prefix, "").split("/");
+          const serverName = parts[0];
+          if (!serverName) continue;
+
+          const serverPrefix = `${prefix}${serverName}/`;
+          let serverSize = 0;
+          let isTruncated = true;
+          let marker: string | undefined;
+
+          while (isTruncated) {
+            const objResult = await obsClient.listObjects({
+              Bucket: BUCKET_NAME,
+              Prefix: serverPrefix,
+              MaxKeys: 1000,
+              Marker: marker || "",
+            });
+            const contents = objResult?.InterfaceResult?.Contents || [];
+            for (const obj of contents) {
+              serverSize += Number(obj.Size) || 0;
+            }
+            isTruncated = objResult?.InterfaceResult?.IsTruncated === "true";
+            marker = objResult?.InterfaceResult?.NextMarker;
           }
-          isTruncated = objResult?.InterfaceResult?.IsTruncated === "true";
-          marker = objResult?.InterfaceResult?.NextMarker;
+
+          serverFolders.set(serverName, serverSize);
         }
 
-        serverFolders.set(serverName, serverSize);
+        isTopTruncated = listResult?.InterfaceResult?.IsTruncated === "true";
+        topMarker = listResult?.InterfaceResult?.NextMarker;
       }
 
       if (serverFolders.size === 0) {

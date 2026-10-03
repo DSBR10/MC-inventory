@@ -1,18 +1,19 @@
 /**
  * Normaliza el estado de un recurso.
- * Convierte "UNKNOWN" a "running" para evitar mostrar estados desconocidos.
+ * Preserva "UNKNOWN" para no dar falsa confianza de que el recurso está saludable.
  *
  * @param status - Estado original del recurso
  * @returns Estado normalizado
  */
 export function normalizeStatus(status: string | undefined): string {
-  if (!status) return "running";
+  if (!status) return "unknown";
 
   const normalized = status.toUpperCase();
 
-  // UNKNOWN siempre se convierte a running
+  // Preservar UNKNOWN en vez de convertirlo a "running" — un recurso
+  // con estado desconocido no debe aparecer como si estuviera activo.
   if (normalized === "UNKNOWN") {
-    return "running";
+    return "unknown";
   }
 
   return status;

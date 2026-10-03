@@ -63,7 +63,14 @@ async function getAccountDDSInventory(
 
     if (!data || response?.status >= 400) {
 
-      console.log(`[HUAWEI DDS] No data for account ${account.name}`);
+      // 400 from DDS typically means the service is not enabled or not
+      // available in this account/region (e.g. DBS.280001). Log as info,
+      // not error, to avoid noise in accounts without DDS.
+      if (response?.status === 400) {
+        console.log(`[HUAWEI DDS] Service not available for account ${account.name} (status 400)`);
+      } else {
+        console.log(`[HUAWEI DDS] No data for account ${account.name} (status ${response?.status})`);
+      }
       return [];
 
     }

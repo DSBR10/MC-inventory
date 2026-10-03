@@ -9,8 +9,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 const ENABLE_TAGS = process.env.ENABLE_RDS_TAGS === "true";
 
 export async function getAWSDocumentDBInventory(account: AWSAccount) {
@@ -21,7 +19,7 @@ export async function getAWSDocumentDBInventory(account: AWSAccount) {
     };
 
     const client = new RDSClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -73,7 +71,7 @@ export async function getAWSDocumentDBInventory(account: AWSAccount) {
           platform: cluster.EngineVersion || "N/A",
           architecture: cluster.StorageEncrypted ? "Encrypted" : "Unencrypted",
           instanceType: cluster.DBSubnetGroup || "N/A",
-          availabilityZone: cluster.AvailabilityZones?.join(", ") || region,
+          availabilityZone: cluster.AvailabilityZones?.join(", ") || account.region,
           tags,
           raw: {
             arn: cluster.DBClusterArn,

@@ -468,16 +468,23 @@ export default function ServidoresPage() {
     finally { setLoading(false); setRefreshing(false); }
   }, []);
 
-  // Polling pausado con pestaña oculta y durante ediciones/bulk (no pisa el trabajo en curso).
+  // Carga inicial (solo una vez)
   useEffect(() => {
     loadData(true);
+  }, [loadData]);
+
+  // Polling pausado con pestaña oculta y durante ediciones/bulk (no pisa el trabajo en curso).
+  // Las condiciones se evalúan en runtime dentro del interval, NO como deps del effect
+  // para evitar que loadData(true) se re-dispare al abrir/cerrar modals o seleccionar rows.
+  useEffect(() => {
     const interval = setInterval(() => {
       if (document.hidden) return;
       if (manageModalOpen || confirmModalOpen || selectedIds.size > 0) return;
       loadData(false);
     }, 30000);
     return () => clearInterval(interval);
-  }, [loadData, manageModalOpen, confirmModalOpen, selectedIds.size]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadData]);
 
   const handleSaveValue = useCallback(async (columnId: string, serverId: string, value: string) => {
     try {
@@ -708,28 +715,27 @@ export default function ServidoresPage() {
 
         <div className="page-section" style={{ animationDelay: "0.05s" }}>
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] overflow-hidden">
-            <div className="p-4 flex items-center gap-3 flex-wrap">
-              <div className="relative flex-1 min-w-[200px] group">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/20 pointer-events-none transition-colors group-focus-within:text-cyan-400/60" />
-                <input type="text" placeholder="Buscar servidores..." value={search} onChange={(e) => handleSearchChange(e.target.value)} aria-label="Buscar servidores" className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] outline-none transition-all duration-200 bg-[var(--bg-hover)]/40 border border-[var(--border)] focus:border-cyan-500/40" />
-                {search && <button type="button" onClick={() => handleSearchChange("")} aria-label="Limpiar búsqueda" className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/70 transition-colors"><X className="w-4 h-4" /></button>}
+            <div className="p-3 flex flex-col lg:flex-row gap-3">
+              <div className="relative w-full lg:max-w-xs group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-primary)]/20 pointer-events-none transition-colors group-focus-within:text-cyan-400/60" />
+                <input type="text" placeholder="Buscar servidores..." value={search} onChange={(e) => handleSearchChange(e.target.value)} aria-label="Buscar servidores" className="w-full pl-9 pr-9 py-2 rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/40 outline-none transition-all duration-200 bg-white/[0.04] border border-white/10 focus:border-cyan-500/40" />
+                {search && <button type="button" onClick={() => handleSearchChange("")} aria-label="Limpiar búsqueda" className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-[var(--text-primary)]/30 hover:text-[var(--text-primary)]/70 transition-colors"><X className="w-3.5 h-3.5" /></button>}
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <Filter className="w-4 h-4 text-[var(--text-primary)]/30" aria-hidden />
-                <select value={filterProvider} aria-label="Filtrar por proveedor" onChange={(e) => { setFilterProvider(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-2 outline-none cursor-pointer min-w-[130px]">
+                <select value={filterProvider} aria-label="Filtrar por proveedor" onChange={(e) => { setFilterProvider(e.target.value); setCurrentPage(1); }} className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/60 text-xs text-[var(--text-primary)]/70 px-2.5 outline-none cursor-pointer min-w-[110px]">
                   <option value="all">Proveedor</option>
                   {uniqueProviders.map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
-                <select value={filterStatus} aria-label="Filtrar por estado" onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-2 outline-none cursor-pointer min-w-[130px]">
+                <select value={filterStatus} aria-label="Filtrar por estado" onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }} className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/60 text-xs text-[var(--text-primary)]/70 px-2.5 outline-none cursor-pointer min-w-[110px]">
                   <option value="all">Estado</option>
                   {uniqueStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <select value={filterAccount} aria-label="Filtrar por cuenta" onChange={(e) => { setFilterAccount(e.target.value); setCurrentPage(1); }} className="rounded-lg border border-[var(--border)] bg-[var(--bg-hover)] text-xs text-[var(--text-primary)]/70 px-2 py-2 outline-none cursor-pointer min-w-[140px]">
+                <select value={filterAccount} aria-label="Filtrar por cuenta" onChange={(e) => { setFilterAccount(e.target.value); setCurrentPage(1); }} className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/60 text-xs text-[var(--text-primary)]/70 px-2.5 outline-none cursor-pointer min-w-[130px]">
                   <option value="all">Cuenta</option>
                   {uniqueAccounts.map((a) => <option key={a} value={a}>{a}</option>)}
                 </select>
-                {activeFilterCount > 0 && <button type="button" onClick={() => { setFilterProvider("all"); setFilterStatus("all"); setFilterAccount("all"); setCurrentPage(1); }} aria-label="Limpiar filtros" className="px-2 py-2 rounded-lg text-xs text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-[var(--bg-hover)] transition-all"><X className="w-3.5 h-3.5" /></button>}
+                {activeFilterCount > 0 && <button type="button" onClick={() => { setFilterProvider("all"); setFilterStatus("all"); setFilterAccount("all"); setCurrentPage(1); }} aria-label="Limpiar filtros" className="h-9 px-2.5 rounded-lg border border-[var(--border)] text-[11px] flex items-center gap-1 text-[var(--text-primary)]/40 hover:text-[var(--text-primary)]/70 hover:bg-[var(--bg-hover)] transition-all"><X size={12} /> Limpiar</button>}
               </div>
 
               <div className="relative">

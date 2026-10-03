@@ -11,8 +11,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSAPIGatewayInventory(account: AWSAccount) {
   try {
     const credentials = {
@@ -21,7 +19,7 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
     };
 
     const client = new APIGatewayClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -63,7 +61,7 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
           platform: api.endpointConfiguration?.types?.join(", ") || "N/A",
           architecture: api.version || "N/A",
           instanceType: api.binaryMediaTypes?.length?.toString() || "N/A",
-          availabilityZone: region,
+          availabilityZone: account.region,
           tags: formatAwsTags(api.tags),
           raw: {
             arn: api.id,
@@ -115,7 +113,7 @@ export async function getAWSAPIGatewayInventory(account: AWSAccount) {
           platform: "API Key",
           architecture: "N/A",
           instanceType: keyDetails.usagePlanKeys?.length?.toString() || "N/A",
-          availabilityZone: region,
+          availabilityZone: account.region,
           tags: {},
           raw: {
             description: key.description,

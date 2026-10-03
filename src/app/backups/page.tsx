@@ -630,7 +630,7 @@ export default function BackupsPage() {
               </div>
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h1 className="text-xl font-bold tracking-tight">Backups de servidores</h1>
+                  <h1 className="text-xl font-bold tracking-tight">Copias de seguridad de infraestructura cloud</h1>
                   {refreshing && <span className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400"><RefreshCw size={12} className="animate-spin" /> Recolectando</span>}
                 </div>
                  <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -725,32 +725,31 @@ export default function BackupsPage() {
 
       <div className="page-section" style={{ animationDelay: "0.1s" }}>
         <div className="rounded-2xl border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-xl overflow-hidden">
-          <div className="p-4 flex flex-col xl:flex-row gap-3">
-            <div className="relative flex-1 group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]/40 group-focus-within:text-cyan-400" />
+          <div className="p-3 flex flex-col xl:flex-row gap-3">
+            <div className="relative w-full xl:max-w-xs group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]/40 group-focus-within:text-cyan-400" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") applyFilters(); }}
-                placeholder="Buscar backup, servidor, vault, ID de recurso..."
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl text-sm bg-white/[0.04] border border-white/10 outline-none focus:border-cyan-500/40 placeholder:text-[var(--text-secondary)]/40 transition-all"
+                placeholder="Buscar backup, servidor, vault..."
+                className="w-full pl-9 pr-9 py-2 rounded-lg text-sm bg-white/[0.04] border border-white/10 outline-none focus:border-cyan-500/40 placeholder:text-[var(--text-secondary)]/40 transition-all"
               />
-              {search && <button type="button" onClick={() => setSearch("")} aria-label="Limpiar búsqueda" className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5"><X size={16} className="text-[var(--text-secondary)]" /></button>}
+              {search && <button type="button" onClick={() => setSearch("")} aria-label="Limpiar búsqueda" className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5"><X size={14} className="text-[var(--text-secondary)]" /></button>}
             </div>
             <div className="flex gap-2 flex-wrap items-center">
-              <select value={provider} onChange={(e) => handleProviderChange(e.target.value)} aria-label="Filtrar por nube" className="control h-10 min-w-[130px]">
-                <option value="">Toda nube</option>
+              <select value={provider} onChange={(e) => handleProviderChange(e.target.value)} aria-label="Nube" className="h-9 rounded-lg border border-[var(--border)] bg-[var(--bg-hover)]/60 text-xs text-[var(--text-primary)]/70 px-2.5 outline-none cursor-pointer min-w-[100px]">
+                <option value="">Proveedor</option>
                 <option value="AWS">AWS</option>
-                <option value="HUAWEI CLOUD">Huawei Cloud</option>
+                <option value="HUAWEI CLOUD">Huawei</option>
               </select>
-              <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className={`px-4 h-10 rounded-xl border text-sm flex items-center gap-2 transition-all ${showFilters ? "bg-cyan-500/15 border-cyan-500/30 text-cyan-400" : "bg-[var(--bg-card)]/60 border-[var(--border)]"}`}>
-                <Filter size={16} /> Filtros
-                {activeFilterCount > 0 && <span className="ml-1 px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-bold">{activeFilterCount}</span>}
+              <button onClick={() => setShowFilters(!showFilters)} aria-expanded={showFilters} className={`px-3 h-9 rounded-lg border text-xs flex items-center gap-1.5 transition-all ${showFilters ? "bg-cyan-500/15 border-cyan-500/30 text-cyan-400" : "bg-[var(--bg-card)]/60 border-[var(--border)] text-[var(--text-primary)]/60"}`}>
+                <Filter size={14} /> Filtros
+                {activeFilterCount > 0 && <span className="ml-0.5 px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-bold">{activeFilterCount}</span>}
               </button>
-              <button onClick={applyFilters} className="px-5 h-10 rounded-xl bg-cyan-600 text-white text-sm font-medium hover:bg-cyan-500 transition-all">Buscar</button>
               {activeFilterCount > 0 && (
-                <button onClick={clearFilters} className="px-3 h-10 rounded-xl border border-[var(--border)] text-xs flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all">
-                  <X size={14} /> Limpiar
+                <button onClick={clearFilters} className="h-9 px-2.5 rounded-lg border border-[var(--border)] text-[11px] flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all">
+                  <X size={12} /> Limpiar
                 </button>
               )}
             </div>

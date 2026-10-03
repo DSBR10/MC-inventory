@@ -154,8 +154,20 @@ ${hashedCanonicalRequest}`;
       response.status >= 400
     ) {
 
+      // Silenciar errores esperados de servicios que pueden no estar
+      // disponibles en todas las cuentas/regiones:
+      // - 404: recurso no encontrado (siempre silenciado)
+      // - 400 de DDS/TMS/RDS: servicio no habilitado en la cuenta
+      const isSilenciable =
+        response.status === 404 ||
+        (response.status === 400 && (
+          host?.includes('dds.') ||
+          host?.includes('tms.') ||
+          host?.includes('rds.')
+        ));
+
       if (
-        response.status !== 404
+        !isSilenciable
       ) {
 
         console.error(

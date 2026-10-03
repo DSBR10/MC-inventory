@@ -14,8 +14,6 @@ import type {
   AWSLogStream,
 } from "@/types/monitoring";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 // Helper to detect log level from message
 function detectLogLevel(message: string): LogEntry["severity"] {
   const upperMessage = message.toUpperCase();
@@ -48,7 +46,7 @@ export async function getCloudWatchLogGroups(
     };
 
     const client = new CloudWatchLogsClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -84,7 +82,7 @@ export async function getCloudWatchLogStreams(
     };
 
     const client = new CloudWatchLogsClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -123,7 +121,7 @@ export async function getCloudWatchLogs(
     };
 
     const client = new CloudWatchLogsClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -171,7 +169,7 @@ export async function getCloudWatchLogs(
             severity,
             provider: "aws",
             account: account.name,
-            region: region,
+            region: account.region,
             logGroup: logGroup.logGroupName,
             logStream: event.logStreamName,
             metadata: {

@@ -9,8 +9,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSLambdaInventory(account: AWSAccount) {
   try {
     const credentials = {
@@ -19,7 +17,7 @@ export async function getAWSLambdaInventory(account: AWSAccount) {
     };
 
     const client = new LambdaClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -70,7 +68,7 @@ export async function getAWSLambdaInventory(account: AWSAccount) {
           platform: func.Architectures?.[0] || "x86_64",
           architecture: func.MemorySize?.toString() + " MB",
           instanceType: func.MemorySize?.toString() + " MB",
-          availabilityZone: region,
+          availabilityZone: account.region,
           tags,
           raw: {
             functionArn: func.FunctionArn,

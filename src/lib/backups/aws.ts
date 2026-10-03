@@ -48,8 +48,14 @@ export async function collectAWSBackups(): Promise<{ records: NormalizedBackup[]
         credentials: { accessKeyId: account.accessKeyId, secretAccessKey: account.secretAccessKey },
       });
 
-      const vaultsRes = await client.send(new ListBackupVaultsCommand({}));
-      const vaults = vaultsRes.BackupVaultList || [];
+      let vaultNextToken: string | undefined;
+      const vaults: any[] = [];
+      do {
+        const vaultsPage = await client.send(new ListBackupVaultsCommand({ MaxResults: 100, NextToken: vaultNextToken }));
+        vaults.push(...(vaultsPage.BackupVaultList || []));
+        vaultNextToken = vaultsPage.NextToken;
+      } while (vaultNextToken);
+
       let accountRecords = 0;
 
       for (const vault of vaults) {

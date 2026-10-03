@@ -48,6 +48,9 @@ export async function collectHuaweiRdsBackups(): Promise<{
   const records: NormalizedHuaweiRdsBackup[] = [];
   const results: BackupAccountResult[] = [];
 
+  // Cuentas excluidas (no tienen bases de datos RDS)
+  const EXCLUDED_ACCOUNTS = new Set(["master-lz-ux"]);
+
   for (const account of accounts) {
     const base = {
       provider: "HUAWEI CLOUD" as const,
@@ -55,54 +58,95 @@ export async function collectHuaweiRdsBackups(): Promise<{
       accountName: account.name,
       region: account.region,
     };
+
+    if (EXCLUDED_ACCOUNTS.has(account.name)) {
+      results.push({ ...base, ok: true, vaults: 0, records: 0 });
+      continue;
+    }
+
     const host = `rds.${account.region}.myhuaweicloud.com`;
     try {
       let accountRecords = 0;
-      const limit = 100;
-      let offset = 0;
-      let total = Number.MAX_SAFE_INTEGER;
 
-      while (offset < total) {
-        const res = await huaweiRequest({
+      // ── Paso 1: Listar todas las instancias RDS de la cuenta ──
+      const instances: { id: string; name: string }[] = [];
+      let instOffset = 0;
+      let instTotal = Number.MAX_SAFE_INTEGER;
+      while (instOffset < instTotal) {
+        const instRes = await huaweiRequest({
           method: "GET",
           host,
-          uri: `/v3/${account.projectId}/backups`,
+          uri: `/v3/${account.projectId}/instances`,
           ak: account.ak,
           sk: account.sk,
           projectId: account.projectId,
-          query: { limit, offset },
+          query: { limit: 100, offset: instOffset },
         });
-        if (res.status >= 400 || !res.data) {
-          throw new Error(
-            `RDS backups respondió ${res.status}: ${JSON.stringify(res.data?.error_msg || res.data || {}).slice(0, 300)}`,
-          );
+        if (instRes.status >= 400 || !instRes.data) {
+          // Si no podemos listar instancias, no hay backups que buscar
+          break;
         }
-        const backups: any[] = res.data.backups || [];
-        total = typeof res.data.total === "number" ? res.data.total : backups.length;
+        const instList: any[] = instRes.data.instances || [];
+        instTotal = typeof instRes.data.total_count === "number"
+          ? instRes.data.total_count
+          : (instOffset + instList.length);
+        for (const inst of instList) {
+          instances.push({ id: inst.id, name: inst.name || inst.id });
+        }
+        if (instList.length === 0) break;
+        instOffset += instList.length;
+      }
 
-        for (const b of backups) {
-          records.push({
-            ...base,
-            dbInstanceId: b.instance_id || "",
-            dbInstanceName: b.instance_name || b.instance_id || "",
-            engine: b.datastore?.type || "",
-            snapshotId: b.id || "",
-            snapshotName: b.name || b.id || "",
-            snapshotType: b.type || "manual",
-            status: normalizeStatus(b.status),
-            sizeBytes: b.size !== undefined && b.size !== null ? Number(b.size) * 1024 * 1024 : null,
-            snapshotCreatedAt: parseDate(b.begin_time || b.created_at),
-            snapshotCompletedAt: parseDate(b.end_time || b.updated_at),
-            raw: {
-              datastore_version: b.datastore?.version || null,
-              databases: b.databases || null,
-              backup_strategy: b.backup_strategy || null,
-            },
+      // ── Paso 2: Para cada instancia, listar sus backups ──
+      // La API de Huawei RDS requiere instance_id para retornar backups.
+      // Sin instance_id, GET /v3/{projectId}/backups retorna total_count=0.
+      const limit = 100;
+      for (const inst of instances) {
+        let offset = 0;
+        let total = Number.MAX_SAFE_INTEGER;
+        while (offset < total) {
+          const res = await huaweiRequest({
+            method: "GET",
+            host,
+            uri: `/v3/${account.projectId}/backups`,
+            ak: account.ak,
+            sk: account.sk,
+            projectId: account.projectId,
+            query: { instance_id: inst.id, limit, offset },
           });
-          accountRecords++;
+          if (res.status >= 400 || !res.data) {
+            // Error en esta instancia, continuar con la siguiente
+            break;
+          }
+          const backups: any[] = res.data.backups || [];
+          total = typeof res.data.total_count === "number"
+            ? res.data.total_count
+            : (offset + backups.length);
+
+          for (const b of backups) {
+            records.push({
+              ...base,
+              dbInstanceId: b.instance_id || inst.id,
+              dbInstanceName: b.instance_name || inst.name || inst.id,
+              engine: b.datastore?.type || "",
+              snapshotId: b.id || "",
+              snapshotName: b.name || b.id || "",
+              snapshotType: b.type || "manual",
+              status: normalizeStatus(b.status),
+              sizeBytes: b.size !== undefined && b.size !== null ? Number(b.size) * 1024 : null,
+              snapshotCreatedAt: parseDate(b.begin_time || b.created_at),
+              snapshotCompletedAt: parseDate(b.end_time || b.updated_at),
+              raw: {
+                datastore_version: b.datastore?.version || null,
+                databases: b.databases || null,
+                backup_strategy: b.backup_strategy || null,
+              },
+            });
+            accountRecords++;
+          }
+          if (backups.length === 0) break;
+          offset += backups.length;
         }
-        if (backups.length === 0) break;
-        offset += backups.length;
       }
 
       results.push({ ...base, ok: true, vaults: 0, records: accountRecords });

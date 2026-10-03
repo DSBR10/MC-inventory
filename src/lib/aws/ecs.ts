@@ -14,8 +14,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSECSInventory(account: AWSAccount) {
   try {
     const credentials = {
@@ -24,7 +22,7 @@ export async function getAWSECSInventory(account: AWSAccount) {
     };
 
     const client = new ECSClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -57,7 +55,7 @@ export async function getAWSECSInventory(account: AWSAccount) {
         id: cluster.clusterArn || "N/A",
         host: "ECS Cluster",
         status: cluster.status || "UNKNOWN",
-        availabilityZone: region,
+        availabilityZone: account.region,
         tags: formatAwsTags(cluster.tags || []),
         raw: {
           registeredContainerInstancesCount: cluster.registeredContainerInstancesCount,
@@ -121,7 +119,7 @@ export async function getAWSECSInventory(account: AWSAccount) {
               status: task.lastStatus || "UNKNOWN",
            operatingSystem: task.platformVersion || "N/A",
               platform: task.launchType || "Fargate",
-              availabilityZone: task.availabilityZone || region,
+              availabilityZone: task.availabilityZone || account.region,
               tags: formatAwsTags(task.tags || []),
               raw: {
                 taskDefinition: task.taskDefinitionArn,
@@ -150,7 +148,7 @@ export async function getAWSECSInventory(account: AWSAccount) {
           platform: service.launchType || "Fargate",
           architecture: service.taskDefinition || "N/A",
           instanceType: service.launchType || "N/A",
-          availabilityZone: region,
+          availabilityZone: account.region,
           tags: formatAwsTags(service.tags || []),
           raw: {
             clusterName: cluster.clusterName,

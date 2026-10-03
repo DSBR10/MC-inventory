@@ -11,8 +11,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 // Helper function to add delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -45,7 +43,7 @@ export async function getAWSDynamoDBInventory(account: AWSAccount) {
     };
 
     const client = new DynamoDBClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -140,7 +138,7 @@ export async function getAWSDynamoDBInventory(account: AWSAccount) {
           instanceType:
             table.KeySchema?.find((k) => k.KeyType === "HASH")?.AttributeName ||
             "N/A",
-          availabilityZone: region,
+          availabilityZone: account.region,
           tags,
           raw: {
             arn: table.TableArn,

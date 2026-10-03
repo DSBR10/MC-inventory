@@ -39,26 +39,15 @@ function getUserRole(email?: string | null, groups: string[] = []): Role {
   const emailLower = email?.toLowerCase() || "";
   const adminEmails = parseCsv(process.env.ADMIN_EMAILS);
 
+  // 1. Explicit admin email list (authoritative)
   if (adminEmails.includes(emailLower)) return "admin";
-  if (groups.length > 0) return mapGroupsToRole(groups, buildEnvGroupRoleMap());
-  if (emailLower.includes("admin") || emailLower.includes("administrator")) {
-    return "admin";
-  }
-  if (
-    emailLower.includes("infra") ||
-    emailLower.includes("devops") ||
-    emailLower.includes("sysops")
-  ) {
-    return "plataformas";
-  }
-  if (
-    emailLower.includes("ops") ||
-    emailLower.includes("operacion") ||
-    emailLower.includes("operaciones")
-  ) {
-    return "operaciones";
-  }
 
+  // 2. Azure AD group mapping (authoritative)
+  if (groups.length > 0) return mapGroupsToRole(groups, buildEnvGroupRoleMap());
+
+  // 3. No groups and not in admin list → least-privilege default.
+  //    Previously this used substring matching on the email which was a
+  //    security risk (e.g. "juan.admin@company.com" → admin).
   return "audit";
 }
 

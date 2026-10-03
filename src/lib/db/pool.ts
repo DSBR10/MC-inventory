@@ -59,8 +59,11 @@ function createPool() {
   }
 
   const pool = new Pool(config);
-  // Do not emit connection errors: pg errors can contain connection details.
-  pool.on("error", () => undefined);
+  // Log pool-level errors (idle client errors, backend crashes, etc.)
+  // Avoid leaking connection details in the message.
+  pool.on("error", (err) => {
+    console.error("[db] pool error:", err.message || "unknown");
+  });
   return pool;
 }
 
@@ -78,8 +81,12 @@ export async function queryAudit<T extends QueryResultRow>(
 ): Promise<QueryResult<T>> {
   try {
     return await getAuditPool().query<T>(text, [...values]);
-  } catch {
-    throw new Error("AUDIT_DATABASE_UNAVAILABLE");
+  } catch (err: any) {
+    const message = err?.message || "unknown";
+    console.error("[db] query failed:", message);
+    const error = new Error(`AUDIT_DATABASE_UNAVAILABLE: ${message}`);
+    error.cause = err;
+    throw error;
   }
 }
 

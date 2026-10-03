@@ -26,9 +26,6 @@ import type {
 
 } from "./accounts";
 
-const region =
-  process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSEC2Inventory(
 
   account: AWSAccount
@@ -48,7 +45,7 @@ export async function getAWSEC2Inventory(
   const ec2Client =
     new EC2Client({
 
-      region,
+      region: account.region,
       credentials
 
     });
@@ -56,7 +53,7 @@ export async function getAWSEC2Inventory(
   const ssmClient =
     new SSMClient({
 
-      region,
+      region: account.region,
       credentials
 
     });

@@ -10,8 +10,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSEKSInventory(account: AWSAccount) {
   try {
     const credentials = {
@@ -20,7 +18,7 @@ export async function getAWSEKSInventory(account: AWSAccount) {
     };
 
     const client = new EKSClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -124,7 +122,7 @@ export async function getAWSEKSInventory(account: AWSAccount) {
           architecture: (cluster as any).architecture || "linux",
           instanceType:
             cluster.resourcesVpcConfig?.clusterSecurityGroupId || "N/A",
-          availabilityZone: cluster.arn?.split(":")[3] || region,
+          availabilityZone: cluster.arn?.split(":")[3] || account.region,
           tags: formatAwsTags(cluster.tags || {}),
           children,
           raw: {

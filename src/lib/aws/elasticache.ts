@@ -10,8 +10,6 @@ import { formatAwsTags } from "./tags";
 
 import type { AWSAccount } from "./accounts";
 
-const region = process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSElastiCacheInventory(account: AWSAccount) {
   try {
     const credentials = {
@@ -20,7 +18,7 @@ export async function getAWSElastiCacheInventory(account: AWSAccount) {
     };
 
     const client = new ElastiCacheClient({
-      region,
+      region: account.region,
       credentials,
     });
 
@@ -139,7 +137,7 @@ export async function getAWSElastiCacheInventory(account: AWSAccount) {
         platform: replicationDetails.EngineVersion || "N/A",
         architecture: replicationDetails.CacheNodeType || "N/A",
         instanceType: replicationDetails.CacheNodeType || "N/A",
-        availabilityZone: replicationDetails.Region || region,
+        availabilityZone: replicationDetails.Region || account.region,
         tags,
         raw: {
           arn: replication.ARN,

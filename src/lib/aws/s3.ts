@@ -19,9 +19,6 @@ import type {
 
 } from "./accounts";
 
-const region =
-  process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSS3Inventory(
 
   account: AWSAccount
@@ -41,7 +38,7 @@ export async function getAWSS3Inventory(
   const client =
     new S3Client({
 
-      region,
+      region: account.region,
       credentials
 
     });
@@ -62,7 +59,7 @@ export async function getAWSS3Inventory(
         const id =
           bucket.Name || "";
 
-        let bucketRegion = region;
+        let bucketRegion = account.region;
 
         try {
 
@@ -83,7 +80,7 @@ export async function getAWSS3Inventory(
 
         } catch {
 
-          bucketRegion = region;
+          bucketRegion = account.region;
 
         }
 

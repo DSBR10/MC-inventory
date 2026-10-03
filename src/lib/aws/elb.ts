@@ -29,9 +29,6 @@ import {
 
 } from "./tags";
 
-const region =
-  process.env.AWS_REGION || "us-east-1";
-
 export async function getAWSELBInventory(
 
   account: AWSAccount
@@ -51,7 +48,7 @@ export async function getAWSELBInventory(
   const client =
     new ElasticLoadBalancingV2Client({
 
-      region,
+      region: account.region,
       credentials
 
     });
@@ -59,7 +56,7 @@ export async function getAWSELBInventory(
   const ec2Client =
     new EC2Client({
 
-      region,
+      region: account.region,
       credentials
 
     });

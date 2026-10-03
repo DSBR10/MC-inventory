@@ -14,9 +14,6 @@ import type {
   AWSAccount
 } from "./accounts";
 
-const region =
-  process.env.AWS_REGION || "us-east-1";
-
 const ENABLE_RDS_TAGS =
   process.env.ENABLE_RDS_TAGS === "true";
 
@@ -41,7 +38,7 @@ export async function getAWSRDSInventory(
     const client =
       new RDSClient({
 
-        region,
+        region: account.region,
         credentials
 
       });

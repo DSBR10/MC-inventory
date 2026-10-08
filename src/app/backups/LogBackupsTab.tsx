@@ -17,6 +17,7 @@ import {
   Filter,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import ExpectedLogServers from "./ExpectedLogServers";
 
 type LogBackupRecord = {
   id: string;
@@ -140,6 +141,7 @@ export default function LogBackupsTab() {
 
   return (
     <div className="space-y-6">
+      <ExpectedLogServers />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
           { label: "Total registros", value: summary?.total ?? 0, icon: FileText, color: "#8b5cf6" },

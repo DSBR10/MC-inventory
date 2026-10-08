@@ -1,107 +1,117 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { hasPermission } from "@/lib/auth/roles";
 import {
-  FileBarChart,
-  Send,
-  ExternalLink,
-  RefreshCw,
-  CheckCircle2,
-  XCircle,
-  Cloud,
-  HardDrive,
-  Archive,
-  Database,
-  Clock3,
   AlertTriangle,
-  ChevronRight,
+  CheckCircle2,
+  Clock3,
+  Database,
+  ExternalLink,
+  FileBarChart,
+  History,
+  Inbox,
+  Plus,
+  RefreshCw,
+  ScrollText,
+  Send,
+  Server,
+  Settings2,
+  Trash2,
+  X,
+  XCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import type { InformeData } from "@/lib/email/informe";
+import type { RdsInformeData } from "@/lib/email/informe-rds";
+import type { LogsInformeData } from "@/lib/email/informe-logs";
+import { formatBogota } from "./shared";
+import ServersReport from "./servers-report";
+import RdsReport from "./rds-report";
+import LogsReport from "./logs-report";
 
-type ServerBackupDetail = {
-  resourceName: string;
-  resourceId: string;
-  resourceType: string;
-  vaultName: string;
-  backupName: string;
+type ReportType = "servers" | "rds" | "logs";
+type ProviderTab = "aws" | "huawei";
+
+type Recipient = {
+  id: string;
+  email: string;
+  name: string | null;
+  active: boolean;
+};
+
+type RecentSend = {
+  sentAt: string;
   status: string;
-  sizeBytes: number | null;
-  backupCreatedAt: string | null;
-  backupCompletedAt: string | null;
-  backupExpiresAt: string | null;
-};
-
-type AccountDetail = {
-  accountId: string;
-  accountName: string;
-  region: string;
-  vaultCount: number;
-  totalBackups: number;
-  successfulBackups: number;
-  failedBackups: number;
-  inProgressBackups: number;
-  expiredBackups: number;
-  serversWithBackup: number;
-  totalServers: number;
-  lastBackup: string | null;
-  servers: ServerBackupDetail[];
-};
-
-type ProviderReport = {
-  provider: string;
-  totalBackups: number;
-  totalBytes: number;
-  accounts: AccountDetail[];
-  successfulTotal: number;
-  failedTotal: number;
-  inProgressTotal: number;
-  expiredTotal: number;
-  successRate: number;
-  failureRate: number;
-};
-
-type InformeData = {
-  generatedAt: string;
-  dateLabel: string;
-  aws: ProviderReport;
-  huawei: ProviderReport;
-  globalSummary: {
-    totalBackups: number;
-    totalBytes: number;
-    successRate: number;
-    failureRate: number;
+  details: {
+    reportType?: string;
+    recipients?: string[];
+    messageId?: string;
+    totalBackups?: number;
+    successRate?: number;
+    error?: string;
   };
+};
+
+type AllReports = {
+  servers: InformeData;
+  rds: RdsInformeData;
+  logs: LogsInformeData;
   sendGridConfigured: boolean;
 };
 
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
-  return `${(bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-}
-
-function formatBogota(iso: string | null): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("es-CO", {
-    timeZone: "America/Bogota",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-}
+const REPORT_META: Record<ReportType, { label: string; short: string }> = {
+  servers: { label: "Servidores", short: "servidores" },
+  rds: { label: "Bases de datos", short: "bases de datos" },
+  logs: { label: "Logs transaccionales", short: "logs" },
+};
 
 export default function InformesPage() {
-  const [data, setData] = useState<InformeData | null>(null);
+  const { data: session } = useSession();
+  const canManageRecipients = !!session?.user?.role && hasPermission(session.user.role, "inventory:modify");
+
+  const [data, setData] = useState<AllReports | null>(null);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [activeTab, setActiveTab] = useState<"aws" | "huawei">("aws");
+  const [reportType, setReportType] = useState<ReportType>("servers");
+  const [activeTab, setActiveTab] = useState<ProviderTab>("aws");
+
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
+  const [recipientsSource, setRecipientsSource] = useState<"db" | "env" | "none">("none");
+  const [senderEmail, setSenderEmail] = useState("");
+  const [recentSends, setRecentSends] = useState<RecentSend[]>([]);
+  const [newEmail, setNewEmail] = useState("");
+  const [newName, setNewName] = useState("");
+  const [savingRecipient, setSavingRecipient] = useState(false);
+
+  // Colapsables: el resumen "Detalle por cuenta" inicia abierto; cada cuenta inicia minimizada.
+  const [detalleAbierto, setDetalleAbierto] = useState(true);
+  const [cuentasAbiertas, setCuentasAbiertas] = useState<Set<string>>(new Set());
+
+  // Centro de configuración de correo
+  const [configOpen, setConfigOpen] = useState(false);
+  const [configTab, setConfigTab] = useState<"estado" | "correos" | "enviar">("estado");
+  const [sendReportType, setSendReportType] = useState<ReportType>("servers");
+  const [sendProvider, setSendProvider] = useState<"all" | "AWS" | "HUAWEI CLOUD">("all");
+  const [adHoc, setAdHoc] = useState("");
+
+  const toggleCuenta = (accountId: string) => {
+    setCuentasAbiertas((prev) => {
+      const next = new Set(prev);
+      if (next.has(accountId)) next.delete(accountId);
+      else next.add(accountId);
+      return next;
+    });
+  };
+
+  const switchReportType = (t: ReportType) => {
+    setReportType(t);
+    setActiveTab("aws");
+    setDetalleAbierto(true);
+    setCuentasAbiertas(new Set());
+  };
 
   const fetchData = useCallback(async () => {
     try {
@@ -120,20 +130,37 @@ export default function InformesPage() {
     fetchData();
   }, [fetchData]);
 
-  const handleSendEmail = async (provider: "all" | "AWS" | "HUAWEI CLOUD") => {
+  const fetchRecipients = useCallback(async () => {
+    try {
+      const res = await fetch("/api/informes/recipients");
+      if (!res.ok) return;
+      const json = await res.json();
+      setRecipients(json.recipients || []);
+      setRecipientsSource(json.source || "none");
+      setSenderEmail(json.senderEmail || "");
+      setRecentSends(json.recentSends || []);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    fetchRecipients();
+  }, [fetchRecipients]);
+
+  const handleSendEmail = async (type: ReportType, provider: "all" | "AWS" | "HUAWEI CLOUD", adHocList?: string[]) => {
     if (sending) return;
     setSending(true);
     try {
       const res = await fetch("/api/informes/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider }),
+        body: JSON.stringify({ reportType: type, provider, recipients: adHocList && adHocList.length > 0 ? adHocList : undefined }),
       });
       const json = await res.json();
       if (!res.ok) {
         throw new Error(json.error || `Error ${res.status}: no se pudo enviar el correo`);
       }
       toast.success(`Correo enviado exitosamente a ${json.recipients?.join(", ") || "destinatarios"}`, { duration: 6000 });
+      fetchRecipients();
     } catch (e: any) {
       toast.error(e?.message || "Error enviando informe por correo", { duration: 8000 });
     } finally {
@@ -141,13 +168,82 @@ export default function InformesPage() {
     }
   };
 
-  const handleViewInNewTab = () => {
-    window.open("/api/informes/pdf", "_blank");
+  const handleSendFromConfig = () => {
+    const list = adHoc.split(/[,;\n]/).map((s) => s.trim().toLowerCase()).filter((s) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s));
+    const unique = [...new Set(list)];
+    if (adHoc.trim() && unique.length === 0) {
+      toast.error("Ningún correo adicional es válido");
+      return;
+    }
+    handleSendEmail(sendReportType, sendProvider, unique);
+  };
+
+  const openQuickSend = (type: ReportType) => {
+    setSendReportType(type);
+    setSendProvider("all");
+    setConfigTab("enviar");
+    setConfigOpen(true);
+  };
+
+  const handleAddRecipient = async () => {
+    const email = newEmail.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      toast.error("Escribe un correo válido");
+      return;
+    }
+    setSavingRecipient(true);
+    try {
+      const res = await fetch("/api/informes/recipients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name: newName.trim() }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "No se pudo agregar");
+      toast.success(`Destinatario agregado: ${json.recipient.email}`);
+      setNewEmail("");
+      setNewName("");
+      fetchRecipients();
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo agregar el destinatario");
+    } finally {
+      setSavingRecipient(false);
+    }
+  };
+
+  const handleToggleRecipient = async (id: string, active: boolean) => {
+    try {
+      const res = await fetch("/api/informes/recipients", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, active }),
+      });
+      if (!res.ok) throw new Error("No se pudo actualizar");
+      fetchRecipients();
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo actualizar el destinatario");
+    }
+  };
+
+  const handleRemoveRecipient = async (id: string, email: string) => {
+    if (!window.confirm(`¿Eliminar a ${email} de los destinatarios?`)) return;
+    try {
+      const res = await fetch(`/api/informes/recipients?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("No se pudo eliminar");
+      toast.success("Destinatario eliminado");
+      fetchRecipients();
+    } catch (e: any) {
+      toast.error(e?.message || "No se pudo eliminar el destinatario");
+    }
   };
 
   const handleRefresh = () => {
     setLoading(true);
     fetchData();
+  };
+
+  const handleViewInNewTab = () => {
+    window.open(`/api/informes/pdf?reportType=${reportType}&provider=${activeTab === "aws" ? "AWS" : "HUAWEI CLOUD"}`, "_blank");
   };
 
   if (loading) {
@@ -159,7 +255,7 @@ export default function InformesPage() {
               <div key={i} className="w-2 h-2 rounded-full bg-cyan-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
-          <p className="text-sm text-[var(--text-secondary)]">Generando informe...</p>
+          <p className="text-sm text-[var(--text-secondary)]">Generando informes...</p>
         </div>
       </div>
     );
@@ -173,7 +269,7 @@ export default function InformesPage() {
     );
   }
 
-  const currentReport = activeTab === "aws" ? data.aws : data.huawei;
+  const activeProviderLabel = activeTab === "aws" ? "AWS" : "HUAWEI CLOUD";
 
   return (
     <div className="space-y-6">
@@ -193,11 +289,11 @@ export default function InformesPage() {
               <div>
                 <h1 className="text-xl font-bold tracking-tight">Informes de backups</h1>
                 <p className="text-sm text-[var(--text-secondary)] mt-1">
-                  {data.dateLabel} · Envío diario automático a las {process.env.NEXT_PUBLIC_INFORMES_HOUR || "07:00"} hora Colombia
+                  Datos del día anterior: <span className="font-semibold text-[var(--text-primary)]">{data.servers.dateLabel}</span> · Envío diario automático a las {process.env.NEXT_PUBLIC_INFORMES_HOUR || "07:00"} hora Colombia
                 </p>
                 <p className="text-xs text-[var(--text-secondary)] mt-1 flex items-center gap-1.5">
                   <Clock3 size={12} />
-                  Generado: {formatBogota(data.generatedAt)}
+                  Generado: {formatBogota(data.servers.generatedAt)}
                 </p>
               </div>
             </div>
@@ -208,206 +304,331 @@ export default function InformesPage() {
               <button onClick={handleViewInNewTab} className="px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-card)]/60 text-sm flex items-center gap-2 hover:bg-[var(--bg-hover)] transition-all">
                 <ExternalLink size={16} /> Ver informe
               </button>
-              {data.sendGridConfigured ? (
-                <button onClick={() => handleSendEmail("all")} disabled={sending} className="px-4 py-2.5 rounded-xl bg-violet-600 text-white text-sm flex items-center gap-2 hover:bg-violet-500 disabled:opacity-50 transition-all">
-                  <Send size={16} className={sending ? "animate-pulse" : ""} /> {sending ? "Enviando..." : "Enviar correo"}
-                </button>
-              ) : (
-                <div className="px-4 py-2.5 rounded-xl border border-amber-500/20 bg-amber-500/10 text-xs text-amber-400 flex items-center gap-2">
-                  <AlertTriangle size={14} /> SendGrid no configurado
-                </div>
-              )}
+              <button onClick={() => { setConfigTab("estado"); setConfigOpen(true); }} className="px-4 py-2.5 rounded-xl bg-violet-600 text-white text-sm flex items-center gap-2 hover:bg-violet-500 transition-all">
+                <Settings2 size={16} /> Configuración
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="page-section" style={{ animationDelay: "0.05s" }}>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: "Total backups", value: data.globalSummary.totalBackups, icon: Database, color: "#8b5cf6" },
-            { label: "Almacenado", value: formatBytes(data.globalSummary.totalBytes), icon: Archive, color: "#06b6d4" },
-            { label: "Tasa éxito", value: `${data.globalSummary.successRate}%`, icon: CheckCircle2, color: "#10b981" },
-            { label: "Tasa fallo", value: `${data.globalSummary.failureRate}%`, icon: XCircle, color: "#ef4444" },
-          ].map((m) => {
-            const Icon = m.icon;
-            return (
-              <div key={m.label} className="rounded-2xl border border-[var(--border)] p-4 bg-[var(--bg-card)]/80 backdrop-blur-xl transition-all duration-200 hover:shadow-lg">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="text-[10px] tracking-widest uppercase font-semibold text-[var(--text-secondary)]">{m.label}</p>
-                    <p className="text-2xl font-bold tracking-tight" style={{ color: m.color }}>{m.value}</p>
-                  </div>
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${m.color}15`, color: m.color }}><Icon size={16} /></div>
-                </div>
-              </div>
-            );
-          })}
+      <div className="page-section" style={{ animationDelay: "0.03s" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {([
+            { id: "servers", label: "Servidores", desc: `${data.servers.globalSummary.totalBackups} backups · ${data.servers.globalSummary.successRate}% éxito`, icon: <Server size={17} />, active: reportType === "servers", accent: "#8b5cf6" },
+            { id: "rds", label: "Bases de datos", desc: `${data.rds.globalSummary.totalSnapshots} snapshots · ${data.rds.globalSummary.successRate}% éxito`, icon: <Database size={17} />, active: reportType === "rds", accent: "#06b6d4" },
+            { id: "logs", label: "Logs transaccionales", desc: `${data.logs.globalSummary.totalEntries} registros · ${data.logs.globalSummary.successRate}% completitud`, icon: <History size={17} />, active: reportType === "logs", accent: "#f59e0b" },
+          ] as const).map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => switchReportType(t.id)}
+              aria-pressed={t.active}
+              className={`flex items-center gap-3 rounded-2xl border p-4 text-left transition-all ${t.active ? "border-transparent shadow-lg" : "border-[var(--border)] bg-[var(--bg-card)]/60 hover:border-white/20"}`}
+              style={t.active ? { background: `linear-gradient(135deg, ${t.accent}26, transparent)` , borderColor: `${t.accent}55` } : undefined}
+            >
+              <span className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${t.accent}18`, color: t.accent }}>
+                {t.icon}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold">{t.label}</span>
+                <span className="block text-xs text-[var(--text-secondary)] truncate">{t.desc}</span>
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="page-section" style={{ animationDelay: "0.1s" }}>
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-card)]/60 backdrop-blur-xl overflow-hidden">
-          <div className="flex border-b border-[var(--border)]">
-            <button
-              onClick={() => setActiveTab("aws")}
-              className={`flex-1 px-6 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-all ${activeTab === "aws" ? "text-amber-400 border-b-2 border-amber-400 bg-amber-500/5" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}
-            >
-              <Cloud size={16} /> AWS Backup
-              <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${activeTab === "aws" ? "bg-amber-500/20 text-amber-300" : "bg-[var(--bg-hover)] text-[var(--text-secondary)]"}`}>{data.aws.totalBackups}</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("huawei")}
-              className={`flex-1 px-6 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-all ${activeTab === "huawei" ? "text-red-400 border-b-2 border-red-400 bg-red-500/5" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}
-            >
-              <HardDrive size={16} /> Huawei CBR
-              <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${activeTab === "huawei" ? "bg-red-500/20 text-red-300" : "bg-[var(--bg-hover)] text-[var(--text-secondary)]"}`}>{data.huawei.totalBackups}</span>
-            </button>
-          </div>
+      {reportType === "servers" && (
+        <ServersReport
+          data={data.servers}
+          activeTab={activeTab}
+          onTab={setActiveTab}
+          detalleAbierto={detalleAbierto}
+          onToggleDetalle={() => setDetalleAbierto((v) => !v)}
+          cuentasAbiertas={cuentasAbiertas}
+          onToggleCuenta={toggleCuenta}
+        />
+      )}
+      {reportType === "rds" && (
+        <RdsReport
+          data={data.rds}
+          activeTab={activeTab}
+          onTab={setActiveTab}
+          detalleAbierto={detalleAbierto}
+          onToggleDetalle={() => setDetalleAbierto((v) => !v)}
+          cuentasAbiertas={cuentasAbiertas}
+          onToggleCuenta={toggleCuenta}
+        />
+      )}
+      {reportType === "logs" && (
+        <LogsReport
+          data={data.logs}
+          activeTab={activeTab}
+          onTab={setActiveTab}
+          detalleAbierto={detalleAbierto}
+          onToggleDetalle={() => setDetalleAbierto((v) => !v)}
+          cuentasAbiertas={cuentasAbiertas}
+          onToggleCuenta={toggleCuenta}
+        />
+      )}
 
-          <div className="p-5">
-            {currentReport.totalBackups === 0 ? (
-              <div className="text-center py-12">
-                <Archive size={28} className="mx-auto mb-3 text-[var(--text-secondary)]/40" />
-                <p className="text-sm font-medium">Sin backups registrados para {currentReport.provider}</p>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">Ejecuta un refresco de backups desde el módulo de Backups.</p>
+      <div className="page-section flex justify-end">
+        <button
+          type="button"
+          onClick={() => openQuickSend(reportType)}
+          className="px-4 py-2.5 rounded-xl border border-violet-500/30 bg-violet-500/10 text-sm flex items-center gap-2 hover:bg-violet-500/20 text-violet-200 transition-all"
+        >
+          <Send size={16} /> Enviar informe de {REPORT_META[reportType].short} por correo
+        </button>
+      </div>
+
+      {configOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setConfigOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Configuración de correo"
+            className="w-full max-w-2xl rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-2xl overflow-hidden max-h-[88vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-[var(--border)]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-violet-600 text-white">
+                  <Settings2 size={16} />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">Configuración de correo</h2>
+                  <p className="text-xs text-[var(--text-secondary)]">Estado, destinatarios y envío de informes</p>
+                </div>
               </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-                  {[
-                    { label: "Total", value: currentReport.totalBackups, color: activeTab === "aws" ? "#f59e0b" : "#ef4444" },
-                    { label: "Exitosos", value: currentReport.successfulTotal, color: "#10b981" },
-                    { label: "Fallidos", value: currentReport.failedTotal, color: "#ef4444" },
-                    { label: "En progreso", value: currentReport.inProgressTotal, color: "#f59e0b" },
-                    { label: "Expirados", value: currentReport.expiredTotal, color: "#71717a" },
-                  ].map((m) => (
-                    <div key={m.label} className="rounded-xl border border-[var(--border)] bg-[var(--bg-hover)]/30 p-3">
-                      <p className="text-[10px] tracking-widest uppercase font-semibold text-[var(--text-secondary)]">{m.label}</p>
-                      <p className="text-xl font-bold mt-1" style={{ color: m.color }}>{m.value}</p>
-                    </div>
-                  ))}
-                </div>
+              <button type="button" onClick={() => setConfigOpen(false)} aria-label="Cerrar configuración" className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--bg-hover)] transition-all">
+                <X size={16} />
+              </button>
+            </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-                    <p className="text-[10px] tracking-widest uppercase font-semibold text-emerald-400/70">Tasa de éxito</p>
-                    <p className="text-3xl font-bold text-emerald-400 mt-1">{currentReport.successRate}%</p>
-                    <div className="mt-2 h-2 rounded-full bg-emerald-500/10 overflow-hidden">
-                      <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${currentReport.successRate}%` }} />
+            <div className="flex gap-1 px-5 pt-3">
+              {([
+                { id: "estado", label: "Estado" },
+                { id: "correos", label: "Correos" },
+                { id: "enviar", label: "Enviar" },
+              ] as const).map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setConfigTab(t.id)}
+                  className={`px-4 py-2 rounded-t-xl text-sm font-medium transition-all ${configTab === t.id ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="px-5 py-4 overflow-y-auto">
+              {configTab === "estado" && (
+                <div className="space-y-3">
+                  <div className={`flex items-center gap-3 rounded-xl border p-4 ${data.sendGridConfigured ? "border-emerald-500/20 bg-emerald-500/5" : "border-amber-500/20 bg-amber-500/5"}`}>
+                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${data.sendGridConfigured ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" : "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]"}`} />
+                    <div>
+                      <p className="text-sm font-semibold">{data.sendGridConfigured ? "SendGrid operativo" : "SendGrid sin configurar"}</p>
+                      <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                        {data.sendGridConfigured
+                          ? "API key y remitente listos. El envío automático corre a diario a las 07:00."
+                          : "Falta SENDGRID_API_KEY o SENDGRID_SENDER_EMAIL en el entorno."}
+                      </p>
                     </div>
                   </div>
-                  <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-                    <p className="text-[10px] tracking-widest uppercase font-semibold text-red-400/70">Tasa de fallo</p>
-                    <p className="text-3xl font-bold text-red-400 mt-1">{currentReport.failureRate}%</p>
-                    <div className="mt-2 h-2 rounded-full bg-red-500/10 overflow-hidden">
-                      <div className="h-full rounded-full bg-red-500 transition-all" style={{ width: `${currentReport.failureRate}%` }} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="rounded-xl border border-[var(--border)] bg-black/20 p-3">
+                      <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)]">Remitente (fijo)</p>
+                      <p className="mt-1 font-medium break-all">{senderEmail || "—"}</p>
+                    </div>
+                    <div className="rounded-xl border border-[var(--border)] bg-black/20 p-3">
+                      <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)]">Envío automático</p>
+                      <p className="mt-1 font-medium">{process.env.NEXT_PUBLIC_INFORMES_HOUR || "07:00"} hora Colombia · 3 informes</p>
                     </div>
                   </div>
-                </div>
-
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
-                  <ChevronRight size={14} className="text-[var(--text-secondary)]" />
-                  Detalle por cuenta
-                </h3>
-
-                <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
-                  <table className="w-full">
-                    <thead className="bg-[var(--bg-hover)]/60 border-b border-[var(--border)]">
-                      <tr>
-                        {["Cuenta", "Región", "Vaults", "Servidores", "Con backup", "Exitosos", "Fallidos", "Último backup"].map((h) => (
-                          <th key={h} className="px-3 py-3 text-left text-[11px] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">{h}</th>
+                  <div className="rounded-xl border border-[var(--border)] bg-black/20 p-3">
+                    <p className="text-[10px] uppercase tracking-widest text-[var(--text-secondary)] mb-2">Últimos envíos</p>
+                    {recentSends.length === 0 ? (
+                      <p className="text-xs text-[var(--text-secondary)] flex items-center gap-2"><Inbox size={13} /> Aún no hay envíos registrados.</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {recentSends.map((s, i) => (
+                          <div key={i} className="flex items-start gap-2 text-xs">
+                            {s.status === "success"
+                              ? <CheckCircle2 size={14} className="text-emerald-400 mt-0.5 shrink-0" />
+                              : <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />}
+                            <div className="min-w-0">
+                              <p className="font-medium">{formatBogota(s.sentAt)} · {s.status}{s.details?.reportType ? ` · ${s.details.reportType}` : ""}</p>
+                              {s.details?.recipients && <p className="text-[var(--text-secondary)] truncate">Para: {s.details.recipients.join(", ")}</p>}
+                              {s.details?.error && <p className="text-red-400 break-words">{s.details.error}</p>}
+                            </div>
+                          </div>
                         ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentReport.accounts.map((a) => (
-                        <tr key={a.accountId} className="border-b border-[var(--border)] hover:bg-[var(--bg-hover)]/40 transition">
-                          <td className="px-3 py-3 text-sm font-medium">{a.accountName}</td>
-                          <td className="px-3 py-3 text-xs text-[var(--text-secondary)]">{a.region}</td>
-                          <td className="px-3 py-3 text-sm text-center">{a.vaultCount}</td>
-                          <td className="px-3 py-3 text-sm text-center">{a.totalServers}</td>
-                          <td className="px-3 py-3 text-sm text-center">
-                            <span className={`font-semibold ${a.serversWithBackup === a.totalServers ? "text-emerald-400" : "text-amber-400"}`}>
-                              {a.serversWithBackup}
-                            </span>
-                            <span className="text-[var(--text-secondary)] text-xs ml-1">/ {a.totalServers}</span>
-                          </td>
-                          <td className="px-3 py-3 text-center">
-                            <span className="text-sm font-semibold text-emerald-400">{a.successfulBackups}</span>
-                          </td>
-                          <td className="px-3 py-3 text-center">
-                            <span className={`text-sm font-semibold ${a.failedBackups > 0 ? "text-red-400" : "text-[var(--text-secondary)]"}`}>{a.failedBackups}</span>
-                          </td>
-                          <td className="px-3 py-3 text-xs text-[var(--text-secondary)] whitespace-nowrap">{formatBogota(a.lastBackup)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              )}
 
-                {currentReport.accounts.map((a) => (
-                  <div key={a.accountId} className="mb-6">
-                    <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
-                      <ChevronRight size={14} className="text-[var(--text-secondary)]" />
-                      {a.accountName}
-                      <span className="text-xs font-normal text-[var(--text-secondary)]">({a.region})</span>
-                      <span className="ml-auto text-xs text-[var(--text-secondary)]">
-                        {a.serversWithBackup}/{a.totalServers} servidores con backup · {a.successfulBackups} ok · <span className={a.failedBackups > 0 ? "text-red-400 font-semibold" : ""}>{a.failedBackups} fallidos</span>
-                      </span>
-                    </h4>
-                    <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
-                      <table className="w-full">
-                        <thead className="bg-[var(--bg-hover)]/60 border-b border-[var(--border)]">
-                          <tr>
-                            {["Servidor", "Tipo", "Vault", "Estado", "Fecha backup", "Tamaño", "Expira"].map((h) => (
-                              <th key={h} className="px-3 py-2.5 text-left text-[10px] uppercase tracking-wider text-[var(--text-secondary)] whitespace-nowrap">{h}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {a.servers.map((s) => {
-                            const isOk = ["COMPLETED", "AVAILABLE"].includes(s.status.toUpperCase());
-                            const isFailed = ["FAILED", "ERROR"].includes(s.status.toUpperCase());
-                            return (
-                              <tr key={s.resourceId} className="border-b border-[var(--border)]/50 hover:bg-[var(--bg-hover)]/30 transition">
-                                <td className="px-3 py-2.5">
-                                  <p className="text-xs font-medium truncate max-w-[200px]">{s.resourceName}</p>
-                                  <p className="text-[10px] text-[var(--text-secondary)] font-mono truncate max-w-[200px]">{s.resourceId}</p>
-                                </td>
-                                <td className="px-3 py-2.5 text-[10px] text-[var(--text-secondary)] whitespace-nowrap">{s.resourceType}</td>
-                                <td className="px-3 py-2.5 text-xs text-[var(--text-secondary)] truncate max-w-[140px]">{s.vaultName || "—"}</td>
-                                <td className="px-3 py-2.5">
-                                  <span className={`px-2 py-0.5 rounded-full text-[10px] border font-medium whitespace-nowrap ${isOk ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : isFailed ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>{s.status}</span>
-                                </td>
-                                <td className="px-3 py-2.5 text-xs whitespace-nowrap">{formatBogota(s.backupCreatedAt)}</td>
-                                <td className="px-3 py-2.5 text-xs whitespace-nowrap tabular-nums">{formatBytes(s.sizeBytes ?? 0)}</td>
-                                <td className="px-3 py-2.5 text-xs whitespace-nowrap text-[var(--text-secondary)]">{formatBogota(s.backupExpiresAt)}</td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+              {configTab === "correos" && (
+                <div>
+                  <p className="text-xs text-[var(--text-secondary)] mb-3">
+                    {recipientsSource === "db" ? (
+                      <>Lista gestionada aquí <span className="text-emerald-400 font-medium">({recipients.filter((r) => r.active).length} activos)</span>. Tiene prioridad sobre la variable de entorno.</>
+                    ) : recipientsSource === "env" ? (
+                      <>Usando variable de entorno. <span className="text-amber-400 font-medium">Agrega un correo para tomar control desde aquí.</span></>
+                    ) : (
+                      <span className="text-red-400 font-medium">Sin destinatarios: agrega al menos uno.</span>
+                    )}
+                  </p>
+                  {recipients.length === 0 ? (
+                    <p className="text-xs text-[var(--text-secondary)] rounded-xl border border-dashed border-[var(--border)] p-4 text-center mb-3">
+                      No hay destinatarios guardados.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 mb-3 max-h-56 overflow-y-auto pr-1">
+                      {recipients.map((r) => (
+                        <div key={r.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 ${r.active ? "border-[var(--border)] bg-[var(--bg-hover)]/30" : "border-[var(--border)] opacity-50"}`}>
+                          <button
+                            type="button"
+                            disabled={!canManageRecipients}
+                            onClick={() => handleToggleRecipient(r.id, !r.active)}
+                            title={r.active ? "Desactivar" : "Activar"}
+                            aria-label={r.active ? `Desactivar ${r.email}` : `Activar ${r.email}`}
+                            className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${r.active ? "bg-emerald-500" : "bg-[var(--bg-hover)] border border-[var(--border)]"} ${canManageRecipients ? "cursor-pointer" : "cursor-default"}`}
+                          >
+                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${r.active ? "left-[18px]" : "left-0.5"}`} />
+                          </button>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium truncate">{r.email}</p>
+                            {r.name && <p className="text-xs text-[var(--text-secondary)] truncate">{r.name}</p>}
+                          </div>
+                          {!r.active && <span className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)]">Inactivo</span>}
+                          {canManageRecipients && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveRecipient(r.id, r.email)}
+                              title={`Eliminar ${r.email}`}
+                              aria-label={`Eliminar ${r.email}`}
+                              className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10 transition-all"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {canManageRecipients ? (
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleAddRecipient(); }}
+                        placeholder="correo@ejemplo.com"
+                        aria-label="Nuevo correo destinatario"
+                        className="flex-1 px-3.5 py-2.5 rounded-xl text-sm bg-white/[0.04] border border-white/10 outline-none focus:border-cyan-500/40 placeholder:text-[var(--text-secondary)]/40"
+                      />
+                      <input
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") handleAddRecipient(); }}
+                        placeholder="Nombre (opcional)"
+                        aria-label="Nombre del destinatario"
+                        className="sm:w-40 px-3.5 py-2.5 rounded-xl text-sm bg-white/[0.04] border border-white/10 outline-none focus:border-cyan-500/40 placeholder:text-[var(--text-secondary)]/40"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddRecipient}
+                        disabled={savingRecipient || !newEmail.trim()}
+                        className="px-4 py-2.5 rounded-xl bg-cyan-600 text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-cyan-500 disabled:opacity-50 transition-all"
+                      >
+                        <Plus size={16} /> {savingRecipient ? "..." : "Agregar"}
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-[var(--text-secondary)]">Solo un administrador puede gestionar los destinatarios.</p>
+                  )}
+                </div>
+              )}
+
+              {configTab === "enviar" && (
+                <div className="space-y-4">
+                  {!data.sendGridConfigured && (
+                    <p className="text-xs rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-amber-300 flex items-start gap-2">
+                      <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+                      SendGrid no está configurado (falta API key o remitente). El envío fallará hasta configurarlo.
+                    </p>
+                  )}
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest text-[var(--text-secondary)] mb-2">Informe</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {([
+                        { id: "servers", label: "Servidores" },
+                        { id: "rds", label: "Bases de datos" },
+                        { id: "logs", label: "Logs" },
+                      ] as const).map((o) => (
+                        <button
+                          key={o.id}
+                          type="button"
+                          onClick={() => setSendReportType(o.id)}
+                          className={`py-2.5 rounded-xl text-sm font-medium border transition-all ${sendReportType === o.id ? "bg-violet-600 text-white border-violet-600" : "border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"}`}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                ))}
-
-                {data.sendGridConfigured && (
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => handleSendEmail(activeTab === "aws" ? "AWS" : "HUAWEI CLOUD")}
-                      disabled={sending}
-                      className="px-4 py-2.5 rounded-xl bg-violet-600 text-white text-sm flex items-center gap-2 hover:bg-violet-500 disabled:opacity-50 transition-all"
-                    >
-                      <Send size={16} className={sending ? "animate-pulse" : ""} /> {sending ? "Enviando..." : `Enviar informe ${currentReport.provider} por correo`}
-                    </button>
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest text-[var(--text-secondary)] mb-2">Alcance del informe</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {([
+                        { id: "all", label: "Completo" },
+                        { id: "AWS", label: "Solo AWS" },
+                        { id: "HUAWEI CLOUD", label: "Solo Huawei" },
+                      ] as const).map((o) => (
+                        <button
+                          key={o.id}
+                          type="button"
+                          onClick={() => setSendProvider(o.id)}
+                          className={`py-2.5 rounded-xl text-sm font-medium border transition-all ${sendProvider === o.id ? "bg-violet-600 text-white border-violet-600" : "border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"}`}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                )}
-              </>
-            )}
+                  <div>
+                    <p className="text-[11px] uppercase tracking-widest text-[var(--text-secondary)] mb-2">Correos adicionales (opcional)</p>
+                    <textarea
+                      value={adHoc}
+                      onChange={(e) => setAdHoc(e.target.value)}
+                      placeholder="otros@ejemplo.com, jefe@ejemplo.com (separados por coma)"
+                      aria-label="Correos adicionales para este envío"
+                      rows={2}
+                      className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-white/[0.04] border border-white/10 outline-none focus:border-cyan-500/40 placeholder:text-[var(--text-secondary)]/40 resize-none"
+                    />
+                    <p className="text-[11px] text-[var(--text-secondary)] mt-1.5">Si lo dejas vacío, se envía a la lista de destinatarios configurada.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSendFromConfig}
+                    disabled={sending}
+                    className="w-full py-3 rounded-xl bg-violet-600 text-white text-sm font-semibold flex items-center justify-center gap-2 hover:bg-violet-500 disabled:opacity-50 transition-all"
+                  >
+                    <Send size={16} className={sending ? "animate-pulse" : ""} />
+                    {sending ? "Enviando..." : `Enviar informe de ${REPORT_META[sendReportType].short}`}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <ScrollToTop />
     </div>

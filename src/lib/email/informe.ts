@@ -1,5 +1,12 @@
 import { queryAudit } from "@/lib/db/pool";
-import { getBackupSummary } from "@/lib/backups/repository";
+import {
+  accountKey,
+  getExpectedServers,
+  getPreviousDayBogota,
+  type Coverage,
+  type DayWindow,
+  type ExpectedResource,
+} from "./compliance";
 
 const UX_LOGO_SRC =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABQCAYAAAD7sIxLAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAeV0lEQVR4nO2dC1NT19rH90fgE7zNOa29oK3RilqsbbT1ri1t5505cy4lrZdatUqtWsQiAUUECkHuihAQEbG1VAXBawSlCEoRxdp62yfkskPfGfIN1vPOuu29dgiQkChUs2f2VBECJb/5P//1X89+liRFr+g1EZdss8QM1mZMV2wWE/6zbLNI4h29olfQl2xLivm/+t1p3ro02Vubjrw16chrywBv5R5QDu+RvYcyt3gO733Bc3hvFK7oFdz1Z8PuxMHjqT5vXSp4j6aB94gFvNUWoGBlgFKxF5SDmaCUZ8qukkxzFK7oNeY1+ENK2mDDLvDWfwcUrN06sBQO1qFMpJRlglKaBUpJdtpfAa6yuTdMlfE3bba3uuUj8d2+o/Gdcv3bnfaGdzoT6012Q73JLkVve8R+B+rlbtiZMPjDLhhs2IUGj6cysNLAW2tBDCzkrdqDMFheDFY5AQspJfuRUjR54bIaew3lc3rtFXN7oHLuTVT9VjccmdcFdfO6UP3bv8CJd36Bk+90yCdN15JOmq5J0ftaRH4H5HI37JS8J3fKGCxvwy4YrP8ODR7bDYO8FNakE7AU7LFUsPaBUroPlJL94CncD0pR7qSDy2rsNRbP+tVXPvtXdGjOTaicewNsGKz4Lqh7+zocn98JJ+b/gk6+8wtqfPcqnDJdTTtluipF76th/w7IpZxMNg+e3Im8J1JgsOE7sRQiASxi3r2H9yLl4F5QyvchpYwqFgGrMAcp1skDF4aqaNatoZLZvVA2+1eomNODsGIRsOZ1wdF51+H4250IK9aP71wDDNZpUzs0mdqTmkztUvRuD+t3QC7vT8l2DBYthQysY6J5x2DtQQwsqljEY2HFygKliILlseYAhkux5k4oVDnGXqP1zT5fUdwtKInrBaxYGKzD/oqFwZpPSiFRrNOmq6h5QftQo8keEwWrPXyw/vxpp4+CxRUrFYOF/Mw7AUup2IPBwooFXqxYxcRjIeVADigFuciTlwtKXl7aREKVN/O2r2DWbSiMuwWlcbdQ+ZxfgZbCmwSs2vhuxBSLlEJNsa5C84J2aF5ot0TBag8frMHGZETAOsE81vHvkPfYblWxlGrusXjcsBe8uBSW7gNPcRbxWJ4D2eCx5gIDCym51jQl1/pUocqb0T89Z0b/UN7M21DwZh8UxfVBcdyvpBQemtsDXLFq4q9T8048VgdoHqsdmha0Qct7V+xRsNojoFgYrB9TgHisE3hVSM27t1Yz70pVOlDzvgfHDTjHAg8phdlIKcwGrFie/BxQ8r9Hnu/zwJOTD08TrkxjvzFrRr8vZ0Y/5M28g6wYrFm3EC+Fh+behCq8Koy/MawU/kTAukY91oI2aF14xRcFqz0CivVTsuz9cSeQVeFxnmNpikVLIQYrA7wVexFfFZJSyFeFB3IQL4We778nYLn354OS9eThshj7jZnGu74sYz/kzLwDWLEwWIWzbgE277QU9qDKt25C9Vs30JF53dqqkMYNqnlvXtgOrQvbUBSs9oiY94JBBpa4Khys2414jkUVK4OuCqnHQiQgZaVQIaUwh5RColi5+chDwCpAStaBJwaXJfa+MeON33z7jL8hAtaMO5D3JgMr7hYrhT2AFQvHDaJi4RzrBxI3iGC1Qet7UcVqigRYyg/JJlWxGFiDx3Yj/aqQeiwv29KhHgsn7/tJKVQ9Vv734MnFipVHFMu9zwqezANIySyKOFypUx9PT3/j96GM6fcg0/gb7J9xF3Jn9kP+zDuo4M3bCHus0tm3kBo3cMWKp3ED9Vh0Vfjzu9cQM+/o7AJ71GOZIgOW9OePO+3YY3GwRPNOSmEVy7EqcI5FV4XEY6mKReMGAhbzWBgsT1YBuDMPgHvPAVD2RA6ulNj7xtTX//BZ3vgdMt64B5nT7xKwcmb2a4qFPZZaCm8S805LIQMLJ+8ULC3Hwubd1JYYLYXt4YOFL7nREuM9kSJrq0IWkJJSSM0739LhYNFSiFP3bOQpyMZxg1oK3apiaWC50wtBSS9Ji4RS7Zr2cCj19T/A8vrvsOeN31HmdKxY/ZA7ox9hsLBi4VJYEtdL44a5PcS82+Jp3EBLIfVYOG742YTN+1VoMrU9bjG1jfmLA4AYADCMdTeN400J5nXZ98efG/TPEuDrIvb/6f/aukupTzZ4j++SyV4h3tLBHouvCm3+HisTSPKOFasIl0KSY4En73sSN3hy88Gz34oVC6lgZRSBO70YKbvL0pTdZRK+Q722x9437pz60Ldr2gPQwLqHeCnE5p2XQq5YxGPNwXuFXLG6oY7lWD/M7yQei5bCdmhdcHV6kGCZIIiraXxg2YN4aYsICADIwfw8AOATARjj58C3DYK/DAHBUuGqT5XxqnCQb+kwj0UVa4+wCU1zLOqxcph55x5LBYspViG404vAbSkC9+4ScO8uS3OHCFdS7H3jjtjHQ8lTH8KuafchdRoBCxGPNZ2bd+6x+oYpFtkrFBTr+NvXteTddA0aTe3m1gVXpb8oWKYQALCOBRb7d3MIr1kg/jwBLwLXsVRZA0voxzrMzPtBGpDSLR0RrFwOFvJkWxEFq0AthW5LMQXruxJwpwQPV1KsbPzmNXloe+wjlDz1AaRMfYBUxWJgccXiAakuecdgvUWTd+qxOnmOhU6+2wEnTR3mRlO79BcGS2JvbkjqMgpUhhBUUPYvsSNeSr3F4D26Wx6kHguJWzpsE1pTLAKWX9yAFSubKdbeAvDsLWRgEcVCLgoWcqccHBOur152TU96TfZtfe0xbH/NDyxm3vdhsIx3kVoKZ/nlWCJYfFXItnROzu8wnzR1SM8AWDGs1AVz4e8xElQSU7VgL7P/zzLqpdgsBm9NmszNO/NYgmIR8448RXxLhybvxGNRxQLPPisphZ69hcidUYTUUphaSsFKLkfuHSPDtXaKbPzqFYcv6VUZtr76iID1bexDlDIVl8L7iJRCvCo0/gZqQIrN+yycvPfRVSFvm3lL3CvsJHFDw7zOxJPzO6RnBCwJAJJCAMI0AlRYrYK9bIF+jjEvCle6zDtIsXnHHksDi3Y3MPOOPPmCYu33A0vzWKpiuXaWg/vbg8i9o2IYXGunuIwbpwwMffXKfwGD9Q1WrNiHsHPqQyBgqYr1Gy2FxrtItyrEikW3dFjyjvcKbwA1713o2LyuxIZ5ndIzBpYU5NfjSw4AFb57g/160bCHChaFy5Yhe6v2srgBl0LamsxLoaIFpEgMSPGqEAekFCzusYqpx9pVCgwscG0/hNzbNLjMU1zGL14a8G2c4oDNr/wXtrwio62vPkYYLFwKyaqQm3cC1l0gpZAk73cIWESx4nBAileFLHlXA9KuxGPzuqRnFCwDjL+MmcMpgUGDpYOrco/s1bcm0+SdtM2QHAsRsMheIcuxsqyCedcUC5dCVwoGqwxc35YTsJzfHALn1oo0DNW6F11D66cMwIYpDvjqZQcSFYt6LG1VyMw7K4UsIMUei/djzdF3N9jiu81H53VJzzBYEvv3kOOHEAx7wBIYElgqXGUWg3KIPP6lC0hZ8q72Y/G9QjV5p+YdeywGFlasUnDtKgX3znIClnvHIXBvq0A3VjfA6hfdvrUvOmH9FCcBCysW9ViP0fbXHsK3RLG0UkjBooqFt3SwYomb0KRthnisG1A5t9tsi++WngOwYkKAhL9WWrglMGSwRLi8BzNlAhbrbtBWhbli24wQN9CA1EPMO48bSpFrVxkvhQgr1o01DWj9Kw4MFqx7yQVfvDQAG192gOixdsQ+0hTr9T8g/fU/aI4lBKT6UtgLZXN+BfowRY+5cm639JyAJYWQbWHVMoYA4oglcFxgaXBlGZTyfTJWLK9aCvWKpbDuBpK87y0QAlIVLF0pvLOxFta9PADmv7th9YsuoIpFSiHSmffXRI91HxHFeuMe2me8R3Ms1t0ggsVKoblybo/0nIElAUBjkLCEFFNEHCwdXKVZMu/H0iXvrB/LHyymWMi1uxjUHGtnOTzcWgmbpj6GT/+mgPnvHqJYa1+iYBHFepmVwtceMbBw3PAAYbCwYpG9Qh438LYZzWOh0tm9iYcIVM8lWIYQoAnmMjwxsHRwlWTJTLGQX/KOA1LkUc27PiD1fFeK3KQUlkHVijb4l8GrgvX5312wjoOFzTtbFVLz/gi+jX0AKdOEgJR5LAwWiRt4ox8Fy1w6u1d6jsGSQsy2IvI9w7oIXNYsg1K4X/bzWIgn76Qfax+LG0SPRQJSat43xMo6sIjHYqVQ9FhbX2XJOwHr/rBNaK2DlLYmF8/uSyyJ65WiYEEo2dRIlxwCyOGBReCyZlG4DmTLancDAWt43MBLIQYLl0K8KuxeX4/+8cKgAJZbNe/rmXknq8JXeNzAwBK2dHgpVPuxsGLF9ZqLZ/dJUbAgVCMfVgmMGFg6uKw5stZBykshbpthOZa6pUPiBoTNe9vnP8I//mfQT7Fc1GMRsAYYWI85WJAc+5Aq1jR93JA1g+ZYOTNvm61xvRIGayy4npNSKI1jkzqs7xWxS4UrP1fmASkz77qA1EMVC7lTcfJehsHyUyy9ed8wvBSCVgrpqpDHDcy8+3Li+o0iWKPB9ZyBFTMOI+8bx/eJHFgqXFlZBk9unqzzWJkHkNo2k05XhTxu6F5fD/5gfS7EDXRVKAuKxeMGca9QCEjpXqHPGtdrFMEaCa7nDCxDCFmVeCVNKFgaXFaDJydf1jf6qf1Yqsfiq8LPXnJpYP3NTcEiiuUMHJDGMrCmiWD9poKF22ass/p8hbP7p48F13MGlg3Gd/kmxGONCNf+fNmdVUBWhepeYRrzWOpeYTlUraRxw3/EVaGQY2lbOo9Y8s46SNmqkHWQUvM+4w5Sc6xZt/CkmVHhCgMs418MLDOEd9knHCwdXFlW2aNt6TDFYmDtKiNxw8OtVWj1FJduVaiZdw0sNXmPHaEU4se/ZtxFfEuH7RUOjQZXGGAF20HwwiQAa7wlcNwl8YleHC53ZoGMO0hJ3JDOzLtuS+cgnP/XabUUqnEDM+8qWK9qpVDtx3rd7/Ev3jaDh4Kwfqyy2T2+krjugJ4rDLCwEQ7mMo4DLF8k9usiUALHXRKf+KVkWaly7TkgC8k773knjX68bebU/7ao5n2d6rEGmHmnYG33L4W65F3bK9Q9Yk87SH2VAZQrDLCCBcASIlTB5k2mp1QCn95e4bjgslgN7vQDsgYW7m6gikW7Gw6C65tDcOaTFiQqlr9518cNQo4lBqS8NZk9TEEfsSc97z5bXIfRFtch8Xu8cLFfoH0c/U6SeAd4zWDVJSbCJbA3kiXxqV0cLo+lWOZbOrgUkp533Jq8/RBybasA19bD0PRJi95j4U3oV3jPuxA3TBNKodg2w8cYzepDeHYD7m6gE/1Io5+vdnbX9NrZXRK+xwtXiM10trHAYn/fEgIEkS6BhhBamscsiU/1UuHaXSKr3Q0ULMBgubdV4A5ScCVVouaPWxFVLJa884cpApRCnWKJ3Q1aKdQ9pVMb3zVUF99hrIvvGBOuMcAKZZukMdCbIfi1YKEa9gxfBEqgbRydEKOWxKd+UbjKDO7UUpkrFvFYOw6RUugiYB0G5+ZKOPtxq6ZYamsy3dIRn4TmOZbaNiN0N5DnCmf3It0MUjJtpst3/O2u6WPBNQZYwZZDf8As7I1PYm9qqGn4WAY61GcCxdcLVoVHLYkTcnG4XCmlsuaxaClkigXOLVXg+sqGzn7UOmoHqRo3YMXi5h2XQt6PJT7+xWY3qMNt51/3jaVcQYAV7uZuqJctwiXQEsa2z4glccIuDJecXGZw7yyXNfNegbDHwqXQtbkKOTdVgXNjNbR81DosbtApFi+FRjrGSAVLN3gt0HwsMhTEd2IUuIIAazyq9SSX++YItMKE8hoBS+KEXkS5MFzJ5bIGVgW4vj4Mrs2VRLFcG6vB9WUNak04p2tNTgm0pcPmY9FVIcux/BVLPUCAgkWGgrzb4Ws0BYYrSLAiFUCGm12F+nOM9nr2cErihF9Etb4tl4l5/6YC4VLoTMJg2ZDzqypwbaxGzg014FxfA+c+bFXjhhHNO18V6gJSbT6W6rEwWPN047h9ZxZcHea5ggTracBliXAJHKukhmLkhynpBENlNbiSy2QakOpKIVcscG60AQHrixpwrquF8x+cQ98GSt5H91hs2gxVLDJtZt51RKbN6A8QGGo22Y3NJrvE70kAly/IlD3UEmiIcEuzriRO2KUkWw1uZt5dO5jH2lYB7q2ViCpWFWCPhUuh88tqoljOdUdgYM1RuLDq3LBH7Pfp4ga8V4g9Vq9aCtVRkdhjsbN0OFh42gyemnyGHSAQJlwSU5dIAGYPEoBIlsCIlMSJg2pXiexmm9Bi8u7aehgR876lCnApxOadKtYRhMFyrj0Kzs/rEIaLKta94R5rpjDRT/VYPcKqsFucNkNnkJqukTnveAYpHsfdvMhubF4UFlwG9gaGauxlllMFu2UjghzMHUwGJt78ecNg7l6+I/D0oWIBKd4rJDmW8Ii9Wgq/pnGDk5RCCtbAFzUwgMFacxRhsJyfHYNLq84N725QPZY2550eIMCmzWCwSCnUFOtHdQYpUSyEx3Gff+/K0Pnw4ZLYHcNASWIQ2IS7gH08IdSep8l8P3Wo3GlsS4d0N9BGP65YTq5YGKzNleDcZEPEY31Zg7jHGlhTSxRrwFwHA4nH4NLKczrzTsBim9DqGCP9lo52rNx8vCqkg9f4qMjmBW0MLDtcWnR5yL7ofKTgkp6n+6lC5UkvJJvQtDWZKRZP3oli0eSdeCz/Urj+CPFYmmLVIwzWwKf1cHnFebXnXYsbGFh4VCT3WOwsHXVVyIbb+oEFLQuvAAHr/ctwZfGloatLLk+PwgWTDywZK1XGAVmb3aA9paNOm9lBzbvqsTZXIXVVSBTrCCmFWLEGPj8KA58dA6e5HpyfHoeBfzUg+/Lzur1CPuddnUGKPRYvhfO0gJQrFimFC9qhaaEeLPuiS9C++KKvI6pc0qQCizf66WaQptJGP97zjhv91O6GryswWLQUqmBV07hhbS0ipXA1BWvAXA8D/6mHgX83gOOf9ZZsY3/isCNP4gKUQlGx5rO4waSdTNGy8AophRexYi26hNqXXISOJRd8XUtaJ5tyxQTZPhPsa/01SiFtTS6QycMUuhmkfPCa3mORUvj1YR438ICUJO88bsClcOAzfNeBM7Ee4VLo+HdDmuOf9VK2sV/KMd42C4qF/McY6ZJ3dpaOYN61Uvg+B+syal98ETqWXoDry875OhY1GzsWNUv45s2CYcBlFsx8AfuzMYQ3EH/9CxGCwfyXAIs8BrY/X8ZP6dDHv/hQkCKuWIgPBVED0m2B4gamWASsWuRUzfsx5EzEpbA+zfHvBkkAS7LOvG3mjX58VCTvbuB7hXRqspZjsSNPEDtWjpRCDJadK9bSC9C59Bx0LWv1dS9qNnYLYI0GV1NwXaOBABk27F8Y5u8PFh/gH0jNAq00A31cBCuYrxtJLZ9c3ECgysmT+bQZ/jAFfxJaNO9MsWg/Ft8rJKWQdDcQsFzcY61likU8Vh04zHUW56f1UgCwpANv9iUSsNSpycJeYXyXdjIFOa+QKhYOSNmxcogrFvFYiy6gjiUXEAare1kr3Fze6vt1SeuwNucIgWVgypXAPs7f8AQWS/DYgudk/HP55/M32Mb+bmITkDkE5lE+Huj7cAVNEj5uYQob47dPyH+mJwQVfmCVzMfShtuqJ1P4lUJVsUg/Fs2xcCnkbTN0SwcrFgtImXl3mGstjsQ6aRSwpMK4XjMfvMYPENAd0qQFpIAPEBBXhefeu6yCdXXxRURK4dLzqGtZK/Qsb0W9K8/6+ldGBi7Qg+VfkvgbF2iv0OxXOsXPsfm94Twn81cm/vrmEb6PhX2e/8/Fg9YkAU71ayMOlZKfJ9NpM3lkdgN+ElodY5RRBJ70EqROm9E8Fo4bePJO2macW7h5rwaXGjfU0rhhTa3FYa6VggBLKonrMROw5tAZpMPB6hD2ClkpVFeFdsRWhdi8IwxW93IG1oqz0Leyyde/vHnY0z9N4YFVIKgKv2NGAUssoeLniCBwoEwBEn1LEGBxMAN9HYfTIL525KDiQ0HoRD+ED2niZ+nQUkjNO53doDfvoseijX5YsSrBtUmnWMy811gGVh+RQgBLKpvbY+atyRpYeo9FFesqUuOG90lASleFiy+ia0vOQycGi5TCFsBg3V7ZjPpXNfn+WHkmLOUCPSD+bz73NLz0iP4mVLBi2JzRYaVL+K+45cPLMv84/1lMrBNW/L6mUc/SGc8lWy0xbIyResKqMCqSKhZ/rpANBeFjjNTHv3iONXxViEiORcCqsQysqZEcn4cMlnRobrdZLIV0S4e1zTDzzjahkS7HWowV6wJQsM5B9/JzcHP5WQbWWdS/6gz8/sEZX39C47iVC6gaiEbY7OdpxDeZ/1vMCF/H/+wPp/g6fAtJ/PyEUb4Ph1n0XyLEhqDO0gkRKkkpyk6jE/3Y4DU25109/YtMTcYPq9JSqJp30WP5l0Lc3cDiBroqrE0bWFcjOcYPFh4CYqaHjdO4Qd82I54JzbZ03rcjrlh6894CvcvPotsrm+HuyiZ074Mz6MGHp4fuJTQa/OEqDuIOUOIm420aQQEl9iCIIfJgCRP9+LFyWLHo4DUSN6il0CXOeWfjuN3JB6l5Z49/4VLoIh6LxQ0bbBbnlzXSwBc1kmNtjeRYXSM5PqNwhQiWZJvbadYOG1dP/1JXhSwgpYq1CJv3i9C2+AIMA0srhXDvgzPwx4en4GHCz3JvQmPMeOCa7LegdFzN/NVPB2LYl7Moy8RnkCoELOqxSCnkhzRlsjnvbGqyhzxi79/dwNtmcDmsJHuF2GO5N9WkuTZWS84N1dLA+mrJsa5acqyplhyfU7jGAZZ0JL7TXPd2VwDzzs6ExoqFPdb7l5liCaVw2TmEzfutFUSx0B1aCtH9D09jsODRx42WiYZgMtxhX+6iLAs98oQOt1XnvLO4wa0PSP2OPBFLodqPReMG0t1QaXFtskmujTbJucEmDXxpkxxf2CTHWpvkWE3hGidYUl18p9l/EzqAxyJgUcW6iDpZ3EAUayVeFTYDBuveB6fh/oenEQZL/rjRJyfYnknVeqpgKSXZaerUZOHoXq0U4sFr9Fg5XfLO4ga10Y+UQu25QvfmyjTnpkrJualKcm6skpwbqqSBL6skx/oqybGuSnKsoXCFAZZUP7/TTI6VUw8bV/cKxbgB6eIGsRSuaoZ+DlbCaXj40c8gf9QIcsIPpol+Y58ZsLTTv+jUZHd2njrRj+dY2qpQaJvZWY5c3GPxtpmtFRb3ZgwVuzdWSs4NldLAl5WSY32l5PiiUnKspXCFCZZ0Ap9VqGub0RTroroqZOZ92TnoXtqKGFgIKxb1WIJifdQIjk8at0z0G/vXB6swy0xKYaEw552fTMGG22Lzrp3+RZN3lwiWmmNRqJxbK6QxwVpH4YoAWNJJU7tZ9Vj+ccMiDSymWMRj9a5oJqWQKNaqM4iZdwwWcnzcmDbRb+xE35HJsJhiCR6LJu/8ZArd0b3a1GT/TWjntoMEquDBqowUWPhxevNwxbpEwGrTmXdaCrl5v7uqCX7jpZAplpzQmDDRb+yzAJakFOXYeY6lnVeYz88r1KYmZ1CwXBpYqsdy7iizOLcdlCYQLOmUqS1Rn2NdRjhuELsb+KqQxQ2kFLJVIXqUcArJH/+MwRpXnvUs3REB68+SHCPOsWjyTg8QUIRNaHVqsnCWjnisnDv5YJpzR5k0EWD5w9Viaktsfa8NLrx3BWHFUuOGxTTH6lrWogtIVfPOPNbjjxp75YTGCX9jnxWwJO+BnC3EY+lKIe9uYIeN401oSzHy8KnJKWXImVJmcScflCYSrGFwLbSbtYD0khCQYo91DvUsa+Gb0My8U4+FFethQqM5ClZkwZIUa26agk+mYGdCK9kF3LyTHMvPY4EnpXyLM6VMmgxg+cN1fqHdfHERWxUuuah6LJJjraCrQlGxMFgPEk5ZHyY0SlGwIg8W6XLA/Vg8eWcHCAiNfsXIlVpsH0wtnD6YWihNJrD84bq06JL5yuLLQ3rFUnMsule4iu4V3v/glPVBwikpClbfEwNL8uTmSUqu1eTOtqa591kbPXsL7O69hTZPRmGS01JkclqKJPWeZGD5w2Vfaje0LT5f3bHkAvyi3ytEJCBdeab391WnP7z/wSkpClbfUwFLcmePfU9GsES47EvtUtvi85J9aYuhc2mLuWt5i6VneUtaz4qzSb0rz5j6V56Rfl91WoqC1ffEzPszBRaHSwBL6lzaInUtb5F68L3irNS78owUBavvia8Knzmw8B0Fq29cccP/A9DRI3azFvY4AAAAAElFTkSuQmCC";
@@ -15,6 +22,7 @@ export type ServerBackupDetail = {
   backupCreatedAt: string | null;
   backupCompletedAt: string | null;
   backupExpiresAt: string | null;
+  coverage: Coverage;
 };
 
 export type AccountDetail = {
@@ -29,6 +37,8 @@ export type AccountDetail = {
   expiredBackups: number;
   serversWithBackup: number;
   totalServers: number;
+  missingServers: number;
+  coveragePct: number;
   lastBackup: string | null;
   servers: ServerBackupDetail[];
 };
@@ -49,6 +59,7 @@ export type ProviderReport = {
 export type InformeData = {
   generatedAt: string;
   dateLabel: string;
+  day: DayWindow;
   aws: ProviderReport;
   huawei: ProviderReport;
   globalSummary: {
@@ -56,6 +67,10 @@ export type InformeData = {
     totalBytes: number;
     successRate: number;
     failureRate: number;
+    expectedServers: number;
+    coveredServers: number;
+    missingServers: number;
+    coveragePct: number;
   };
 };
 
@@ -96,7 +111,7 @@ function formatDateShort(iso: string | null): string {
 function statusColor(status: string): string {
   const s = status.toUpperCase();
   if (["COMPLETED", "AVAILABLE"].includes(s)) return "#10b981";
-  if (["FAILED", "ERROR"].includes(s)) return "#ef4444";
+  if (["FAILED", "ERROR", "SIN BACKUP"].includes(s)) return "#ef4444";
   if (["IN_PROGRESS", "PROTECTING", "CREATING", "PARTIAL"].includes(s)) return "#f59e0b";
   if (["EXPIRED", "DELETING"].includes(s)) return "#71717a";
   return "#06b6d4";
@@ -105,173 +120,256 @@ function statusColor(status: string): string {
 function statusBg(status: string): string {
   const s = status.toUpperCase();
   if (["COMPLETED", "AVAILABLE"].includes(s)) return "#f0fdf4";
-  if (["FAILED", "ERROR"].includes(s)) return "#fef2f2";
+  if (["FAILED", "ERROR", "SIN BACKUP"].includes(s)) return "#fef2f2";
   if (["IN_PROGRESS", "PROTECTING", "CREATING", "PARTIAL"].includes(s)) return "#fffbeb";
   if (["EXPIRED", "DELETING"].includes(s)) return "#f9fafb";
   return "#f0f9ff";
 }
 
-export async function generateInformeData(): Promise<InformeData> {
-  const summary = await getBackupSummary();
+type WindowBackupRow = {
+  resource_name: string;
+  resource_id: string;
+  resource_type: string;
+  vault_name: string;
+  backup_name: string;
+  status: string;
+  size_bytes: number | null;
+  backup_created_at: string | null;
+  backup_completed_at: string | null;
+  backup_expires_at: string | null;
+};
 
+function coverageOf(status: string): Coverage {
+  const s = status.toUpperCase();
+  if (["COMPLETED", "AVAILABLE"].includes(s)) return "OK";
+  if (["FAILED", "ERROR"].includes(s)) return "FAILED";
+  return "FAILED";
+}
+
+function toDetail(row: WindowBackupRow, coverage: Coverage): ServerBackupDetail {
+  return {
+    resourceName: row.resource_name || row.resource_id,
+    resourceId: row.resource_id,
+    resourceType: row.resource_type || "",
+    vaultName: row.vault_name || "",
+    backupName: row.backup_name || "",
+    status: coverage === "MISSING" ? "SIN BACKUP" : row.status,
+    sizeBytes: row.size_bytes !== null && row.size_bytes !== undefined ? Number(row.size_bytes) : null,
+    backupCreatedAt: row.backup_created_at ? new Date(row.backup_created_at).toISOString() : null,
+    backupCompletedAt: row.backup_completed_at ? new Date(row.backup_completed_at).toISOString() : null,
+    backupExpiresAt: row.backup_expires_at ? new Date(row.backup_expires_at).toISOString() : null,
+    coverage,
+  };
+}
+
+function missingDetail(exp: ExpectedResource): ServerBackupDetail {
+  return {
+    resourceName: exp.resourceName,
+    resourceId: exp.resourceId,
+    resourceType: "",
+    vaultName: "",
+    backupName: "",
+    status: "SIN BACKUP",
+    sizeBytes: null,
+    backupCreatedAt: null,
+    backupCompletedAt: null,
+    backupExpiresAt: null,
+    coverage: "MISSING",
+  };
+}
+
+/**
+ * Informe de cumplimiento del DÍA ANTERIOR (America/Bogota):
+ * cruza el inventario (servidores esperados) con los backups generados
+ * en la ventana [00:00, 24:00) de ayer. Lo que no tiene backup sale en rojo.
+ */
+export async function generateInformeData(day?: DayWindow): Promise<InformeData> {
+  const target = day || getPreviousDayBogota();
   const now = new Date();
-  const dateLabel = now.toLocaleDateString("es-CO", {
-    timeZone: "America/Bogota",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const expected = await getExpectedServers();
+
+  const byAccount = new Map<string, { provider: string; accountId: string; accountName: string; expected: ExpectedResource[] }>();
+  for (const exp of expected) {
+    const key = accountKey(exp.provider, exp.accountId);
+    let entry = byAccount.get(key);
+    if (!entry) {
+      entry = { provider: exp.provider, accountId: exp.accountId, accountName: exp.accountName, expected: [] };
+      byAccount.set(key, entry);
+    }
+    entry.expected.push(exp);
+  }
+
+  const windowRows = await queryAudit<WindowBackupRow & { provider: string; account_id: string; account_name: string; region: string }>(
+    `SELECT provider, account_id, account_name, region, resource_name, resource_id, resource_type, vault_name, backup_name, status, size_bytes, backup_created_at, backup_completed_at, backup_expires_at
+     FROM server_backups
+     WHERE backup_created_at >= $1 AND backup_created_at < $2
+     ORDER BY provider, account_id, resource_id, backup_created_at DESC`,
+    [target.startISO, target.endISO],
+  );
+
+  const windowByAccount = new Map<string, typeof windowRows.rows>();
+  for (const row of windowRows.rows) {
+    const key = accountKey(row.provider, row.account_id);
+    const list = windowByAccount.get(key);
+    if (list) list.push(row);
+    else windowByAccount.set(key, [row]);
+  }
+
+  // Cuentas con backups en ventana pero sin inventario (p. ej. caché vacío): igual se reportan.
+  for (const [key, rows] of windowByAccount) {
+    if (!byAccount.has(key) && rows.length > 0) {
+      const first = rows[0];
+      byAccount.set(key, {
+        provider: first.provider,
+        accountId: first.account_id,
+        accountName: first.account_name || "N/A",
+        expected: [],
+      });
+    }
+  }
 
   async function buildProviderReport(provider: "AWS" | "HUAWEI CLOUD"): Promise<ProviderReport> {
-    const providerAccounts = summary.byAccount.filter((a) => a.provider === provider);
-    const providerTotal = summary.byProvider.find((p) => p.provider === provider)?.total || 0;
+    const providerEntries = [...byAccount.values()].filter((a) => a.provider === provider);
 
-    const statusForProvider = await queryAudit<{ status: string; total: number }>(
-      `SELECT status, COUNT(*)::int AS total FROM server_backups WHERE provider = $1 GROUP BY status`,
-      [provider],
-    );
+    const accounts = providerEntries.map((acc) => {
+      const rows = windowByAccount.get(accountKey(acc.provider, acc.accountId)) || [];
+      const latestByResource = new Map<string, WindowBackupRow>();
+      for (const r of rows) {
+        if (!latestByResource.has(r.resource_id)) latestByResource.set(r.resource_id, r);
+      }
 
-    const bytesRes = await queryAudit<{ bytes: string }>(
-      `SELECT COALESCE(SUM(size_bytes), 0)::bigint AS bytes FROM server_backups WHERE provider = $1`,
-      [provider],
-    );
-    const totalBytes = Number(bytesRes.rows[0]?.bytes || 0);
+      const seen = new Set<string>();
+      const servers: ServerBackupDetail[] = [];
+      let ok = 0;
+      let failed = 0;
+      let missing = 0;
+      let bytes = 0;
+      const vaults = new Set<string>();
+      let last: string | null = null;
 
-    const successfulTotal = statusForProvider.rows
-      .filter((r) => ["COMPLETED", "AVAILABLE"].includes(r.status.toUpperCase()))
-      .reduce((a, r) => a + r.total, 0);
-    const failedTotal = statusForProvider.rows
-      .filter((r) => ["FAILED", "ERROR"].includes(r.status.toUpperCase()))
-      .reduce((a, r) => a + r.total, 0);
-    const inProgressTotal = statusForProvider.rows
-      .filter((r) => ["IN_PROGRESS", "PROTECTING", "CREATING", "PARTIAL"].includes(r.status.toUpperCase()))
-      .reduce((a, r) => a + r.total, 0);
-    const expiredTotal = statusForProvider.rows
-      .filter((r) => ["EXPIRED", "DELETING"].includes(r.status.toUpperCase()))
-      .reduce((a, r) => a + r.total, 0);
+      for (const exp of acc.expected) {
+        const rec = latestByResource.get(exp.resourceId);
+        if (!rec) {
+          // Fallback por nombre (IDs difieren entre nubes en casos borde).
+          const byName = [...latestByResource.values()].find(
+            (r) => (r.resource_name || "").toLowerCase() === exp.resourceName.toLowerCase(),
+          );
+          if (!byName) {
+            servers.push(missingDetail(exp));
+            missing++;
+            continue;
+          }
+          seen.add(byName.resource_id);
+          const cov = coverageOf(byName.status);
+          servers.push(toDetail(byName, cov));
+          if (cov === "OK") { ok++; bytes += Number(byName.size_bytes || 0); }
+          else failed++;
+          if (byName.vault_name) vaults.add(byName.vault_name);
+          if (byName.backup_created_at && (!last || byName.backup_created_at > last)) last = byName.backup_created_at;
+          continue;
+        }
+        seen.add(rec.resource_id);
+        const cov = coverageOf(rec.status);
+        servers.push(toDetail(rec, cov));
+        if (cov === "OK") { ok++; bytes += Number(rec.size_bytes || 0); }
+        else failed++;
+        if (rec.vault_name) vaults.add(rec.vault_name);
+        if (rec.backup_created_at && (!last || rec.backup_created_at > last)) last = rec.backup_created_at;
+      }
 
-    const accounts = await Promise.all(
-      providerAccounts.map(async (acc) => {
-        const vaultRes = await queryAudit<{ count: number }>(
-          `SELECT COUNT(DISTINCT vault_id)::int AS count FROM server_backups WHERE provider = $1 AND account_id = $2`,
-          [provider, acc.accountId],
-        );
-        const vaultCount = vaultRes.rows[0]?.count || 0;
+      // Backups huérfanos (recurso ya no está en inventario): se listan igual.
+      for (const [rid, rec] of latestByResource) {
+        if (seen.has(rid)) continue;
+        const cov = coverageOf(rec.status);
+        servers.push(toDetail(rec, cov));
+        if (cov === "OK") bytes += Number(rec.size_bytes || 0);
+        if (rec.vault_name) vaults.add(rec.vault_name);
+      }
 
-        const statusRes = await queryAudit<{ status: string; total: number }>(
-          `SELECT status, COUNT(*)::int AS total FROM server_backups WHERE provider = $1 AND account_id = $2 GROUP BY status`,
-          [provider, acc.accountId],
-        );
+      servers.sort((a, b) => {
+        const rank = (c: Coverage) => (c === "MISSING" ? 0 : c === "FAILED" ? 1 : 2);
+        return rank(a.coverage) - rank(b.coverage) || a.resourceName.localeCompare(b.resourceName);
+      });
 
-        const successful = statusRes.rows
-          .filter((r) => ["COMPLETED", "AVAILABLE"].includes(r.status.toUpperCase()))
-          .reduce((a, r) => a + r.total, 0);
-        const failed = statusRes.rows
-          .filter((r) => ["FAILED", "ERROR"].includes(r.status.toUpperCase()))
-          .reduce((a, r) => a + r.total, 0);
-        const inProgress = statusRes.rows
-          .filter((r) => ["IN_PROGRESS", "PROTECTING", "CREATING", "PARTIAL"].includes(r.status.toUpperCase()))
-          .reduce((a, r) => a + r.total, 0);
-        const expired = statusRes.rows
-          .filter((r) => ["EXPIRED", "DELETING"].includes(r.status.toUpperCase()))
-          .reduce((a, r) => a + r.total, 0);
+      const totalServers = acc.expected.length;
+      const inProgress = rows.filter((r) =>
+        ["IN_PROGRESS", "PROTECTING", "CREATING", "PARTIAL"].includes((r.status || "").toUpperCase()),
+      ).length;
+      const expired = rows.filter((r) =>
+        ["EXPIRED", "DELETING"].includes((r.status || "").toUpperCase()),
+      ).length;
 
-        const serversRes = await queryAudit<{ count: number }>(
-          `SELECT COUNT(DISTINCT resource_id)::int AS count FROM server_backups WHERE provider = $1 AND account_id = $2`,
-          [provider, acc.accountId],
-        );
-        const totalServers = serversRes.rows[0]?.count || 0;
+      return {
+        accountId: acc.accountId,
+        accountName: acc.accountName,
+        region: rows[0]?.region || "",
+        vaultCount: vaults.size,
+        totalBackups: rows.length,
+        successfulBackups: ok,
+        failedBackups: failed,
+        inProgressBackups: inProgress,
+        expiredBackups: expired,
+        serversWithBackup: ok,
+        totalServers,
+        missingServers: missing,
+        coveragePct: totalServers ? Math.round((ok / totalServers) * 100) : 0,
+        lastBackup: last ? new Date(last).toISOString() : null,
+        servers,
+      };
+    });
 
-        const serversWithBackupRes = await queryAudit<{ count: number }>(
-          `SELECT COUNT(DISTINCT resource_id)::int AS count FROM server_backups WHERE provider = $1 AND account_id = $2 AND status IN ('COMPLETED','AVAILABLE')`,
-          [provider, acc.accountId],
-        );
-        const serversWithBackup = serversWithBackupRes.rows[0]?.count || 0;
-
-        const regionRes = await queryAudit<{ region: string }>(
-          `SELECT DISTINCT region FROM server_backups WHERE provider = $1 AND account_id = $2 LIMIT 1`,
-          [provider, acc.accountId],
-        );
-
-        const serversRes2 = await queryAudit<{
-          resource_name: string;
-          resource_id: string;
-          resource_type: string;
-          vault_name: string;
-          backup_name: string;
-          status: string;
-          size_bytes: number | null;
-          backup_created_at: string | null;
-          backup_completed_at: string | null;
-          backup_expires_at: string | null;
-        }>(
-          `SELECT DISTINCT ON (resource_id) resource_name, resource_id, resource_type, vault_name, backup_name, status, size_bytes, backup_created_at, backup_completed_at, backup_expires_at FROM server_backups WHERE provider = $1 AND account_id = $2 ORDER BY resource_id, backup_created_at DESC NULLS LAST`,
-          [provider, acc.accountId],
-        );
-
-        const servers: ServerBackupDetail[] = serversRes2.rows.map((r) => ({
-          resourceName: r.resource_name || r.resource_id,
-          resourceId: r.resource_id,
-          resourceType: r.resource_type || "",
-          vaultName: r.vault_name || "",
-          backupName: r.backup_name || "",
-          status: r.status,
-          sizeBytes: r.size_bytes !== null && r.size_bytes !== undefined ? Number(r.size_bytes) : null,
-          backupCreatedAt: r.backup_created_at ? new Date(r.backup_created_at).toISOString() : null,
-          backupCompletedAt: r.backup_completed_at ? new Date(r.backup_completed_at).toISOString() : null,
-          backupExpiresAt: r.backup_expires_at ? new Date(r.backup_expires_at).toISOString() : null,
-        }));
-
-        return {
-          accountId: acc.accountId,
-          accountName: acc.accountName,
-          region: regionRes.rows[0]?.region || "",
-          vaultCount,
-          totalBackups: acc.total,
-          successfulBackups: successful,
-          failedBackups: failed,
-          inProgressBackups: inProgress,
-          expiredBackups: expired,
-          serversWithBackup,
-          totalServers,
-          lastBackup: acc.lastBackup,
-          servers,
-        };
-      }),
+    const totalBackups = accounts.reduce((a, c) => a + c.totalBackups, 0);
+    const successfulTotal = accounts.reduce((a, c) => a + c.successfulBackups, 0);
+    const failedTotal = accounts.reduce((a, c) => a + c.failedBackups, 0);
+    const inProgressTotal = accounts.reduce((a, c) => a + c.inProgressBackups, 0);
+    const expiredTotal = accounts.reduce((a, c) => a + c.expiredBackups, 0);
+    const totalBytes = accounts.reduce(
+      (a, c) => a + c.servers.filter((s) => s.coverage === "OK").reduce((x, s) => x + (s.sizeBytes || 0), 0),
+      0,
     );
 
     return {
       provider: provider === "AWS" ? "AWS" : "Huawei Cloud",
-      totalBackups: providerTotal,
+      totalBackups,
       totalBytes,
       accounts,
       successfulTotal,
       failedTotal,
       inProgressTotal,
       expiredTotal,
-      successRate: providerTotal ? Math.round((successfulTotal / providerTotal) * 100) : 0,
-      failureRate: providerTotal ? Math.round((failedTotal / providerTotal) * 100) : 0,
+      successRate: totalBackups ? Math.round((successfulTotal / totalBackups) * 100) : 0,
+      failureRate: totalBackups ? Math.round((failedTotal / totalBackups) * 100) : 0,
     };
   }
 
   const aws = await buildProviderReport("AWS");
   const huawei = await buildProviderReport("HUAWEI CLOUD");
 
-  const globalTotal = summary.total;
+  const expectedServers = expected.length;
+  const coveredServers =
+    aws.accounts.reduce((a, c) => a + c.serversWithBackup, 0) +
+    huawei.accounts.reduce((a, c) => a + c.serversWithBackup, 0);
+  const missingServers = expectedServers - coveredServers;
+  const globalTotal = aws.totalBackups + huawei.totalBackups;
   const globalOk = aws.successfulTotal + huawei.successfulTotal;
   const globalFailed = aws.failedTotal + huawei.failedTotal;
+  const globalBytes = aws.totalBytes + huawei.totalBytes;
 
   return {
     generatedAt: now.toISOString(),
-    dateLabel,
+    dateLabel: target.label,
+    day: target,
     aws,
     huawei,
     globalSummary: {
       totalBackups: globalTotal,
-      totalBytes: summary.totalBytes,
+      totalBytes: globalBytes,
       successRate: globalTotal ? Math.round((globalOk / globalTotal) * 100) : 0,
       failureRate: globalTotal ? Math.round((globalFailed / globalTotal) * 100) : 0,
+      expectedServers,
+      coveredServers,
+      missingServers: Math.max(0, missingServers),
+      coveragePct: expectedServers ? Math.round((coveredServers / expectedServers) * 100) : 0,
     },
   };
 }
@@ -297,11 +395,12 @@ function renderProviderSection(report: ProviderReport): string {
         .map((s) => {
           const sc = statusColor(s.status);
           const sb = statusBg(s.status);
-          return `<tr>
+          const rowBg = s.coverage === "MISSING" ? "background:#fef2f2;" : "";
+          return `<tr style="${rowBg}">
             <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:13px;font-weight:500;color:#1f2937;">${esc(s.resourceName)}</td>
             <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">${esc(s.resourceType)}</td>
             <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">${esc(s.vaultName)}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;"><span style="display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;color:${sc};background:${sb};">${esc(s.status)}</span></td>
+            <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;"><span style="display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;color:${sc};background:${sb};${s.coverage === "MISSING" ? "border:1px solid #ef4444;" : ""}">${esc(s.status)}</span></td>
             <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;white-space:nowrap;">${formatDateShort(s.backupCreatedAt)}</td>
             <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:right;white-space:nowrap;">${s.sizeBytes !== null ? formatBytes(s.sizeBytes) : "—"}</td>
             <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;white-space:nowrap;">${formatDateShort(s.backupExpiresAt)}</td>
@@ -310,6 +409,9 @@ function renderProviderSection(report: ProviderReport): string {
         .join("");
 
       const coveragePct = acc.totalServers ? Math.round((acc.serversWithBackup / acc.totalServers) * 100) : 0;
+      const missingBanner = acc.missingServers > 0
+        ? `<p style="font-size:12px;font-weight:600;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:8px 12px;margin:0 0 12px;">⚠ ${acc.missingServers} servidor(es) SIN BACKUP en esta cuenta</p>`
+        : "";
 
       return `
       <div style="margin-bottom:24px;">
@@ -339,6 +441,7 @@ function renderProviderSection(report: ProviderReport): string {
             </td>
           </tr>
         </table>
+        ${missingBanner}
         ${acc.servers.length > 0 ? `
         <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
           <thead>
@@ -423,7 +526,9 @@ export function generateEmailHtml(data: InformeData): string {
 
   <tr>
     <td style="background:#ffffff;padding:24px 32px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
-      <div style="font-size:16px;font-weight:600;color:#1f2937;margin-bottom:16px;">Resumen ejecutivo</div>
+      <div style="font-size:16px;font-weight:600;color:#1f2937;margin-bottom:6px;">Resumen ejecutivo — día anterior</div>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:16px;">Cobertura: ${globalSummary.coveredServers}/${globalSummary.expectedServers} servidores con backup (${globalSummary.coveragePct}%)</div>
+      ${globalSummary.missingServers > 0 ? `<div style="font-size:13px;font-weight:700;color:#ffffff;background:#ef4444;border-radius:8px;padding:12px 16px;margin-bottom:16px;">⚠ ${globalSummary.missingServers} SERVIDOR(ES) SIN BACKUP — revisar detalle en rojo</div>` : `<div style="font-size:13px;font-weight:600;color:#065f46;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px 16px;margin-bottom:16px;">✓ Todos los servidores tienen backup del día anterior</div>`}
       <table cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
           <td width="25%" style="padding:12px 14px;background:#f9fafb;border-radius:8px 0 0 8px;border-right:1px solid #e5e7eb;">
@@ -471,7 +576,7 @@ export function generateEmailText(data: InformeData): string {
   const { aws, huawei, globalSummary, dateLabel } = data;
 
   const lines: string[] = [];
-  lines.push("MC Inventory — Informe diario de backups");
+  lines.push("MC Inventory — Informe diario de backups (día anterior)");
   lines.push(dateLabel);
   lines.push("");
   lines.push("=== RESUMEN EJECUTIVO ===");
@@ -479,6 +584,10 @@ export function generateEmailText(data: InformeData): string {
   lines.push(`Volumen total: ${formatBytes(globalSummary.totalBytes)}`);
   lines.push(`Tasa de éxito: ${globalSummary.successRate}%`);
   lines.push(`Tasa de fallo: ${globalSummary.failureRate}%`);
+  lines.push(`Cobertura: ${globalSummary.coveredServers}/${globalSummary.expectedServers} servidores (${globalSummary.coveragePct}%)`);
+  if (globalSummary.missingServers > 0) {
+    lines.push(`!!! ${globalSummary.missingServers} SERVIDOR(ES) SIN BACKUP !!!`);
+  }
   lines.push("");
 
   function renderProvider(report: ProviderReport) {
@@ -488,12 +597,13 @@ export function generateEmailText(data: InformeData): string {
     for (const acc of report.accounts) {
       const coverage = acc.totalServers ? Math.round((acc.serversWithBackup / acc.totalServers) * 100) : 0;
       lines.push(`-- ${acc.accountName} (${acc.accountId}) — ${acc.region} --`);
-      lines.push(`  Total: ${acc.totalBackups} | Exitosos: ${acc.successfulBackups} | Fallidos: ${acc.failedBackups} | Cobertura: ${coverage}%`);
+      lines.push(`  Total: ${acc.totalBackups} | Exitosos: ${acc.successfulBackups} | Fallidos: ${acc.failedBackups} | Sin backup: ${acc.missingServers} | Cobertura: ${coverage}%`);
       lines.push("");
       for (const s of acc.servers) {
+        const flag = s.coverage === "MISSING" ? "[SIN BACKUP] " : s.coverage === "FAILED" ? "[FALLIDO] " : "";
         const size = s.sizeBytes !== null ? formatBytes(s.sizeBytes) : "—";
-        lines.push(`  ${s.resourceName} [${s.resourceType}]`);
-        lines.push(`    Vault: ${s.vaultName} | Estado: ${s.status} | Fecha: ${formatDateShort(s.backupCreatedAt)} | Tamaño: ${size} | Expira: ${formatDateShort(s.backupExpiresAt)}`);
+        lines.push(`  ${flag}${s.resourceName} [${s.resourceType}]`);
+        lines.push(`    Vault: ${s.vaultName || "—"} | Estado: ${s.status} | Fecha: ${formatDateShort(s.backupCreatedAt)} | Tamaño: ${size} | Expira: ${formatDateShort(s.backupExpiresAt)}`);
       }
       lines.push("");
     }
@@ -507,4 +617,45 @@ export function generateEmailText(data: InformeData): string {
   lines.push("Informe generado automáticamente");
 
   return lines.join("\n");
+}
+
+/**
+ * Recorta el informe a un solo proveedor y recalcula el resumen global,
+ * para que "Enviar informe AWS/Huawei" contenga solo esa nube.
+ */
+export function filterInformeData(data: InformeData, provider: "AWS" | "HUAWEI CLOUD"): InformeData {
+  const keep = provider === "AWS" ? data.aws : data.huawei;
+  const empty: ProviderReport = {
+    provider: provider === "AWS" ? "Huawei Cloud" : "AWS",
+    totalBackups: 0,
+    totalBytes: 0,
+    accounts: [],
+    successfulTotal: 0,
+    failedTotal: 0,
+    inProgressTotal: 0,
+    expiredTotal: 0,
+    successRate: 0,
+    failureRate: 0,
+  };
+  const aws = provider === "AWS" ? keep : empty;
+  const huawei = provider === "HUAWEI CLOUD" ? keep : empty;
+  const total = keep.totalBackups;
+  const covered = keep.accounts.reduce((a, c) => a + c.serversWithBackup, 0);
+  const expectedCount = keep.accounts.reduce((a, c) => a + c.totalServers, 0);
+  const missing = Math.max(0, expectedCount - covered);
+  return {
+    ...data,
+    aws,
+    huawei,
+    globalSummary: {
+      totalBackups: total,
+      totalBytes: keep.totalBytes,
+      successRate: keep.successRate,
+      failureRate: keep.failureRate,
+      expectedServers: expectedCount,
+      coveredServers: covered,
+      missingServers: missing,
+      coveragePct: expectedCount ? Math.round((covered / expectedCount) * 100) : 0,
+    },
+  };
 }
